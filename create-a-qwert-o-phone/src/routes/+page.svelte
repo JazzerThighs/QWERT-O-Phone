@@ -1,0 +1,15 @@
+<!-- YOU CAN DELETE EVERYTHING IN THIS PAGE -->
+<script lang="ts">
+	import { BlankQOPUserData } from '../UserDataMode/initQOPUD';
+    const QOPUserData = BlankQOPUserData();
+</script>
+
+    <h1>QOP User Data:</h1>
+    <pre>{JSON.stringify(QOPUserData, null, 2)}</pre>
+
+	
+
+
+<style>
+    /* You can style your component here */
+</style>
