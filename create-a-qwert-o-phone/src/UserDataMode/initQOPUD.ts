@@ -235,7 +235,7 @@ export class NoteTemplate {
 		this.ColorHex = '#FFFFFFFF';
 	}
 }
-export class ButtonTemplate {
+export class ActionTypeTemplate {
 	public Name: string;
 	public Description: string;
 	public ButtonEventCodes: ActionEventCodes;
@@ -284,7 +284,7 @@ export class ScaleTemplate {
 		this.NoteSet = [new NoteTemplate()];
 	}
 }
-export class FretTemplate extends ButtonTemplate {
+export class FretTemplate extends ActionTypeTemplate {
 	public TranspositionEventCodes: TranspositionObject;
 	public DeltaType: DeltaTypeString;
 	public NoteIDDelta: number;
@@ -297,7 +297,7 @@ export class FretTemplate extends ButtonTemplate {
 		this.CentsDelta = 0;
 	}
 }
-export class GutTemplate extends ButtonTemplate {
+export class GutTemplate extends ActionTypeTemplate {
 	public OpenGutNoteID: number[];
 	public OpenGutWaveType: SimpleWaveformTypeString[];
 	public TranspositionEventCodes: TranspositionObject;
@@ -318,7 +318,7 @@ export class GutTemplate extends ButtonTemplate {
 		this.FretSet = [new FretTemplate()];
 	}
 }
-export class ValveTemplate extends ButtonTemplate {
+export class ValveTemplate extends ActionTypeTemplate {
 	public TranspositionEventCodes: TranspositionObject;
 	public DeltaSet: DeltaTemplate[];
 	constructor() {
@@ -346,14 +346,14 @@ export class ChartTemplate {
 	public Name: string;
 	public Description: string;
 	public TranspositionEventCodes: TranspositionObject;
-	public PadSet: ButtonTemplate[];
+	public PadSet: ActionTypeTemplate[];
 	public ComboSet: ComboTemplate[];
 
 	constructor() {
 		this.Name = '';
 		this.Description = '';
 		this.TranspositionEventCodes = {} as TranspositionObject;
-		this.PadSet = [new ButtonTemplate()];
+		this.PadSet = [new ActionTypeTemplate()];
 		this.ComboSet = [new ComboTemplate()];
 	}
 }
