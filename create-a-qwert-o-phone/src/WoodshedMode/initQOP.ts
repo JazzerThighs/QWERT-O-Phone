@@ -1,5 +1,9 @@
 import { DeltaSetValidator, OpenGutValidator } from '../UserDataMode/validateQOPUD.js';
-import type { QOPUserDataTemplate, GutTemplate, SimpleWaveformTypeString } from '../UserDataMode/initQOPUD.js';
+import type {
+	QOPUserDataTemplate,
+	GutTemplate,
+	SimpleWaveformTypeString
+} from '../UserDataMode/initQOPUD.js';
 import { FindClosestMIDINote } from './woodshedMIDIOUT.js';
 import { QOPMutator } from './mutateQOPLoop.js';
 
@@ -58,23 +62,7 @@ type QOPScaleObject = {
 	PitchBendLSB: number;
 	PitchBendMSB: number;
 };
-type QOPGutList = {
-	// QOP.GutList
-	RequireFretMap: boolean[];
-	RequireValveMap: boolean[];
-	RequireComboMap: boolean[];
-	OpenGutNoteIDMap: number[][];
-};
-type QOPFretSetList = {
-	// QOP.FretSetList[]
-	HighestFretPressed: number;
-
-	DeltaTypeMap: string;
-	NoteIDDeltaMap: number;
-	CentsDeltaMap: number;
-	ResultantNoteIDDelta: number;
-	ResultantCentsDelta: number;
-	
+type QOPTrackers = {
 	SustainState: boolean[];
 	SustainTracker?: { [key: string]: boolean }[];
 	SustainMap?: {
@@ -110,6 +98,8 @@ type QOPFretSetList = {
 			[key: string]: [number, number];
 		};
 	};
+};
+type QOPTransposition = {
 	TranspositionState: [number, number][];
 	TranspositionMap?: {
 		[key: string]: {
@@ -117,105 +107,35 @@ type QOPFretSetList = {
 		};
 	};
 };
-type QOPValveList = {
-	DeltaTypeMap: string[];
-	NoteIDDeltaMap: number[];
-	CentsDeltaMap: number[];
-	ResultantNoteIDDelta: number[];
-	ResultantCentsDelta: number[];
-	
-	SustainState: boolean[];
-	SustainTracker?: { [key: string]: boolean }[];
-	SustainMap?: {
-		[key: string]: {
-			[key: string]: [number, number];
-		};
+type QOPGutList = QOPTrackers &
+	QOPTransposition & {
+		RequireFretMap: boolean[];
+		RequireValveMap: boolean[];
+		RequireComboMap: boolean[];
+		OpenGutNoteIDMap: number[][];
 	};
-	AntiSustainState: boolean[];
-	AntiSustainTracker?: { [key: string]: boolean }[];
-	AntiSustainMap?: {
-		[key: string]: {
-			[key: string]: [number, number];
-		};
+type QOPFretSetList = QOPTrackers &
+	QOPTransposition & {
+		HighestFretPressed: number;
+		DeltaTypeMap: string;
+		NoteIDDeltaMap: number;
+		CentsDeltaMap: number;
+		ResultantNoteIDDelta: number;
+		ResultantCentsDelta: number;
 	};
-	ButtonState: boolean[];
-	ButtonTracker?: { [key: string]: boolean }[];
-	ButtonMap?: {
-		[key: string]: {
-			[key: string]: [number, number];
-		};
+type QOPValveList = QOPTrackers &
+	QOPTransposition & {
+		DeltaTypeMap: string[];
+		NoteIDDeltaMap: number[];
+		CentsDeltaMap: number[];
+		ResultantNoteIDDelta: number[];
+		ResultantCentsDelta: number[];
 	};
-	SostenutoState: boolean[];
-	SostenutoTracker?: { [key: string]: boolean }[];
-	SostenutoMap?: {
-		[key: string]: {
-			[key: string]: [number, number];
-		};
-	};
-	AntiSostenutoState: boolean[];
-	AntiSostenutoTracker?: { [key: string]: boolean }[];
-	AntiSostenutoMap?: {
-		[key: string]: {
-			[key: string]: [number, number];
-		};
-	};
-	TranspositionState: [number, number][];
-	TranspositionMap?: {
-		[key: string]: {
-			[key: string]: [[number, number], [number, number]];
-		};
-	};
-};
-type QOPChartList = {
-	TranspositionState: [number, number][];
-	TranspositionMap?: {
-		[key: string]: {
-			[key: string]: [[number, number], [number, number]];
-		};
-	};
-};
-type QOPPadSetList = {
-	// QOP.PadSetList[]
+type QOPChartList = QOPTransposition;
+type QOPPadSetList = QOPTrackers & {
 	PressedPads: number[];
-	
-	SustainState: boolean[];
-	SustainTracker?: { [key: string]: boolean }[];
-	SustainMap?: {
-		[key: string]: {
-			[key: string]: [number, number];
-		};
-	};
-	AntiSustainState: boolean[];
-	AntiSustainTracker?: { [key: string]: boolean }[];
-	AntiSustainMap?: {
-		[key: string]: {
-			[key: string]: [number, number];
-		};
-	};
-	ButtonState: boolean[];
-	ButtonTracker?: { [key: string]: boolean }[];
-	ButtonMap?: {
-		[key: string]: {
-			[key: string]: [number, number];
-		};
-	};
-	SostenutoState: boolean[];
-	SostenutoTracker?: { [key: string]: boolean }[];
-	SostenutoMap?: {
-		[key: string]: {
-			[key: string]: [number, number];
-		};
-	};
-	AntiSostenutoState: boolean[];
-	AntiSostenutoTracker?: { [key: string]: boolean }[];
-	AntiSostenutoMap?: {
-		[key: string]: {
-			[key: string]: [number, number];
-		};
-	};
 };
-type QOPComboSetList = {
-	// QOP.ComboSetList[]
+type QOPComboSetList = QOPTransposition & {
 	ComboMap: { [key: string]: number | number[] }[][];
 	DeltaTypeMap: { [key: number]: string };
 	NoteIDDeltaMap: { [key: number]: number };
@@ -261,13 +181,80 @@ export class QOPTemplate {
 		this.MIDIOutput = new QOPMIDIOutput();
 
 		this.ScaleList = [];
-		this.GutList = {} as QOPGutList;
-		this.FretSetList = [];
-		this.ValveList = {} as QOPValveList;
-		this.ChartList = {} as QOPChartList;
-		this.PadSetList = [];
-		this.ComboSetList = [];
 
+		// Initializing the complex types
+		this.GutList = {
+			ButtonState: [],
+			SustainState: [],
+			AntiSustainState: [],
+			SostenutoState: [],
+			AntiSostenutoState: [],
+			TranspositionState: [],
+			RequireFretMap: [],
+			RequireValveMap: [],
+			RequireComboMap: [],
+			OpenGutNoteIDMap: []
+		};
+
+		this.FretSetList = [
+			{
+				ButtonState: [],
+				SustainState: [],
+				AntiSustainState: [],
+				SostenutoState: [],
+				AntiSostenutoState: [],
+				TranspositionState: [],
+				HighestFretPressed: 0,
+				DeltaTypeMap: '',
+				NoteIDDeltaMap: 0,
+				CentsDeltaMap: 0,
+				ResultantNoteIDDelta: 0,
+				ResultantCentsDelta: 0
+			}
+		];
+
+		this.ValveList = {
+			ButtonState: [],
+			SustainState: [],
+			AntiSustainState: [],
+			SostenutoState: [],
+			AntiSostenutoState: [],
+			TranspositionState: [],
+			DeltaTypeMap: [],
+			NoteIDDeltaMap: [],
+			CentsDeltaMap: [],
+			ResultantNoteIDDelta: [],
+			ResultantCentsDelta: []
+		};
+
+		this.ChartList = {
+			TranspositionState: []
+		};
+
+		this.PadSetList = [
+			{
+				ButtonState: [],
+				SustainState: [],
+				AntiSustainState: [],
+				SostenutoState: [],
+				AntiSostenutoState: [],
+				PressedPads: []
+			}
+		];
+
+		this.ComboSetList = [
+			{
+				TranspositionState: [],
+				ComboMap: [[]],
+				DeltaTypeMap: {},
+				NoteIDDeltaMap: {},
+				CentsDeltaMap: {},
+				ResultantNoteIDDelta: [],
+				ResultantCentsDelta: []
+			}
+		];
+
+		// Tree initialization remains the same
 		this.ButtonTree = { keydown: {}, keyup: {} };
 		this.SustainTree = { keydown: {}, keyup: {} };
 		this.AntiSustainTree = { keydown: {}, keyup: {} };
@@ -276,6 +263,7 @@ export class QOPTemplate {
 		this.TranspositionTree = { keydown: {}, keyup: {} };
 	}
 }
+
 class QOPStateMachine {
 	public ChangedActionTypes: string[];
 	public ChangedLists: string[];
@@ -351,44 +339,80 @@ function HydrateScaleList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate) {
 	);
 }
 
+type ActionStates = {
+	ButtonState?: boolean[];
+	SustainState?: boolean[];
+	AntiSustainState?: boolean[];
+	SostenutoState?: boolean[];
+	AntiSostenutoState?: boolean[];
+	TranspositionState?: [number, number][];
+};
+
+type ActionTrackers = {
+	ButtonTracker?: { [key: string]: boolean }[];
+	SustainTracker?: { [key: string]: boolean }[];
+	AntiSustainTracker?: { [key: string]: boolean }[];
+	SostenutoTracker?: { [key: string]: boolean }[];
+	AntiSostenutoTracker?: { [key: string]: boolean }[];
+};
+
+type ActionMaps = {
+	ButtonMap?: Record<string, Record<string, [number, number]>>;
+	SustainMap?: Record<string, Record<string, [number, number]>>;
+	AntiSustainMap?: Record<string, Record<string, [number, number]>>;
+	SostenutoMap?: Record<string, Record<string, [number, number]>>;
+	AntiSostenutoMap?: Record<string, Record<string, [number, number]>>;
+	TranspositionMap?: Record<string, Record<string, [[number, number], [number, number]]>>;
+};
+
 function HydrateStateTrackerMap(
-	objToModify: QOPGutList | QOPFretSetList | QOPValveList | QOPChartList | QOPPadSetList | QOPComboSetList,
-	objList: Array<object>,
+	objToModify: ActionStates & ActionTrackers & ActionMaps,
+	objList: object[], // Made this `any` since we're dynamically accessing properties.
 	currentIndex: number,
-	skipActionTypes: Array<string> | null,
+	skipActionTypes: Array<string> = [],
 	ignoreDummyToggleStates: boolean
 ) {
+	const actionTypes = [
+		'Button',
+		'Sustain',
+		'AntiSustain',
+		'Sostenuto',
+		'AntiSostenuto',
+		'Transposition'
+	];
+
 	actionTypes.forEach((actionType) => {
-		// DummyToggleStates, actionState properties which are inititialized when there are no bindings; makes the logic later much cleaner.
+		// ... (rest of your function)
+
+		const actionState = actionType + 'State';
+		const actionTracker = actionType + 'Tracker';
+		const actionMap: string = actionType + 'Map';
+
+		// DummyToggleStates, actionState properties which are initialized when there are no bindings; makes the logic later much cleaner.
 		if (!ignoreDummyToggleStates) {
-			objToModify['ButtonState'] = [];
-			objToModify['SustainState'] = [];
-			objToModify['AntiSustainState'] = [];
-			objToModify['SostenutoState'] = [];
-			objToModify['AntiSostenutoState'] = [];
-			for (let obj = 0; obj < objList.length; obj++) {
-				objToModify['ButtonState'].push(false);
-				objToModify['SustainState'].push(false);
-				objToModify['AntiSustainState'].push(false);
-				objToModify['SostenutoState'].push(false);
-				objToModify['AntiSostenutoState'].push(false);
-			}
+			// Explicitly initialize each state property if it exists in objToModify
+			if ('ButtonState' in objToModify) objToModify.ButtonState = Array(objList.length).fill(false);
+			if ('SustainState' in objToModify)
+				objToModify.SustainState = Array(objList.length).fill(false);
+			if ('AntiSustainState' in objToModify)
+				objToModify.AntiSustainState = Array(objList.length).fill(false);
+			if ('SostenutoState' in objToModify)
+				objToModify.SostenutoState = Array(objList.length).fill(false);
+			if ('AntiSostenutoState' in objToModify)
+				objToModify.AntiSostenutoState = Array(objList.length).fill(false);
 		}
-		if (skipActionTypes) {
+		if (skipActionTypes !== null) {
 			if (!skipActionTypes.includes('Transposition')) {
-				objToModify['TranspositionState'] = [];
 				for (let obj = 0; obj < objList.length; obj++) {
 					objToModify['TranspositionState'].push([0, 0]);
 				}
 			}
+		}
+		if (skipActionTypes) {
 			if (skipActionTypes.includes(actionType)) {
 				return;
 			}
 		}
-
-		const actionState = actionType + 'State';
-		const actionTracker = actionType + 'Tracker';
-		const actionMap = actionType + 'Map';
 
 		// Initialize State, Tracker and Map for the actionType.
 		if (actionType !== 'Transposition') {
@@ -428,6 +452,7 @@ function HydrateStateTrackerMap(
 		}
 	});
 }
+
 function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): void {
 	if (!QOPUserData.GutList) return; // If there is no GutList, return early.
 
@@ -486,7 +511,7 @@ function HydrateFretSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate):
 	QOPUserData.GutList.forEach((gut, gutIndex) => {
 		if (!gut.FretSet) return; // If there is no FretSet, return early.
 
-		let fretSetObj = {
+		const fretSetObj = {
 			HighestFretPressed: -1,
 			ResultantNoteIDDelta: 0,
 			ResultantCentsDelta: 0
@@ -494,7 +519,7 @@ function HydrateFretSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate):
 
 		gut.FretSet.forEach((fret, fretIndex) => {
 			let emptyActionTypes: string[] = [];
-			for (let actionType of actionTypes) {
+			for (const actionType of actionTypes) {
 				const EventCodes = actionType + 'EventCodes';
 				if (Object.keys(fret[EventCodes] || {}).length === 0) {
 					emptyActionTypes = [...emptyActionTypes, actionType];
@@ -518,11 +543,6 @@ function HydrateFretSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate):
 }
 function HydrateValveList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): void {
 	if (!QOPUserData.ValveList) return; // If there is no ValveList, return early.
-
-	QOP.ValveList = {
-		ResultantNoteIDDelta: [],
-		ResultantCentsDelta: []
-	};
 
 	for (let gut = 0; gut < QOPUserData.GutList.length; gut++) {
 		QOP.ValveList.ResultantNoteIDDelta.push(0);
