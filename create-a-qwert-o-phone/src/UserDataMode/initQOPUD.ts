@@ -1,21 +1,28 @@
 import { MIDILUT } from '../WoodshedMode/woodshedMIDIOUT';
-
 export const CurrentQOPVersion = 'qop0.0.69';
-export function QOPUDTimestamp() {
-	const now = new Date();
-	const formattedDateTime = now.toISOString().slice(0, 16).replace('T', '_').replace(/:/g, '-');
-	return formattedDateTime;
+
+interface IQOPUserDataTemplate {
+	Name: string;
+	Version: string;
+	Timestamp: string;
+	Deprecated: boolean;
+	Description: string;
+	ScaleList: ScaleUDTemplate[];
+	GutList: GutUDTemplate[];
+	ValveList: ValveUDTemplate[];
+	ChartList: ChartUDTemplate[];
 }
-export class QOPUserDataTemplate {
+export class QOPUserDataTemplate implements IQOPUserDataTemplate {
 	public Name: string;
 	public Version: string;
 	public Timestamp: string;
 	public Deprecated: boolean;
 	public Description: string;
-	public ScaleList: ScaleTemplate[];
-	public GutList: GutTemplate[];
-	public ValveList: ValveTemplate[];
-	public ChartList: ChartTemplate[];
+
+	public ScaleList: ScaleUDTemplate[];
+	public GutList: GutUDTemplate[];
+	public ValveList: ValveUDTemplate[];
+	public ChartList: ChartUDTemplate[];
 
 	constructor() {
 		this.Name = 'QWERT-O-Phone';
@@ -23,15 +30,32 @@ export class QOPUserDataTemplate {
 		this.Timestamp = QOPUDTimestamp();
 		this.Deprecated = false;
 		this.Description = 'Create-A-QWERT-O-Phone';
-		this.ScaleList = [new ScaleTemplate()];
-		this.GutList = [new GutTemplate()];
-		this.ValveList = [new ValveTemplate()];
-		this.ChartList = [new ChartTemplate()];
+		
+		this.ScaleList = [new ScaleUDTemplate()];
+		this.GutList = [new GutUDTemplate()];
+		this.ValveList = [new ValveUDTemplate()];
+		this.ChartList = [new ChartUDTemplate()];
 	}
+}
+
+/* QOPUserData stores all of the settings on the app. 
+This data, in its straightforward format, is the object that matches the format of a downloadable JSON file that the User can store and use later. 
+QOP, which is optimized for speed, is created using the criteria inside the QOPUserData object that the building function is passed.*/
+export function BlankQOPUserData() {
+	const QOPUserData = new QOPUserDataTemplate();
+	HydrateScaleForUD(QOPUserData, QOPUserData.ScaleList[0], false);
+
+	return QOPUserData;
+}
+
+export function QOPUDTimestamp() {
+	const now = new Date();
+	const formattedDateTime = now.toISOString().slice(0, 16).replace('T', '_').replace(/:/g, '-');
+	return formattedDateTime;
 }
 export function HydrateScaleForUD(
 	QOPUserData: QOPUserDataTemplate,
-	passedScale: ScaleTemplate = new ScaleTemplate(),
+	passedScale: ScaleUDTemplate = new ScaleUDTemplate(),
 	isNewAddition = true
 ) {
 	let { NoteClassSet } = passedScale;
@@ -57,7 +81,7 @@ export function HydrateScaleForUD(
 		NoteClassSet = standardMIDINoteNames;
 		let octave = -2; // MIDI note 0 corresponds to C-2.
 		for (let note = 0; note < 127; note++) {
-			NoteSet.push(new NoteTemplate());
+			NoteSet.push(new NoteUDTemplate());
 		}
 		for (let note = 0; note < NoteSet.length; note++) {
 			NoteSet[note].PitchHz = MIDILUT[note];
@@ -107,7 +131,7 @@ export function HydrateScaleForUD(
 		switch (ScaleType) {
 			case 'Equal Temperament':
 				for (let note = 0; note < numNotes; note++) {
-					NoteSet.push(new NoteTemplate());
+					NoteSet.push(new NoteUDTemplate());
 				}
 				for (let note = 0; note < NoteSet.length; note++) {
 					NoteSet[note].PitchHz = TuningHz * Math.pow(2, (note - ReferenceNote) / OctaveDivisions);
@@ -119,15 +143,6 @@ export function HydrateScaleForUD(
 	if (isNewAddition) {
 		QOPUserData.ScaleList.push(passedScale);
 	}
-}
-/* QOPUserData stores all of the settings on the app. 
-This data, in its straightforward format, is the object that matches the format of a downloadable JSON file that the User can store and use later. 
-QOP, which is optimized for speed, is created using the criteria inside the QOPUserData object that the building function is passed.*/
-export function BlankQOPUserData() {
-	const QOPUserData = new QOPUserDataTemplate();
-	HydrateScaleForUD(QOPUserData, QOPUserData.ScaleList[0], false);
-
-	return QOPUserData;
 }
 
 export const i32HexRegExp = /^#[0-9A-Fa-f]{8}$/;
@@ -215,19 +230,24 @@ export type QOPValidEventCodesString =
 	| 'NumpadSubtract'
 	| 'NumpadMultiply'
 	| 'NumpadDivide';
-export type ActionEventCodes = {
+export type ActionEventCodes = Partial<{
 	[QOPValidEventCode in QOPValidEventCodesString]: [number, number];
-};
-export type TranspositionObject = {
+}>;
+export type TranspositionObject = Partial<{
 	[QOPValidEventCode in QOPValidEventCodesString]: [[number, number], [number, number]];
-};
+}>;
 
-export class NoteTemplate {
+interface INoteUDTemplate {
+	Name: string[];
+	Description: string;
+	PitchHz: number;
+	ColorHex: string;
+}
+export class NoteUDTemplate implements INoteUDTemplate {
 	public Name: string[];
 	public Description: string;
 	public PitchHz: number;
 	public ColorHex: string;
-
 	constructor() {
 		this.Name = [];
 		this.Description = '';
@@ -235,7 +255,16 @@ export class NoteTemplate {
 		this.ColorHex = '#FFFFFFFF';
 	}
 }
-export class ActionTypeTemplate {
+interface IActionTypeUDTemplate {
+	Name: string;
+	Description: string;
+	ButtonEventCodes: ActionEventCodes;
+	SustainEventCodes: ActionEventCodes;
+	AntiSustainEventCodes: ActionEventCodes;
+	SostenutoEventCodes: ActionEventCodes;
+	AntiSostenutoEventCodes: ActionEventCodes;
+}
+export class ActionTypeUDTemplate implements IActionTypeUDTemplate {
 	public Name: string;
 	public Description: string;
 	public ButtonEventCodes: ActionEventCodes;
@@ -253,7 +282,12 @@ export class ActionTypeTemplate {
 		this.AntiSostenutoEventCodes = {} as ActionEventCodes;
 	}
 }
-export class DeltaTemplate {
+interface IDeltaUDTemplate {
+	DeltaType: DeltaTypeString;
+	NoteIDDelta: number;
+	CentsDelta: number;
+}
+export class DeltaUDTemplate implements IDeltaUDTemplate {
 	public DeltaType: DeltaTypeString;
 	public NoteIDDelta: number;
 	public CentsDelta: number;
@@ -263,7 +297,17 @@ export class DeltaTemplate {
 		this.CentsDelta = 0; // FLOAT (any)
 	}
 }
-export class ScaleTemplate {
+interface IScaleUDTemplate {
+	Name: string;
+	Description: string;
+	ScaleType: ScaleTypeString;
+	ReferenceNote: number;
+	TuningHz: number;
+	OctaveDivisions: number;
+	NoteClassSet: string[][];
+	NoteSet: NoteUDTemplate[];
+}
+export class ScaleUDTemplate implements IScaleUDTemplate {
 	public Name: string;
 	public Description: string;
 	public ScaleType: ScaleTypeString;
@@ -271,8 +315,7 @@ export class ScaleTemplate {
 	public TuningHz: number;
 	public OctaveDivisions: number;
 	public NoteClassSet: string[][];
-	public NoteSet: NoteTemplate[];
-
+	public NoteSet: NoteUDTemplate[];
 	constructor() {
 		this.Name = '';
 		this.Description = '';
@@ -281,10 +324,16 @@ export class ScaleTemplate {
 		this.TuningHz = 440; //FLOAT Frequency in Hz of this.referenceNote (0 < x)
 		this.OctaveDivisions = 12;
 		this.NoteClassSet = [];
-		this.NoteSet = [new NoteTemplate()];
+		this.NoteSet = [new NoteUDTemplate()];
 	}
 }
-export class FretTemplate extends ActionTypeTemplate {
+interface IFretUDTemplate {
+	TranspositionEventCodes: TranspositionObject;
+	DeltaType: DeltaTypeString;
+	NoteIDDelta: number;
+	CentsDelta: number;
+}
+export class FretUDTemplate extends ActionTypeUDTemplate implements IFretUDTemplate {
 	public TranspositionEventCodes: TranspositionObject;
 	public DeltaType: DeltaTypeString;
 	public NoteIDDelta: number;
@@ -297,63 +346,86 @@ export class FretTemplate extends ActionTypeTemplate {
 		this.CentsDelta = 0;
 	}
 }
-export class GutTemplate extends ActionTypeTemplate {
+interface IGutUDTemplate {
+	OpenGutNoteID: number[];
+	OpenGutWaveType: SimpleWaveformTypeString[];
+	TranspositionEventCodes: TranspositionObject;
+	RequireFret: boolean;
+	RequireValve: boolean;
+	RequireCombo: boolean;
+	FretSet: FretUDTemplate[];
+}
+export class GutUDTemplate extends ActionTypeUDTemplate implements IGutUDTemplate {
 	public OpenGutNoteID: number[];
 	public OpenGutWaveType: SimpleWaveformTypeString[];
 	public TranspositionEventCodes: TranspositionObject;
 	public RequireFret: boolean;
 	public RequireValve: boolean;
 	public RequireCombo: boolean;
-	public FretSet: FretTemplate[];
-
+	public FretSet: FretUDTemplate[];
 	constructor() {
 		super();
-		this.Name = '';
 		this.OpenGutNoteID = [69]; // The 69th MIDI note is A4=440Hz
 		this.OpenGutWaveType = ['sine'];
 		this.TranspositionEventCodes = {} as TranspositionObject;
 		this.RequireFret = false; // For use with Frets
 		this.RequireValve = false; // For use with Valves
 		this.RequireCombo = false; // For use with PadComboCharts
-		this.FretSet = [new FretTemplate()];
+		this.FretSet = [new FretUDTemplate()];
 	}
 }
-export class ValveTemplate extends ActionTypeTemplate {
+interface IValveUDTemplate {
+	TranspositionEventCodes: TranspositionObject;
+	DeltaSet: DeltaUDTemplate[];
+}
+export class ValveUDTemplate extends ActionTypeUDTemplate implements IValveUDTemplate {
 	public TranspositionEventCodes: TranspositionObject;
-	public DeltaSet: DeltaTemplate[];
+	public DeltaSet: DeltaUDTemplate[];
 	constructor() {
 		super();
-		this.Name = '';
 		this.TranspositionEventCodes = {} as TranspositionObject;
-		this.DeltaSet = [new DeltaTemplate()];
+		this.DeltaSet = [new DeltaUDTemplate()];
 	}
 }
-export class ComboTemplate {
+interface IComboUDTemplate {
+	Name: string;
+	Description: string;
+	Combo: boolean[];
+	TranspositionEventCodes: TranspositionObject;
+	DeltaSet: DeltaUDTemplate[];
+}
+export class ComboUDTemplate implements IComboUDTemplate {
 	public Name: string;
 	public Description: string;
 	public Combo: boolean[];
 	public TranspositionEventCodes: TranspositionObject;
-	public DeltaSet: DeltaTemplate[];
+	public DeltaSet: DeltaUDTemplate[];
 	constructor() {
 		this.Name = '';
 		this.Description = '';
 		this.TranspositionEventCodes = {} as TranspositionObject;
 		this.Combo = []; // Array of BOOLEAN
-		this.DeltaSet = [new DeltaTemplate()]; //Array of Objects
+		this.DeltaSet = [new DeltaUDTemplate()]; //Array of Objects
 	}
 }
-export class ChartTemplate {
+interface IChartUDTemplate {
+	Name: string;
+	Description: string;
+	TranspositionEventCodes: TranspositionObject;
+	PadSet: ActionTypeUDTemplate[];
+	ComboSet: ComboUDTemplate[];
+}
+export class ChartUDTemplate implements IChartUDTemplate {
 	public Name: string;
 	public Description: string;
 	public TranspositionEventCodes: TranspositionObject;
-	public PadSet: ActionTypeTemplate[];
-	public ComboSet: ComboTemplate[];
-
+	public PadSet: ActionTypeUDTemplate[];
+	public ComboSet: ComboUDTemplate[];
 	constructor() {
 		this.Name = '';
 		this.Description = '';
 		this.TranspositionEventCodes = {} as TranspositionObject;
-		this.PadSet = [new ActionTypeTemplate()];
-		this.ComboSet = [new ComboTemplate()];
+		this.PadSet = [new ActionTypeUDTemplate()];
+		this.ComboSet = [new ComboUDTemplate()];
 	}
 }

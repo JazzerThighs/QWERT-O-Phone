@@ -1,9 +1,9 @@
 import { QOPTemplate, actionTypes, QOPLists } from './initQOP.js';
-import { MIDIOutputPacket } from './woodshedMIDIOUT.js';
+//import { MIDIOutputPacket } from './woodshedMIDIOUT.js';
 import { OscNodesUpdate } from './woodshedOscNodes.js';
 	
 function ActionStateFlipper(QOP_xList: object, ChangedActionTypes: string[]) {
-	for (let xActionType of ChangedActionTypes) {
+	for (const xActionType of ChangedActionTypes) {
 		let actionTracker = QOP_xList[xActionType + 'Tracker'];
 		if (actionTracker !== undefined) {
 			let actionState = QOP_xList[xActionType + 'State'];
@@ -88,8 +88,9 @@ function ActionStateFlipper(QOP_xList: object, ChangedActionTypes: string[]) {
 	}
 }
 
-function CalculateValveListDeltaChord(QOP) {
-	let { GutList, ValveList } = QOP;
+function CalculateValveListDeltaChord(QOP: QOPTemplate) {
+	const { GutList, ValveList } = QOP;
+	let { ValveConfirm } = QOP.StateMachine;
 
 	for (
 		let deltaIndex = 0;
@@ -100,7 +101,7 @@ function CalculateValveListDeltaChord(QOP) {
 		ValveList.ResultantCentsDelta[deltaIndex] = 0;
 		for (let valve = 0; valve < ValveList.ButtonState.length; valve++) {
 			if (ValveList.ButtonState[valve]) {
-				QOP.ValveConfirm = true;
+				ValveConfirm = true;
 				if (
 					ValveList.DeltaTypeMap[valve][deltaIndex] === 'NoteID' ||
 					ValveList.DeltaTypeMap[valve][deltaIndex] === 'Both'
@@ -120,21 +121,22 @@ function CalculateValveListDeltaChord(QOP) {
 			}
 		}
 		if (!ValveList.ButtonState.includes(true)) {
-			QOP.ValveConfirm = false;
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			ValveConfirm = false;
 		}
 	}
 }
-function CalculateFretDelta(QOP) {
-	let { FretSetList } = QOP;
+function CalculateFretDelta(QOP: QOPTemplate) {
+	const { FretSetList } = QOP;
 
 	for (let fs = 0; fs < FretSetList.length; fs++) {
-		let fretSet = FretSetList[fs];
+		const fretSet = FretSetList[fs];
 		fretSet.ResultantNoteIDDelta = 0;
 		fretSet.ResultantCentsDelta = 0;
 		if (fretSet.ButtonState.includes(true)) {
-			QOP.FretConfirm[fs] = true;
+			QOP.StateMachine.FretConfirm[fs] = true;
 			fretSet.HighestFretPressed = fretSet.ButtonState.lastIndexOf(true);
-			let highFret = fretSet.HighestFretPressed;
+			const highFret = fretSet.HighestFretPressed;
 			if (
 				fretSet.DeltaTypeMap[highFret] === 'NoteID' ||
 				fretSet.DeltaTypeMap[highFret] === 'Both'
@@ -152,19 +154,20 @@ function CalculateFretDelta(QOP) {
 					fretSet.TranspositionState[highFret][1];
 			}
 		} else {
-			QOP.FretConfirm[fs] = false;
+			QOP.StateMachine.FretConfirm[fs] = false;
 			fretSet.HighestFretPressed = -1;
 		}
 	}
 }
-function CalculateComboSetListDeltaChord(QOP) {
-	let { PadSetList, ComboSetList, GutList } = QOP;
+function CalculateComboSetListDeltaChord(QOP: QOPTemplate) {
+	const { PadSetList, ComboSetList, GutList } = QOP;
+	let { ComboConfirm } = QOP.StateMachine;
 
-	QOP.ComboConfirm = false;
+	ComboConfirm = false;
 	for (let chartIndex = 0; chartIndex < PadSetList.length; chartIndex++) {
 		//PressedPads Determination
-		let padSet = PadSetList[chartIndex];
-		let comboSet = ComboSetList[chartIndex];
+		const padSet = PadSetList[chartIndex];
+		const comboSet = ComboSetList[chartIndex];
 		padSet.PressedPads = [];
 
 		for (let pad = 0; pad < padSet.ButtonState.length; pad++) {
@@ -173,18 +176,19 @@ function CalculateComboSetListDeltaChord(QOP) {
 			}
 		}
 		//Combo Validation
-		let searchArray = comboSet.ComboMap[padSet.PressedPads.length];
-		let matchedCombo: number | null = null;
+		const searchArray = comboSet.ComboMap[padSet.PressedPads.length];
+		let matchedCombo = -1;
 		if (searchArray !== null) {
 			for (let combo = 0; combo < searchArray.length; combo++) {
-				let { TrueIndexes, ComboIndex } = searchArray[combo];
+				const { TrueIndexes, ComboIndex } = searchArray[combo];
 				if (
 					padSet.PressedPads.every(
 						(element, index) => element === TrueIndexes[index]
 					)
 				) {
 					matchedCombo = ComboIndex;
-					QOP.ComboConfirm = true;
+					// eslint-disable-next-line @typescript-eslint/no-unused-vars
+					ComboConfirm = true;
 					break;
 				}
 			}
@@ -194,7 +198,7 @@ function CalculateComboSetListDeltaChord(QOP) {
 			deltaIndex < GutList.ButtonState.length;
 			deltaIndex++
 		) {
-			if (matchedCombo !== null) {
+			if (matchedCombo > -1) {
 				if (
 					comboSet.DeltaTypeMap[deltaIndex][matchedCombo] === 'NoteID' ||
 					comboSet.DeltaTypeMap[deltaIndex][matchedCombo] === 'Both'
@@ -223,8 +227,8 @@ function CalculateComboSetListDeltaChord(QOP) {
 	}
 }
 
-function CalculateTotalFrequency(QOP) {
-	let {
+function CalculateTotalFrequency(QOP: QOPTemplate) {
+	const {
 		ScaleList,
 		GutList,
 		FretSetList,
@@ -233,17 +237,18 @@ function CalculateTotalFrequency(QOP) {
 		PadSetList,
 		ComboSetList,
 	} = QOP;
-	let {
+	const {
 		NoteIDAccumulator,
 		CentsAccumulator,
 		TotalFrequency,
-		PrevTotalFrequency,
+		
 	} = QOP.StateMachine;
+	let { PrevTotalFrequency } = QOP.StateMachine;
 
 	PrevTotalFrequency = TotalFrequency.map((innerArray) => [...innerArray]);
 
-	let ComboNoteIDAccumulator: number[] = Array(PadSetList.length).fill(0);
-	let ComboCentsAccumulator: number[] = Array(PadSetList.length).fill(0);
+	const ComboNoteIDAccumulator: number[] = Array(PadSetList.length).fill(0);
+	const ComboCentsAccumulator: number[] = Array(PadSetList.length).fill(0);
 
 	for (let gut = 0; gut < GutList.ButtonState.length; gut++) {
 		for (let chart = 0; chart < PadSetList.length; chart++) {
@@ -260,7 +265,7 @@ function CalculateTotalFrequency(QOP) {
 			ChartList.TranspositionState[gut][0] +
 			ComboCentsAccumulator[gut];
 
-		let UnalteredScaleFrequency: number[] = Array(ScaleList.length).fill(0);
+		const UnalteredScaleFrequency: number[] = Array(ScaleList.length).fill(0);
 		for (let scale = 0; scale < ScaleList.length; scale++) {
 			NoteIDAccumulator[gut][scale] =
 				GutList.OpenGutNoteIDMap[gut][scale] +
@@ -279,13 +284,13 @@ function CalculateTotalFrequency(QOP) {
 	}
 }
 
-export function QOPMutator(event: KeyboardEvent, eNumber, QOP: QOPTemplate) {
+export function QOPMutator(event: KeyboardEvent, eNumber: number, QOP: QOPTemplate) {
 	if (event.repeat || event.metaKey) {
 		return;
 	}
 
-	let e: string = event.type;
-	let code: string = event.code;
+	const e: string = event.type;
+	const code: string = event.code;
 	let { ChangedActionTypes, ChangedLists, ChangedTransposition } =
 		QOP.StateMachine;
 
@@ -293,31 +298,31 @@ export function QOPMutator(event: KeyboardEvent, eNumber, QOP: QOPTemplate) {
 	ChangedLists.length = 0;
 	ChangedTransposition = false;
 
-	for (let xActionType of actionTypes) {
+	for (const xActionType of actionTypes) {
 		let actionTypeTree = QOP[xActionType + 'Tree'];
-		let actionTypeTree_Event = actionTypeTree[e];
+		const actionTypeTree_Event = actionTypeTree[e];
 		if (actionTypeTree_Event[code] !== undefined) {
-			let actionTypeTree_Event_Code = actionTypeTree_Event[code];
-			for (let list of QOPLists) {
+			const actionTypeTree_Event_Code = actionTypeTree_Event[code];
+			for (const list of QOPLists) {
 				if (actionTypeTree_Event_Code[list] !== undefined) {
-					let actionTypeTree_Event_Code_List = actionTypeTree_Event_Code[list];
+					const actionTypeTree_Event_Code_List = actionTypeTree_Event_Code[list];
 					if (xActionType !== 'Transposition') {
 						ChangedActionTypes = [...ChangedActionTypes, xActionType];
 						ChangedLists = [...ChangedLists, list];
 						switch (list) {
 							case 'GutList':
 							case 'ValveList':
-								for (let q of actionTypeTree_Event_Code_List) {
+								for (const q of actionTypeTree_Event_Code_List) {
 									let bool = QOP[list][xActionType + 'Tracker'][q];
 									bool[code] = !bool[code];
 								}
 								break;
 							case 'FretSetList':
 							case 'PadSetList':
-								for (let member in actionTypeTree_Event_Code_List) {
-									let actionTypeTree_Event_Code_List_Member =
+								for (const member in actionTypeTree_Event_Code_List) {
+									const actionTypeTree_Event_Code_List_Member =
 										actionTypeTree_Event_Code_List[member];
-									for (let q of actionTypeTree_Event_Code_List_Member) {
+									for (const q of actionTypeTree_Event_Code_List_Member) {
 										let bool = QOP[list][member][xActionType + 'Tracker'][q];
 										bool[code] = !bool[code];
 									}
@@ -330,9 +335,9 @@ export function QOPMutator(event: KeyboardEvent, eNumber, QOP: QOPTemplate) {
 							case 'GutList':
 							case 'ValveList':
 							case 'ChartList':
-								for (let q of actionTypeTree_Event_Code_List) {
+								for (const q of actionTypeTree_Event_Code_List) {
 									if (QOP[list]['TranspositionMap'][code][q] !== undefined) {
-										let state = QOP[list]['TranspositionState'][q];
+										const state = QOP[list]['TranspositionState'][q];
 										let delta = QOP[list]['TranspositionMap'][code][q][eNumber];
 										state[0] += delta[0];
 										state[1] += delta[1];
@@ -342,9 +347,8 @@ export function QOPMutator(event: KeyboardEvent, eNumber, QOP: QOPTemplate) {
 								break;
 							case 'FretSetList':
 							case 'ComboSetList':
-								for (let member in actionTypeTree_Event_Code_List) {
-									let actionTypeTree_Event_Code_List_Set =
-										actionTypeTree_Event_Code_List[member];
+								for (const member in actionTypeTree_Event_Code_List) {
+									const actionTypeTree_Event_Code_List_Set = actionTypeTree_Event_Code_List[member];
 									for (
 										let q = 0;
 										q < actionTypeTree_Event_Code_List_Set.length;
@@ -355,8 +359,7 @@ export function QOPMutator(event: KeyboardEvent, eNumber, QOP: QOPTemplate) {
 											undefined
 										) {
 											let state = QOP[list][member]['TranspositionState'][q];
-											let delta =
-												QOP[list][member]['TranspositionMap'][code][q];
+											const delta = QOP[list][member]['TranspositionMap'][code][q];
 											state[0] += delta[0];
 											state[1] += delta[1];
 											// state = state.map((value, index) => value + delta[index]);
@@ -378,13 +381,12 @@ export function QOPMutator(event: KeyboardEvent, eNumber, QOP: QOPTemplate) {
 		ChangedActionTypes.sort((a, b) => {
 			return actionTypes.indexOf(a) - actionTypes.indexOf(b);
 		});
-		let lastChangedActionTypesIndex =
-			ChangedActionTypes[ChangedActionTypes.length - 1];
+		const lastChangedActionTypesIndex = ChangedActionTypes[ChangedActionTypes.length - 1];
 		if (lastChangedActionTypesIndex !== 'Button') {
 			ChangedActionTypes.push('Button');
 		}
 		//Toggle State Booleans
-		for (let xList of ChangedLists) {
+		for (const xList of ChangedLists) {
 			let QOP_xList = QOP[xList];
 
 			switch (xList) {
@@ -396,16 +398,16 @@ export function QOPMutator(event: KeyboardEvent, eNumber, QOP: QOPTemplate) {
 				case 'PadSetList':
 				case 'ComboSetList':
 					for (let member = 0; member < QOP[xList].length; member++) {
-						let QOP_xList_Member = QOP_xList[member];
+						const QOP_xList_Member = QOP_xList[member];
 						ActionStateFlipper(QOP_xList_Member, ChangedActionTypes);
-						break;
 					}
+					break;
 				case 'ChartList':
 					break;
 			}
 		}
 		//Update QOP Calc*Delta Logic
-		for (let xList of ChangedLists) {
+		for (const xList of ChangedLists) {
 			switch (xList) {
 				case 'ValveList':
 					CalculateValveListDeltaChord(QOP);
@@ -426,12 +428,12 @@ export function QOPMutator(event: KeyboardEvent, eNumber, QOP: QOPTemplate) {
 		}
 
 		CalculateTotalFrequency(QOP);
-		MIDIOutputPacket(QOP);
+		//MIDIOutputPacket(QOP);
 		OscNodesUpdate(QOP);
 	} else {
 		if (ChangedTransposition === true) {
 			CalculateTotalFrequency(QOP);
-			MIDIOutputPacket(QOP);
+			//MIDIOutputPacket(QOP);
 			OscNodesUpdate(QOP);
 		}
 	}

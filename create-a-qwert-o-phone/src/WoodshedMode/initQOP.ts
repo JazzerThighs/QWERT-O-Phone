@@ -1,7 +1,6 @@
 import { DeltaSetValidator, OpenGutValidator } from '../UserDataMode/validateQOPUD.js';
 import type {
 	QOPUserDataTemplate,
-	GutTemplate,
 	SimpleWaveformTypeString
 } from '../UserDataMode/initQOPUD.js';
 import { FindClosestMIDINote } from './woodshedMIDIOUT.js';
@@ -130,7 +129,7 @@ interface IQOPStateMachineTemplate {
 	PrevTotalFrequency: number[][];
 	GutSoundState: boolean[];
 }
-class QOPStateMachineTemplate implements IQOPStateMachineTemplate {
+export class QOPStateMachineTemplate implements IQOPStateMachineTemplate {
 	public ChangedActionTypes: string[];
 	public ChangedLists: string[];
 	public ChangedTransposition: boolean;
@@ -163,7 +162,7 @@ interface IQOPOscillatorsTemplate {
 	OscWaveType: SimpleWaveformTypeString[][];
 	OscNodesMute: boolean[];
 }
-class QOPOscillatorsTemplate implements IQOPOscillatorsTemplate {
+export class QOPOscillatorsTemplate implements IQOPOscillatorsTemplate {
 	public OscNodes: OscillatorNode[][];
 	public OscGainNodes: GainNode[][];
 	public OscWaveType: SimpleWaveformTypeString[][];
@@ -179,7 +178,7 @@ class QOPOscillatorsTemplate implements IQOPOscillatorsTemplate {
 interface IQOPMIDIOutputTemplate {
 	GutMIDIOUTDisabled: boolean[];
 }
-class QOPMIDIOutputTemplate implements IQOPMIDIOutputTemplate {
+export class QOPMIDIOutputTemplate implements IQOPMIDIOutputTemplate {
 	public GutMIDIOUTDisabled: boolean[];
 
 	constructor() {
@@ -239,7 +238,7 @@ interface IQOPActionTypes {
 	AntiSostenutoTracker?: QOPActionTrackerType[];
 	AntiSostenutoMap?: QOPActionMapType;
 }
-class QOPActionTypes implements IQOPActionTypes {
+export class QOPActionTypes implements IQOPActionTypes {
 	SustainState: boolean[];
 	SustainTracker?: QOPActionTrackerType[];
 	SustainMap?: QOPActionMapType;
@@ -272,7 +271,7 @@ interface IQOPGutTemplate {
 	TranspositionState: QOPTranspositionStateType;
 	TranspositionMap?: QOPTranspositionMapType;
 }
-class QOPGutTemplate extends QOPActionTypes implements IQOPGutTemplate {
+export class QOPGutTemplate extends QOPActionTypes implements IQOPGutTemplate {
 	public RequireFretMap: boolean[];
 	public RequireValveMap: boolean[];
 	public RequireComboMap: boolean[];
@@ -299,7 +298,7 @@ interface IQOPFretSetTemplate {
 	TranspositionState: QOPTranspositionStateType;
 	TranspositionMap?: QOPTranspositionMapType;
 }
-class QOPFretSetTemplate extends QOPActionTypes implements IQOPFretSetTemplate {
+export class QOPFretSetTemplate extends QOPActionTypes implements IQOPFretSetTemplate {
 	public HighestFretPressed: number;
 	public DeltaTypeMap: string[];
 	public NoteIDDeltaMap: number[];
@@ -321,18 +320,18 @@ class QOPFretSetTemplate extends QOPActionTypes implements IQOPFretSetTemplate {
 	}
 }
 interface IQOPValveTemplate {
-	DeltaTypeMap: string[];
-	NoteIDDeltaMap: number[];
-	CentsDeltaMap: number[];
+	DeltaTypeMap: string[][];
+	NoteIDDeltaMap: number[][];
+	CentsDeltaMap: number[][];
 	ResultantNoteIDDelta: number[];
 	ResultantCentsDelta: number[];
 	TranspositionState: QOPTranspositionStateType;
 	TranspositionMap?: QOPTranspositionMapType;
 }
-class QOPValveTemplate extends QOPActionTypes implements IQOPValveTemplate {
-	public DeltaTypeMap: string[];
-	public NoteIDDeltaMap: number[];
-	public CentsDeltaMap: number[];
+export class QOPValveTemplate extends QOPActionTypes implements IQOPValveTemplate {
+	public DeltaTypeMap: string[][];
+	public NoteIDDeltaMap: number[][];
+	public CentsDeltaMap: number[][];
 	public ResultantNoteIDDelta: number[];
 	public ResultantCentsDelta: number[];
 	public TranspositionState: QOPTranspositionStateType;
@@ -352,7 +351,7 @@ interface IQOPChartTemplate {
 	TranspositionState: QOPTranspositionStateType;
 	TranspositionMap?: QOPTranspositionMapType;
 }
-class QOPChartTemplate implements IQOPChartTemplate {
+export class QOPChartTemplate implements IQOPChartTemplate {
 	public TranspositionState: QOPTranspositionStateType;
 	public TranspositionMap?: QOPTranspositionMapType;
 	constructor() {
@@ -363,7 +362,7 @@ class QOPChartTemplate implements IQOPChartTemplate {
 interface IQOPPadSetTemplate {
 	PressedPads: number[];
 }
-class QOPPadSetTemplate extends QOPActionTypes implements IQOPPadSetTemplate {
+export class QOPPadSetTemplate extends QOPActionTypes implements IQOPPadSetTemplate {
 	public PressedPads: number[];
 	constructor() {
 		super();
@@ -371,29 +370,29 @@ class QOPPadSetTemplate extends QOPActionTypes implements IQOPPadSetTemplate {
 	}
 }
 interface IQOPComboSetTemplate {
-	ComboMap: { [key: string]: number | number[] }[][];
-	DeltaTypeMap: { [key: number]: string };
-	NoteIDDeltaMap: { [key: number]: number };
-	CentsDeltaMap: { [key: number]: number };
+	ComboMap: { TrueIndexes: number[]; ComboIndex: number }[][];
+	DeltaTypeMap: string[][];
+	NoteIDDeltaMap: number[][];
+	CentsDeltaMap: number[][];
 	ResultantNoteIDDelta: number[];
 	ResultantCentsDelta: number[];
 	TranspositionState: QOPTranspositionStateType;
 	TranspositionMap?: QOPTranspositionMapType;
 }
-class QOPComboSetTemplate implements IQOPComboSetTemplate {
-	public ComboMap: { [key: string]: number | number[] }[][];
-	public DeltaTypeMap: { [key: number]: string };
-	public NoteIDDeltaMap: { [key: number]: number };
-	public CentsDeltaMap: { [key: number]: number };
+export class QOPComboSetTemplate implements IQOPComboSetTemplate {
+	public ComboMap: { TrueIndexes: number[]; ComboIndex: number }[][];
+	public DeltaTypeMap: string[][];
+	public NoteIDDeltaMap: number[][];
+	public CentsDeltaMap: number[][];
 	public ResultantNoteIDDelta: number[];
 	public ResultantCentsDelta: number[];
 	public TranspositionState: QOPTranspositionStateType;
 	public TranspositionMap?: QOPTranspositionMapType;
 	constructor() {
 		this.ComboMap = [];
-		this.DeltaTypeMap = {};
-		this.NoteIDDeltaMap = {};
-		this.CentsDeltaMap = {};
+		this.DeltaTypeMap = [];
+		this.NoteIDDeltaMap = [];
+		this.CentsDeltaMap = [];
 		this.ResultantNoteIDDelta = [];
 		this.ResultantCentsDelta = [];
 		this.TranspositionState = [];
@@ -405,7 +404,7 @@ interface IQOPTreeTemplate {
 	keydown: { [key: string]: object };
 	keyup: { [key: string]: object };
 }
-class QOPTreeTemplate implements IQOPTreeTemplate {
+export class QOPTreeTemplate implements IQOPTreeTemplate {
 	public keydown: { [key: string]: object };
 	public keyup: { [key: string]: object };
 	constructor() {
@@ -413,8 +412,6 @@ class QOPTreeTemplate implements IQOPTreeTemplate {
 		this.keyup = {};
 	}
 }
-
-
 
 function HydrateScaleList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate) {
 	QOP.ScaleList = QOPUserData.ScaleList.map(
@@ -530,64 +527,55 @@ function HydrateStateTrackerMap(
 		}
 	});
 }
-
+export const eventCodeProperties: string[] = [
+	'ButtonEventCodes',
+	'SustainEventCodes',
+	'AntiSustainEventCodes',
+	'SostenutoEventCodes',
+	'AntiSostenutoEventCodes',
+	'TranspositionEventCodes'
+];
 function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): void {
-	if (!QOPUserData.GutList) return; // If there is no GutList, return early.
-
-	// Initialize the "Require" Maps
-	if (!QOP.GutList['RequireFretMap']) {
-		QOP.GutList.RequireFretMap = [];
-	}
-	if (!QOP.GutList['RequireValveMap']) {
-		QOP.GutList.RequireValveMap = [];
-	}
-	if (!QOP.GutList['RequireComboMap']) {
-		QOP.GutList.RequireComboMap = [];
-	}
-	if (!QOP.GutList['OpenGutNoteIDMap']) {
-		QOP.GutList.OpenGutNoteIDMap = [];
-	}
-
 	for (let gutIndex = 0; gutIndex < QOPUserData.GutList.length; gutIndex++) {
-		const gut: GutTemplate = QOPUserData.GutList[gutIndex];
 		const emptyActionTypes: string[] = [];
 
-		const eventCodeProperties: string[] = [
-			'ButtonEventCodes',
-			'SustainEventCodes',
-			'AntiSustainEventCodes',
-			'SostenutoEventCodes',
-			'AntiSostenutoEventCodes',
-			'TranspositionEventCodes'
-		];
-
-		for (const property of eventCodeProperties) {
-			const obj = gut[property];
-			if (obj && Object.keys(obj).length === 0) {
-				const actionType = property.replace('EventCodes', ''); // Extract the actionType from the property name
-				emptyActionTypes.push(actionType);
-			}
+		if (Object.keys(QOPUserData.GutList[gutIndex]['ButtonEventCodes']).length === 0) {
+			const actionType = 'ButtonEventCodes'.replace('EventCodes', ''); // Extract the actionType from the property name
+			emptyActionTypes.push(actionType);
+		}
+		if (Object.keys(QOPUserData.GutList[gutIndex]['SustainEventCodes']).length === 0) {
+			const actionType = 'SustainEventCodes'.replace('EventCodes', ''); // Extract the actionType from the property name
+			emptyActionTypes.push(actionType);
+		}
+		if (Object.keys(QOPUserData.GutList[gutIndex]['AntiSustainEventCodes']).length === 0) {
+			const actionType = 'AntiSustainEventCodes'.replace('EventCodes', ''); // Extract the actionType from the property name
+			emptyActionTypes.push(actionType);
+		}
+		if (Object.keys(QOPUserData.GutList[gutIndex]['SostenutoEventCodes']).length === 0) {
+			const actionType = 'SostenutoEventCodes'.replace('EventCodes', ''); // Extract the actionType from the property name
+			emptyActionTypes.push(actionType);
+		}
+		if (Object.keys(QOPUserData.GutList[gutIndex]['TranspositionEventCodes']).length === 0) {
+			const actionType = 'TranspositionEventCodes'.replace('EventCodes', ''); // Extract the actionType from the property name
+			emptyActionTypes.push(actionType);
 		}
 
 		HydrateStateTrackerMap(QOP.GutList, QOPUserData.GutList, gutIndex, emptyActionTypes, false);
 
-		// Add RequireFret, RequireValve, RequireCombo, and OpenGutNoteID to their respective Maps.
-		QOP.GutList.RequireFretMap.push(gut.RequireFret);
-		QOP.GutList.RequireValveMap.push(gut.RequireValve);
-		QOP.GutList.RequireComboMap.push(gut.RequireCombo);
-		QOP.GutList.OpenGutNoteIDMap.push(gut.OpenGutNoteID);
+		QOP.GutList.RequireFretMap.push(QOPUserData.GutList[gutIndex].RequireFret);
+		QOP.GutList.RequireValveMap.push(QOPUserData.GutList[gutIndex].RequireValve);
+		QOP.GutList.RequireComboMap.push(QOPUserData.GutList[gutIndex].RequireCombo);
+		QOP.GutList.OpenGutNoteIDMap.push(QOPUserData.GutList[gutIndex].OpenGutNoteID);
 
 		QOP.Oscillators.OscWaveType[gutIndex] = [];
 		for (let scale = 0; scale < QOPUserData.ScaleList.length; scale++) {
-			QOP.Oscillators.OscWaveType[gutIndex][scale] = gut.OpenGutWaveType[scale];
+			QOP.Oscillators.OscWaveType[gutIndex][scale] =
+				QOPUserData.GutList[gutIndex].OpenGutWaveType[scale];
 		}
 	}
 }
 function HydrateFretSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): void {
-	if (!QOPUserData.GutList) return; // If there is no GutList, return early.
-
-	QOPUserData.GutList.forEach((gut, gutIndex) => {
-		if (!gut.FretSet) return; // If there is no FretSet, return early.
+	for (let gutIndex = 0; gutIndex < QOPUserData.GutList.length; gutIndex++) {
 
 		const fretSetObj = {
 			HighestFretPressed: -1,
@@ -617,7 +605,7 @@ function HydrateFretSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate):
 			...QOP.FretSetList[gutIndex],
 			...fretSetObj
 		};
-	});
+	}
 }
 function HydrateValveList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): void {
 	if (!QOPUserData.ValveList) return; // If there is no ValveList, return early.
