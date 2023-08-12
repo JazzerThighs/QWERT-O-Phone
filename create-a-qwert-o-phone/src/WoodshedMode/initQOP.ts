@@ -1,5 +1,5 @@
 import { DeltaSetValidator, OpenGutValidator } from '../UserDataMode/validateQOPUD.js';
-import type { QOPUserDataTemplate, SimpleWaveformTypeString } from '../UserDataMode/initQOPUD.js';
+import type { QOPUserDataTemplate, GutTemplate, SimpleWaveformTypeString } from '../UserDataMode/initQOPUD.js';
 import { FindClosestMIDINote } from './woodshedMIDIOUT.js';
 import { QOPMutator } from './mutateQOPLoop.js';
 
@@ -58,75 +58,175 @@ type QOPScaleObject = {
 	PitchBendLSB: number;
 	PitchBendMSB: number;
 };
-type QOPListObject = {
+type QOPGutList = {
 	// QOP.GutList
-	RequireFretMap?: boolean[];
-	RequireValveMap?: boolean[];
-	RequireComboMap?: boolean[];
-	OpenGutNoteIDMap?: number[][];
-
+	RequireFretMap: boolean[];
+	RequireValveMap: boolean[];
+	RequireComboMap: boolean[];
+	OpenGutNoteIDMap: number[][];
+};
+type QOPFretSetList = {
 	// QOP.FretSetList[]
-	HighestFretPressed?: number;
+	HighestFretPressed: number;
 
-	// QOP.PadSetList[]
-	PressedPads?: number[];
-
-	// QOP.ComboSetList[]
-	ComboMap?: { [key: string]: number | number[] }[][];
-
-	DeltaTypeMap?: string | string[] | { [key: number]: string };
-	NoteIDDeltaMap?: number | number[] | { [key: number]: number };
-	CentsDeltaMap?: number | number[] | { [key: number]: number };
-	ResultantNoteIDDelta?: number | number[];
-	ResultantCentsDelta?: number | number[];
-
-	SustainState?: boolean[];
+	DeltaTypeMap: string;
+	NoteIDDeltaMap: number;
+	CentsDeltaMap: number;
+	ResultantNoteIDDelta: number;
+	ResultantCentsDelta: number;
+	
+	SustainState: boolean[];
 	SustainTracker?: { [key: string]: boolean }[];
 	SustainMap?: {
 		[key: string]: {
 			[key: string]: [number, number];
 		};
 	};
-	AntiSustainState?: boolean[];
+	AntiSustainState: boolean[];
 	AntiSustainTracker?: { [key: string]: boolean }[];
 	AntiSustainMap?: {
 		[key: string]: {
 			[key: string]: [number, number];
 		};
 	};
-	ButtonState?: boolean[];
+	ButtonState: boolean[];
 	ButtonTracker?: { [key: string]: boolean }[];
 	ButtonMap?: {
 		[key: string]: {
 			[key: string]: [number, number];
 		};
 	};
-	SostenutoState?: boolean[];
+	SostenutoState: boolean[];
 	SostenutoTracker?: { [key: string]: boolean }[];
 	SostenutoMap?: {
 		[key: string]: {
 			[key: string]: [number, number];
 		};
 	};
-	AntiSostenutoState?: boolean[];
+	AntiSostenutoState: boolean[];
 	AntiSostenutoTracker?: { [key: string]: boolean }[];
 	AntiSostenutoMap?: {
 		[key: string]: {
 			[key: string]: [number, number];
 		};
 	};
-	TranspositionState?: [number, number][];
+	TranspositionState: [number, number][];
 	TranspositionMap?: {
 		[key: string]: {
 			[key: string]: [[number, number], [number, number]];
 		};
 	};
 };
+type QOPValveList = {
+	DeltaTypeMap: string[];
+	NoteIDDeltaMap: number[];
+	CentsDeltaMap: number[];
+	ResultantNoteIDDelta: number[];
+	ResultantCentsDelta: number[];
+	
+	SustainState: boolean[];
+	SustainTracker?: { [key: string]: boolean }[];
+	SustainMap?: {
+		[key: string]: {
+			[key: string]: [number, number];
+		};
+	};
+	AntiSustainState: boolean[];
+	AntiSustainTracker?: { [key: string]: boolean }[];
+	AntiSustainMap?: {
+		[key: string]: {
+			[key: string]: [number, number];
+		};
+	};
+	ButtonState: boolean[];
+	ButtonTracker?: { [key: string]: boolean }[];
+	ButtonMap?: {
+		[key: string]: {
+			[key: string]: [number, number];
+		};
+	};
+	SostenutoState: boolean[];
+	SostenutoTracker?: { [key: string]: boolean }[];
+	SostenutoMap?: {
+		[key: string]: {
+			[key: string]: [number, number];
+		};
+	};
+	AntiSostenutoState: boolean[];
+	AntiSostenutoTracker?: { [key: string]: boolean }[];
+	AntiSostenutoMap?: {
+		[key: string]: {
+			[key: string]: [number, number];
+		};
+	};
+	TranspositionState: [number, number][];
+	TranspositionMap?: {
+		[key: string]: {
+			[key: string]: [[number, number], [number, number]];
+		};
+	};
+};
+type QOPChartList = {
+	TranspositionState: [number, number][];
+	TranspositionMap?: {
+		[key: string]: {
+			[key: string]: [[number, number], [number, number]];
+		};
+	};
+};
+type QOPPadSetList = {
+	// QOP.PadSetList[]
+	PressedPads: number[];
+	
+	SustainState: boolean[];
+	SustainTracker?: { [key: string]: boolean }[];
+	SustainMap?: {
+		[key: string]: {
+			[key: string]: [number, number];
+		};
+	};
+	AntiSustainState: boolean[];
+	AntiSustainTracker?: { [key: string]: boolean }[];
+	AntiSustainMap?: {
+		[key: string]: {
+			[key: string]: [number, number];
+		};
+	};
+	ButtonState: boolean[];
+	ButtonTracker?: { [key: string]: boolean }[];
+	ButtonMap?: {
+		[key: string]: {
+			[key: string]: [number, number];
+		};
+	};
+	SostenutoState: boolean[];
+	SostenutoTracker?: { [key: string]: boolean }[];
+	SostenutoMap?: {
+		[key: string]: {
+			[key: string]: [number, number];
+		};
+	};
+	AntiSostenutoState: boolean[];
+	AntiSostenutoTracker?: { [key: string]: boolean }[];
+	AntiSostenutoMap?: {
+		[key: string]: {
+			[key: string]: [number, number];
+		};
+	};
+};
+type QOPComboSetList = {
+	// QOP.ComboSetList[]
+	ComboMap: { [key: string]: number | number[] }[][];
+	DeltaTypeMap: { [key: number]: string };
+	NoteIDDeltaMap: { [key: number]: number };
+	CentsDeltaMap: { [key: number]: number };
+	ResultantNoteIDDelta: number[];
+	ResultantCentsDelta: number[];
+};
 type QOPTreeObject = {
 	keydown: { [key: string]: object };
 	keyup: { [key: string]: object };
 };
-
 
 export class QOPTemplate {
 	public StateMachine: QOPStateMachine;
@@ -134,12 +234,12 @@ export class QOPTemplate {
 	public MIDIOutput: QOPMIDIOutput;
 
 	public ScaleList: QOPScaleObject[][];
-	public GutList: QOPListObject;
-	public FretSetList: QOPListObject[];
-	public ValveList: QOPListObject;
-	public ChartList: QOPListObject;
-	public PadSetList: QOPListObject[];
-	public ComboSetList: QOPListObject[];
+	public GutList: QOPGutList;
+	public FretSetList: QOPFretSetList[];
+	public ValveList: QOPValveList;
+	public ChartList: QOPChartList;
+	public PadSetList: QOPPadSetList[];
+	public ComboSetList: QOPComboSetList[];
 
 	public ButtonTree: QOPTreeObject;
 	public SustainTree: QOPTreeObject;
@@ -154,10 +254,10 @@ export class QOPTemplate {
 		this.MIDIOutput = new QOPMIDIOutput();
 
 		this.ScaleList = [];
-		this.GutList = {};
+		this.GutList = {} as QOPGutList;
 		this.FretSetList = [];
-		this.ValveList = {};
-		this.ChartList = {};
+		this.ValveList = {} as QOPValveList;
+		this.ChartList = {} as QOPChartList;
 		this.PadSetList = [];
 		this.ComboSetList = [];
 
@@ -245,7 +345,7 @@ function HydrateScaleList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate) {
 }
 
 function HydrateStateTrackerMap(
-	objToModify: QOPListObject,
+	objToModify: QOPGutObject | QOPFretSetList | QOPValveList | QOPChartList | QOPPadSetList | QOPComboSetList,
 	objList: Array<object>,
 	currentIndex: number,
 	skipActionTypes: Array<string> | null,
@@ -338,14 +438,17 @@ function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): voi
 		QOP.GutList.OpenGutNoteIDMap = [];
 	}
 
-	QOPUserData.GutList.forEach((gut, gutIndex: number) => {
-		let emptyActionTypes: string[] = [];
+	for (let gutIndex = 0; gutIndex < QOPUserData.GutList.length; gutIndex++) {
+		const gut: GutTemplate = QOPUserData.GutList[gutIndex];
+		const emptyActionTypes: string[] = [];
+
 		for (const actionType of actionTypes) {
 			const EventCodes: string = actionType + 'EventCodes';
-			if (Object.keys(gut[EventCodes] || {}).length === 0) {
-				emptyActionTypes = [...emptyActionTypes, actionType];
+			if (gut[EventCodes] !== null) {
+				emptyActionTypes.push(actionType);
 			}
 		}
+
 		HydrateStateTrackerMap(QOP.GutList, QOPUserData.GutList, gutIndex, emptyActionTypes, false);
 
 		// Add RequireFret, RequireValve, RequireCombo, and OpenGutNoteID to their respective Maps.
@@ -355,8 +458,10 @@ function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): voi
 		QOP.GutList.OpenGutNoteIDMap.push(gut.OpenGutNoteID);
 
 		QOP.Oscillators.OscWaveType[gutIndex] = [];
-		QOP.Oscillators.OscWaveType[gutIndex].push(gut.OpenGutWaveType);
-	});
+		for (let scale = 0; scale < QOPUserData.ScaleList.length; scale++) {
+			QOP.Oscillators.OscWaveType[gutIndex][scale] = gut.OpenGutWaveType[scale];
+		}
+	}
 }
 function HydrateFretSetList(QOPUserData, QOP): void {
 	if (!QOPUserData.GutList) return; // If there is no GutList, return early.
