@@ -227,6 +227,13 @@ type QOPTreeObject = {
 	keydown: { [key: string]: object };
 	keyup: { [key: string]: object };
 };
+type EventCodeKeys =
+	| 'ButtonEventCodes'
+	| 'SustainEventCodes'
+	| 'AntiSustainEventCodes'
+	| 'SostenutoEventCodes'
+	| 'AntiSostenutoEventCodes'
+	| 'TranspositionEventCodes';
 
 export class QOPTemplate {
 	public StateMachine: QOPStateMachine;
@@ -345,7 +352,7 @@ function HydrateScaleList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate) {
 }
 
 function HydrateStateTrackerMap(
-	objToModify: QOPGutObject | QOPFretSetList | QOPValveList | QOPChartList | QOPPadSetList | QOPComboSetList,
+	objToModify: QOPGutList | QOPFretSetList | QOPValveList | QOPChartList | QOPPadSetList | QOPComboSetList,
 	objList: Array<object>,
 	currentIndex: number,
 	skipActionTypes: Array<string> | null,
@@ -442,9 +449,19 @@ function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): voi
 		const gut: GutTemplate = QOPUserData.GutList[gutIndex];
 		const emptyActionTypes: string[] = [];
 
-		for (const actionType of actionTypes) {
-			const EventCodes: string = actionType + 'EventCodes';
-			if (gut[EventCodes] !== null) {
+		const eventCodeProperties: EventCodeKeys[] = [
+			'ButtonEventCodes',
+			'SustainEventCodes',
+			'AntiSustainEventCodes',
+			'SostenutoEventCodes',
+			'AntiSostenutoEventCodes',
+			'TranspositionEventCodes'
+		];
+
+		for (const property of eventCodeProperties) {
+			const obj = gut[property];
+			if (obj && Object.keys(obj).length === 0) {
+				const actionType = property.replace('EventCodes', ''); // Extract the actionType from the property name
 				emptyActionTypes.push(actionType);
 			}
 		}
@@ -463,7 +480,7 @@ function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): voi
 		}
 	}
 }
-function HydrateFretSetList(QOPUserData, QOP): void {
+function HydrateFretSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): void {
 	if (!QOPUserData.GutList) return; // If there is no GutList, return early.
 
 	QOPUserData.GutList.forEach((gut, gutIndex) => {
@@ -499,7 +516,7 @@ function HydrateFretSetList(QOPUserData, QOP): void {
 		};
 	});
 }
-function HydrateValveList(QOPUserData, QOP): void {
+function HydrateValveList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): void {
 	if (!QOPUserData.ValveList) return; // If there is no ValveList, return early.
 
 	QOP.ValveList = {
@@ -543,7 +560,7 @@ function HydrateValveList(QOPUserData, QOP): void {
 		});
 	});
 }
-function HydrateChartList(QOPUserData, QOP): void {
+function HydrateChartList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): void {
 	if (!QOPUserData.ChartList) return; // If there is no GutList, return early.
 	QOP.ChartList = {};
 	QOPUserData.ChartList.forEach((chart, chartIndex) => {
@@ -569,7 +586,7 @@ function HydrateChartList(QOPUserData, QOP): void {
 		);
 	});
 }
-function HydratePadSetList(QOPUserData, QOP): void {
+function HydratePadSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): void {
 	if (!QOPUserData.ChartList) return; // If there is no ChartList, return early.
 
 	QOPUserData.ChartList.forEach((chart, chartIndex) => {
@@ -596,7 +613,7 @@ function HydratePadSetList(QOPUserData, QOP): void {
 		};
 	});
 }
-function HydrateComboSetList(QOPUserData, QOP): void {
+function HydrateComboSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): void {
 	if (!QOPUserData.ChartList) return; // If there is no ChartList, return early.
 
 	QOPUserData.ChartList.forEach((chart, chartIndex) => {
