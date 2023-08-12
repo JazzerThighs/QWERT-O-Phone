@@ -1,7 +1,7 @@
 import {
 	QOPUserDataTemplate,
 	CurrentQOPVersion,
-	DeltaTemplate,
+	DeltaUDTemplate,
 } from './initQOPUD.js';
 
 export function DeprecatedCheck(QOPUserData: QOPUserDataTemplate) {
@@ -43,7 +43,7 @@ export function DeltaSetValidator(QOPUserData: QOPUserDataTemplate) {
 		for (let valve = 0; valve < ValveList.length; valve++) {
 			if (ValveList[valve].DeltaSet.length < GutList.length) {
 				while (ValveList[valve].DeltaSet.length < GutList.length) {
-					ValveList[valve].DeltaSet.push(new DeltaTemplate());
+					ValveList[valve].DeltaSet.push(new DeltaUDTemplate());
 				}
 				console.log(
 					`Added DeltaTemplate object(s) to ValveList.${valve}.DeltaSet} in order to match the present number of Guts.`
@@ -57,7 +57,7 @@ export function DeltaSetValidator(QOPUserData: QOPUserDataTemplate) {
 					while (
 						ChartList[chart].ComboSet[combo].DeltaSet.length < GutList.length
 					) {
-						ChartList[chart].ComboSet[combo].DeltaSet.push(new DeltaTemplate());
+						ChartList[chart].ComboSet[combo].DeltaSet.push(new DeltaUDTemplate());
 					}
 					console.log(
 						`Added DeltaTemplate object(s) to ChartList.${chart}.ComboSet.${combo}.DeltaSet} in order to match the present number of Guts.`
