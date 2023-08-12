@@ -2,7 +2,7 @@ import { QOPTemplate, actionTypes, QOPLists } from './initQOP.js';
 import { MIDIOutputPacket } from './woodshedMIDIOUT.js';
 import { OscNodesUpdate } from './woodshedOscNodes.js';
 	
-function ActionStateFlipper(QOP_xList: {}, ChangedActionTypes: string[]) {
+function ActionStateFlipper(QOP_xList: object, ChangedActionTypes: string[]) {
 	for (let xActionType of ChangedActionTypes) {
 		let actionTracker = QOP_xList[xActionType + 'Tracker'];
 		if (actionTracker !== undefined) {

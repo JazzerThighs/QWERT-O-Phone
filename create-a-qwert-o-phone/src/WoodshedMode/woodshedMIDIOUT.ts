@@ -1,15 +1,12 @@
-import type { QOPTemplate } from "./initQOP.js";
+//import type { QOPTemplate } from "./initQOP.js";
 
 export function FindClosestMIDINote(targetFrequency: number) {
-	let ClosestMIDINote, closestFrequency;
+	let ClosestMIDINote = 0;
+	let closestFrequency = 0;
 
 	// Find the MIDI note closest to the target frequency
 	for (let m = 0; m <= 127; m++) {
-		if (
-			closestFrequency === undefined ||
-			Math.abs(MIDILUT[m] - targetFrequency) <
-				Math.abs(closestFrequency - targetFrequency)
-		) {
+		if (Math.abs(MIDILUT[m] - targetFrequency) < Math.abs(closestFrequency - targetFrequency)) {
 			ClosestMIDINote = m;
 			closestFrequency = MIDILUT[m];
 		}
@@ -17,10 +14,10 @@ export function FindClosestMIDINote(targetFrequency: number) {
 
 	return { ClosestMIDINote, closestFrequency };
 }
-export function MIDIOutputPacket(QOP: QOPTemplate) {
-	const { GutSoundState } = QOP.StateMachine;
-	const { GutMIDIOUTDisabled } = QOP.MIDIOutput;
-}
+// export function MIDIOutputPacket(QOP: QOPTemplate) {
+// 	const { GutSoundState } = QOP.StateMachine;
+// 	const { GutMIDIOUTDisabled } = QOP.MIDIOutput;
+// }
 
 export const MIDILUT: {
 	[key: number]: number;

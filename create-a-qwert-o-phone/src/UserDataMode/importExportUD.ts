@@ -1,7 +1,7 @@
-import { QOPUDTimestamp } from './initQOPUD.js';
+import { QOPUserDataTemplate, QOPUDTimestamp } from './initQOPUD.js';
 import { DeprecatedCheck } from './validateQOPUD.js';
 
-export function DownloadQOPUDJSON(obj) {
+export function DownloadQOPUDJSON(obj: QOPUserDataTemplate) {
 	const formattedDateTime = QOPUDTimestamp();
 	if (obj.Timestamp !== undefined) {
 		obj.Timestamp = formattedDateTime;
@@ -16,7 +16,7 @@ export function DownloadQOPUDJSON(obj) {
 	document.body.removeChild(downloadLink); // Remove the link after triggering the download
 }
 
-export function ImportQOPUDJSON(QOPUserData) {
+export function ImportQOPUDJSON(QOPUserData: QOPUserDataTemplate) {
 	const fileInput = document.getElementById('jsonUploader') as HTMLInputElement;
 
 	if (fileInput.files && fileInput.files.length > 0) {

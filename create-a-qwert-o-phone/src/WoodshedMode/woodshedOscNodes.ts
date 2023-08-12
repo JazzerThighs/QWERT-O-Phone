@@ -1,9 +1,9 @@
 import { QOPTemplate, audioContext } from "./initQOP.js";
 
-export function OscNodesStop(gut, QOP) {
-	let { ScaleList } = QOP;
-	let { GutSoundState } = QOP.StateMachine;
-	let { OscNodes, OscGainNodes } = QOP.Oscillators;
+export function OscNodesStop(gut: number, QOP: QOPTemplate) {
+	const { ScaleList } = QOP;
+	const { GutSoundState } = QOP.StateMachine;
+	const { OscNodes, OscGainNodes } = QOP.Oscillators;
 	for (let scale = 0; scale < ScaleList.length; scale++) {
 		if (OscNodes[gut][scale]) {
 			OscNodes[gut][scale].disconnect(OscGainNodes[gut][scale]);
@@ -12,23 +12,23 @@ export function OscNodesStop(gut, QOP) {
 	}
 	GutSoundState[gut] = false;
 }
-export function PanicOscNodesStop(QOP) {
+export function PanicOscNodesStop(QOP: QOPTemplate) {
 	for (let gut = 0; gut < QOP.GutList.ButtonState.length; gut++) {
 		OscNodesStop(gut, QOP);
 	}
 }
 
 export function OscNodesUpdate(QOP: QOPTemplate) {
-	let { ScaleList, GutList } = QOP;
-	let {
+	const { ScaleList, GutList } = QOP;
+	const {
 		GutSoundState,
 		TotalFrequency,
 		PrevTotalFrequency,
 		FretConfirm,
 		ValveConfirm,
-		ComboConfirm,
+		ComboConfirm
 	} = QOP.StateMachine;
-	let { OscNodes, OscGainNodes, OscWaveType, OscNodesMute } = QOP.Oscillators;
+	const { OscNodes, OscGainNodes, OscWaveType, OscNodesMute } = QOP.Oscillators;
 
 	for (let gut = 0; gut < GutList.ButtonState.length; gut++) {
 		if (OscNodesMute[gut]) {
@@ -62,7 +62,7 @@ export function OscNodesUpdate(QOP: QOPTemplate) {
 							if (OscNodes[gut][scale]) {
 								OscNodes[gut][scale].stop();
 							}
-							let newOscillator = new OscillatorNode(audioContext);
+							const newOscillator = new OscillatorNode(audioContext);
 							newOscillator.frequency.value = TotalFrequency[gut][scale];
 							newOscillator.type = OscWaveType[gut][scale];
 							newOscillator.connect(OscGainNodes[gut][scale]);
@@ -90,7 +90,7 @@ export function OscNodesUpdate(QOP: QOPTemplate) {
 				GutSoundState[gut] = true;
 				for (let scale = 0; scale < ScaleList.length; scale++) {
 					if (OscGainNodes[gut][scale].gain.value > 0) {
-						let newOscillator = new OscillatorNode(audioContext);
+						const newOscillator = new OscillatorNode(audioContext);
 						newOscillator.frequency.value = TotalFrequency[gut][scale];
 						newOscillator.connect(OscGainNodes[gut][scale]);
 						newOscillator.type = OscWaveType[gut][scale];
