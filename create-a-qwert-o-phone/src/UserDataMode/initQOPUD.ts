@@ -146,7 +146,7 @@ export function HydrateScaleForUD(
 }
 
 export const i32HexRegExp = /^#[0-9A-Fa-f]{8}$/;
-export type DeltaTypeString = 'NoteID' | 'Cents' | 'Both';
+type DeltaTypesString = 'NoteID' | 'Cents' | 'Both'
 export type SimpleWaveformTypeString = 'sine' | 'triangle' | 'square' | 'sawtooth';
 export type ScaleTypeString =
 	| 'Equal Temperament'
@@ -283,12 +283,12 @@ export class ActionTypeUDTemplate implements IActionTypeUDTemplate {
 	}
 }
 interface IDeltaUDTemplate {
-	DeltaType: DeltaTypeString;
+	DeltaType: DeltaTypesString;
 	NoteIDDelta: number;
 	CentsDelta: number;
 }
 export class DeltaUDTemplate implements IDeltaUDTemplate {
-	public DeltaType: DeltaTypeString;
+	public DeltaType: DeltaTypesString;
 	public NoteIDDelta: number;
 	public CentsDelta: number;
 	constructor() {
@@ -329,13 +329,13 @@ export class ScaleUDTemplate implements IScaleUDTemplate {
 }
 interface IFretUDTemplate {
 	TranspositionEventCodes: TranspositionObject;
-	DeltaType: DeltaTypeString;
+	DeltaType: DeltaTypesString;
 	NoteIDDelta: number;
 	CentsDelta: number;
 }
 export class FretUDTemplate extends ActionTypeUDTemplate implements IFretUDTemplate {
 	public TranspositionEventCodes: TranspositionObject;
-	public DeltaType: DeltaTypeString;
+	public DeltaType: DeltaTypesString;
 	public NoteIDDelta: number;
 	public CentsDelta: number;
 	constructor() {
