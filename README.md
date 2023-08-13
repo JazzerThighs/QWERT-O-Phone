@@ -26,7 +26,7 @@ To Be Implemented:
 - MIDI: In, Out, all around.<br />
 - Analog Control Support: For extra flavor.<br />
 - Fancy In-browser Synths: For those of us with a taste for something more than basic.<br />
-- NPM: Yeah, yeah, I know.
+- NPM: Not sure what it would be used for, but I'm down.<br />
 
 
 
