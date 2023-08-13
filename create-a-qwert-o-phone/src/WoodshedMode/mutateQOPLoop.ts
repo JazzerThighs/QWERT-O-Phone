@@ -1,4 +1,4 @@
-import { QOPTemplate, actionTypes, QOPLists } from './initQOP.js';
+import { QOPTemplate, ActionTypes, QOPLists } from './initQOP.js';
 //import { MIDIOutputPacket } from './woodshedMIDIOUT.js';
 import { OscNodesUpdate } from './woodshedOscNodes.js';
 	
@@ -245,6 +245,7 @@ function CalculateTotalFrequency(QOP: QOPTemplate) {
 	} = QOP.StateMachine;
 	let { PrevTotalFrequency } = QOP.StateMachine;
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	PrevTotalFrequency = TotalFrequency.map((innerArray) => [...innerArray]);
 
 	const ComboNoteIDAccumulator: number[] = Array(PadSetList.length).fill(0);
@@ -298,7 +299,7 @@ export function QOPMutator(event: KeyboardEvent, eNumber: number, QOP: QOPTempla
 	ChangedLists.length = 0;
 	ChangedTransposition = false;
 
-	for (const xActionType of actionTypes) {
+	for (const xActionType of ActionTypes) {
 		let actionTypeTree = QOP[xActionType + 'Tree'];
 		const actionTypeTree_Event = actionTypeTree[e];
 		if (actionTypeTree_Event[code] !== undefined) {
@@ -379,7 +380,7 @@ export function QOPMutator(event: KeyboardEvent, eNumber: number, QOP: QOPTempla
 			return QOPLists.indexOf(a) - QOPLists.indexOf(b);
 		});
 		ChangedActionTypes.sort((a, b) => {
-			return actionTypes.indexOf(a) - actionTypes.indexOf(b);
+			return ActionTypes.indexOf(a) - ActionTypes.indexOf(b);
 		});
 		const lastChangedActionTypesIndex = ChangedActionTypes[ChangedActionTypes.length - 1];
 		if (lastChangedActionTypesIndex !== 'Button') {

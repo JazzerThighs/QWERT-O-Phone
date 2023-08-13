@@ -2,8 +2,7 @@ import { DeltaSetValidator, OpenGutValidator } from '../UserDataMode/validateQOP
 import type {
 	QOPUserDataTemplate,
 	SimpleWaveformTypeString,
-	QOPValidEventCodesString,
-	DeltaUDTemplate
+	QOPValidEventCodesString
 } from '../UserDataMode/initQOPUD.js';
 import { FindClosestMIDINote } from './woodshedMIDIOUT.js';
 import { QOPMutator } from './mutateQOPLoop.js';
@@ -457,13 +456,14 @@ export const QOPLists: QOPListsString = [
 	'ComboSetList',
 	'GutList'
 ];
-type ActionTypesString = ['Sustain', 'AntiSustain', 'Button', 'Sostenuto', 'AntiSostenuto'];
+type ActionTypesString = ['Sustain', 'AntiSustain', 'Button', 'Sostenuto', 'AntiSostenuto', 'Transposition'];
 export const ActionTypes: ActionTypesString = [
 	'Sustain',
 	'AntiSustain',
 	'Button',
 	'Sostenuto',
-	'AntiSostenuto'
+	'AntiSostenuto',
+	'Transposition'
 ];
 type QOPActionEventCodesString = [
 	'ButtonEventCodes',
@@ -536,7 +536,7 @@ function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): voi
 		QOP.GutList.RequireComboMap.push(QOPUserData.GutList[gutIndex].RequireCombo);
 		QOP.GutList.OpenGutNoteIDMap.push(QOPUserData.GutList[gutIndex].OpenGutNoteID);
 
-		for (let propNum = 0; propNum < EventCodeProperties.length; propNum++) {
+		for (let propNum = 0; propNum < ActionTypeTrackers.length; propNum++) {
 			const eventCodeProp = EventCodeProperties[propNum];
 			const actionState = ActionTypeStates[propNum];
 			const actionMap = ActionTypeMaps[propNum];
@@ -574,7 +574,7 @@ function HydrateFretSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate):
 		const fretSetIndex = QOP.FretSetList[gutIndex];
 		const UDGut = QOPUserData.GutList[gutIndex];
 		for (let fret = 0; fret < UDGut.FretSet.length; fret++) {
-			for (let propNum = 0; propNum < EventCodeProperties.length; propNum++) {
+			for (let propNum = 0; propNum < ActionTypeTrackers.length; propNum++) {
 				const eventCodeProp = EventCodeProperties[propNum];
 				const actionState = ActionTypeStates[propNum];
 				const actionMap = ActionTypeMaps[propNum];
@@ -614,7 +614,7 @@ function HydrateFretSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate):
 }
 function HydrateValveList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): void {
 	for (let valveIndex = 0; valveIndex < QOPUserData.ValveList.length; valveIndex++) {
-		for (let propNum = 0; propNum < EventCodeProperties.length; propNum++) {
+		for (let propNum = 0; propNum < ActionTypeTrackers.length; propNum++) {
 			const eventCodeProp = EventCodeProperties[propNum];
 			const actionState = ActionTypeStates[propNum];
 			const actionMap = ActionTypeMaps[propNum];
@@ -675,7 +675,7 @@ function HydratePadSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): 
 		const padSetIndex = QOP.PadSetList[chartIndex];
 		const UDChart = QOPUserData.ChartList[chartIndex];
 		for (let pad = 0; pad < UDChart.PadSet.length; pad++) {
-			for (let propNum = 0; propNum < EventCodeProperties.length; propNum++) {
+			for (let propNum = 0; propNum < ActionTypeTrackers.length; propNum++) {
 				const eventCodeProp = EventCodeProperties[propNum];
 				const actionState = ActionTypeStates[propNum];
 				const actionMap = ActionTypeMaps[propNum];
@@ -739,11 +739,12 @@ function HydrateActionTypeTree(QOP: QOPTemplate): void {
 				for (const code in actionTypeMap) {
 					for (const n in actionTypeMap[code]) {
 						const value = actionTypeMap[code][n];
+						const actionTypeTree
 						if (QOP[`${actionType}Tree`] === undefined) {
 							QOP[`${actionType}Tree`] = { keydown: {}, keyup: {} };
 						}
 
-						function PassedTreeTest(downOrUp: string, QOP: QOPTemplate) {
+						const PassedTreeTest = (downOrUp: string, QOP: QOPTemplate) => {
 							if (QOP[`${actionType}Tree`][downOrUp][code] === undefined) {
 								QOP[`${actionType}Tree`][downOrUp][code] = {};
 							}
