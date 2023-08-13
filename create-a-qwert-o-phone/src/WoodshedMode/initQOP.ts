@@ -142,19 +142,19 @@ export class QOPStateMachineTemplate implements IQOPStateMachineTemplate {
 interface IQOPOscillatorsTemplate {
 	OscNodes: OscillatorNode[][];
 	OscGainNodes: GainNode[][];
-	OscWaveType: SimpleWaveformTypeString[][];
+	OscWaveform: SimpleWaveformTypeString[][];
 	OscNodesMute: boolean[];
 }
 export class QOPOscillatorsTemplate implements IQOPOscillatorsTemplate {
 	public OscNodes: OscillatorNode[][];
 	public OscGainNodes: GainNode[][];
-	public OscWaveType: SimpleWaveformTypeString[][];
+	public OscWaveform: SimpleWaveformTypeString[][];
 	public OscNodesMute: boolean[];
 
 	constructor() {
 		this.OscNodes = [];
 		this.OscGainNodes = [];
-		this.OscWaveType = [];
+		this.OscWaveform = [];
 		this.OscNodesMute = [];
 	}
 }
@@ -606,16 +606,46 @@ const ActionTypeTrees: ActionTypeTreesString = [
 
 function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): void {
 	for (let gutIndex = 0; gutIndex < QOPUserData.GutList.length; gutIndex++) {
+		QOP.Oscillators.OscNodes.push([]);
+		QOP.Oscillators.OscGainNodes.push([]);
+		QOP.Oscillators.OscNodesMute.push(false);
+		const emptyWaveformArray: SimpleWaveformTypeString[] = [];
+		QOP.Oscillators.OscWaveform.push(emptyWaveformArray);
+
+		QOP.MIDIOutput.GutMIDIOUTDisabled.push(true);
+
+		QOP.StateMachine.GutSoundState.push(false);
+		QOP.StateMachine.NoteIDAccumulator.push([]);
+		QOP.StateMachine.CentsAccumulator.push(0);
+		QOP.StateMachine.TotalFrequency.push([]);
+		QOP.StateMachine.PrevTotalFrequency.push([]);
+		QOP.StateMachine.FretConfirm.push(false);
+		
 		QOP.GutList.RequireFretMap.push(QOPUserData.GutList[gutIndex].RequireFret);
 		QOP.GutList.RequireValveMap.push(QOPUserData.GutList[gutIndex].RequireValve);
 		QOP.GutList.RequireComboMap.push(QOPUserData.GutList[gutIndex].RequireCombo);
 		QOP.GutList.OpenGutNoteIDMap.push(QOPUserData.GutList[gutIndex].OpenGutNoteID);
 
-		const emptyArray: SimpleWaveformTypeString[] = [];
-		QOP.Oscillators.OscWaveType.push(emptyArray);
-		for (let scale = 0; scale < QOPUserData.ScaleList.length; scale++) {
-			QOP.Oscillators.OscWaveType[gutIndex][scale] =
-				QOPUserData.GutList[gutIndex].OpenGutWaveType[scale];
+		
+		
+		for (let scaleIndex = 0; scaleIndex < QOPUserData.ScaleList.length; scaleIndex++) {
+			QOP.Oscillators.OscWaveform[gutIndex][scaleIndex] =
+				QOPUserData.GutList[gutIndex].OscWaveType[scaleIndex];
+
+			const newOscillator = new OscillatorNode(audioContext);
+			QOP.Oscillators.OscNodes[gutIndex].push(newOscillator);
+
+			const gainNode = new GainNode(audioContext);
+			gainNode.connect(audioContext.destination);
+			gainNode.gain.value = 0.3;
+			QOP.Oscillators.OscGainNodes[gutIndex].push(gainNode);
+			QOP.Oscillators.OscNodes[gutIndex][scaleIndex].connect(
+				QOP.Oscillators.OscGainNodes[gutIndex][scaleIndex]
+			);
+
+			QOP.StateMachine.NoteIDAccumulator[gutIndex].push(0);
+			QOP.StateMachine.TotalFrequency[gutIndex].push(0);
+			QOP.StateMachine.PrevTotalFrequency[gutIndex].push(0);
 		}
 
 		for (let propNum = 0; propNum < ActionTypeTrackers.length; propNum++) {
@@ -1038,6 +1068,7 @@ function HydrateQOP(QOPUserData: QOPUserDataTemplate) {
 	const QOP = new QOPTemplate();
 
 	HydrateScaleList(QOPUserData, QOP);
+	
 	HydrateGutList(QOPUserData, QOP);
 	HydrateFretSetList(QOPUserData, QOP);
 	HydrateValveList(QOPUserData, QOP);
@@ -1045,34 +1076,5 @@ function HydrateQOP(QOPUserData: QOPUserDataTemplate) {
 	HydratePadSetList(QOPUserData, QOP);
 	HydrateComboSetList(QOPUserData, QOP);
 
-	for (let gut = 0; gut < QOP.GutList.ButtonState.length; gut++) {
-		QOP.Oscillators.OscNodes.push([]);
-		QOP.Oscillators.OscGainNodes.push([]);
-		QOP.Oscillators.OscNodesMute.push(false);
-
-		QOP.MIDIOutput.GutMIDIOUTDisabled.push(true);
-
-		QOP.StateMachine.GutSoundState.push(false);
-		QOP.StateMachine.NoteIDAccumulator.push([]);
-		QOP.StateMachine.CentsAccumulator.push(0);
-		QOP.StateMachine.TotalFrequency.push([]);
-		QOP.StateMachine.PrevTotalFrequency.push([]);
-		QOP.StateMachine.FretConfirm.push(false);
-
-		for (let scale = 0; scale < QOP.ScaleList.length; scale++) {
-			const newOscillator = new OscillatorNode(audioContext);
-			QOP.Oscillators.OscNodes[gut].push(newOscillator);
-
-			const gainNode = new GainNode(audioContext);
-			gainNode.connect(audioContext.destination);
-			gainNode.gain.value = 0.3;
-			QOP.Oscillators.OscGainNodes[gut].push(gainNode);
-			QOP.Oscillators.OscNodes[gut][scale].connect(QOP.Oscillators.OscGainNodes[gut][scale]);
-
-			QOP.StateMachine.NoteIDAccumulator[gut].push(0);
-			QOP.StateMachine.TotalFrequency[gut].push(0);
-			QOP.StateMachine.PrevTotalFrequency[gut].push(0);
-		}
-	}
 	return QOP;
 }

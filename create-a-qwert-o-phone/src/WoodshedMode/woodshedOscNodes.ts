@@ -28,7 +28,7 @@ export function OscNodesUpdate(QOP: QOPTemplate) {
 		ValveConfirm,
 		ComboConfirm
 	} = QOP.StateMachine;
-	const { OscNodes, OscGainNodes, OscWaveType, OscNodesMute } = QOP.Oscillators;
+	const { OscNodes, OscGainNodes, OscWaveform, OscNodesMute } = QOP.Oscillators;
 
 	for (let gut = 0; gut < GutList.ButtonState.length; gut++) {
 		if (OscNodesMute[gut]) {
@@ -64,7 +64,7 @@ export function OscNodesUpdate(QOP: QOPTemplate) {
 							}
 							const newOscillator = new OscillatorNode(audioContext);
 							newOscillator.frequency.value = TotalFrequency[gut][scale];
-							newOscillator.type = OscWaveType[gut][scale];
+							newOscillator.type = OscWaveform[gut][scale];
 							newOscillator.connect(OscGainNodes[gut][scale]);
 							newOscillator.start();
 							OscNodes[gut][scale] = newOscillator;
@@ -93,7 +93,7 @@ export function OscNodesUpdate(QOP: QOPTemplate) {
 						const newOscillator = new OscillatorNode(audioContext);
 						newOscillator.frequency.value = TotalFrequency[gut][scale];
 						newOscillator.connect(OscGainNodes[gut][scale]);
-						newOscillator.type = OscWaveType[gut][scale];
+						newOscillator.type = OscWaveform[gut][scale];
 						OscNodes[gut][scale] = newOscillator;
 						OscNodes[gut][scale].start();
 					}

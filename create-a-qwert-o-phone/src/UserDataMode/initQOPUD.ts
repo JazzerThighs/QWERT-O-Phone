@@ -348,8 +348,10 @@ export class FretUDTemplate extends ActionTypeUDTemplate implements IFretUDTempl
 }
 interface IGutUDTemplate {
 	OpenGutNoteID: number[];
-	OpenGutWaveType: SimpleWaveformTypeString[];
-	
+
+	GutOscMute: boolean;
+	OscWaveType: SimpleWaveformTypeString[];
+	OscGain: number[];
 
 	TranspositionEventCodes: TranspositionObject;
 	RequireFret: boolean;
@@ -359,7 +361,11 @@ interface IGutUDTemplate {
 }
 export class GutUDTemplate extends ActionTypeUDTemplate implements IGutUDTemplate {
 	public OpenGutNoteID: number[];
-	public OpenGutWaveType: SimpleWaveformTypeString[];
+
+	public GutOscMute: boolean;
+	public OscWaveType: SimpleWaveformTypeString[];
+	public OscGain: number[];
+
 	public TranspositionEventCodes: TranspositionObject;
 	public RequireFret: boolean;
 	public RequireValve: boolean;
@@ -368,7 +374,11 @@ export class GutUDTemplate extends ActionTypeUDTemplate implements IGutUDTemplat
 	constructor() {
 		super();
 		this.OpenGutNoteID = [69]; // The 69th MIDI note is A4=440Hz
-		this.OpenGutWaveType = ['sine'];
+		
+		this.GutOscMute = false;
+		this.OscWaveType = ['sine'];
+		this.OscGain = [0.25];
+
 		this.TranspositionEventCodes = {} as TranspositionObject;
 		this.RequireFret = false; // For use with Frets
 		this.RequireValve = false; // For use with Valves
