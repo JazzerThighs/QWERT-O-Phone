@@ -6,7 +6,7 @@ function ActionStateFlipper(QOP_xList: object, ChangedActionTypes: string[]) {
 	for (const xActionType of ChangedActionTypes) {
 		let actionTracker = QOP_xList[xActionType + 'Tracker'];
 		if (actionTracker !== undefined) {
-			let actionState = QOP_xList[xActionType + 'State'];
+			const actionState = QOP_xList[xActionType + 'State'];
 			for (let q = 0; q < actionTracker.length; q++) {
 				switch (xActionType) {
 					case 'Sostenuto':
