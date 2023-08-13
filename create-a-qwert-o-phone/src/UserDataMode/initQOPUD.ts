@@ -349,6 +349,8 @@ export class FretUDTemplate extends ActionTypeUDTemplate implements IFretUDTempl
 interface IGutUDTemplate {
 	OpenGutNoteID: number[];
 	OpenGutWaveType: SimpleWaveformTypeString[];
+	
+
 	TranspositionEventCodes: TranspositionObject;
 	RequireFret: boolean;
 	RequireValve: boolean;
