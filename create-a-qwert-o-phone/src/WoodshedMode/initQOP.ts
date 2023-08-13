@@ -191,6 +191,26 @@ class QOPScaleTemplate implements IQOPScaleTemplate {
 		this.PitchBendMSB = 64;
 	}
 }
+type QOPListsString = [
+	'ValveList',
+	'ChartList',
+	'FretSetList',
+	'PadSetList',
+	'ComboSetList',
+	'GutList'
+];
+export const QOPLists: QOPListsString = [
+	'ValveList',
+	'ChartList',
+	'FretSetList',
+	'PadSetList',
+	'ComboSetList',
+	'GutList'
+];
+type QOPSingleListsString = ['GutList', 'ValveList', 'ChartList'];
+export const QOPSingleLists: QOPSingleListsString = ['GutList', 'ValveList', 'ChartList'];
+type QOPSetListsString = ['FretSetList', 'PadSetList', 'ComboSetList'];
+export const QOPSetLists: QOPSetListsString = ['FretSetList', 'PadSetList', 'ComboSetList'];
 
 type QOPActionTrackerType = { [key: string]: boolean };
 type QOPActionMapType = {
@@ -391,17 +411,43 @@ export class QOPComboSetTemplate implements IQOPComboSetTemplate {
 		this.TranspositionMap = {} as QOPTranspositionMapType;
 	}
 }
-
+interface ITreeListsTemplate {
+	GutList: number[];
+	ValveList: number[];
+	ChartList: number[];
+	FretSetList: { [index: number]: number[] };
+	PadSetList: { [index: number]: number[] };
+	ComboSetList: { [index: number]: number[] };
+}
+class TreeListsTemplate implements ITreeListsTemplate {
+	public GutList: number[];
+	public ValveList: number[];
+	public ChartList: number[];
+	public FretSetList: { [index: number]: number[] };
+	public PadSetList: { [index: number]: number[] };
+	public ComboSetList: { [index: number]: number[] };
+	constructor() {
+		this.GutList = [];
+		this.ValveList = [];
+		this.ChartList = [];
+		this.FretSetList = {};
+		this.PadSetList = {};
+		this.ComboSetList = {};
+	}
+}
+type TreeKDKUTemplate = Partial<{
+	[QOPValidEventCode in QOPValidEventCodesString]: TreeListsTemplate;
+}>;
 interface IQOPTreeTemplate {
-	keydown: { [key: string]: object };
-	keyup: { [key: string]: object };
+	keydown: TreeKDKUTemplate;
+	keyup: TreeKDKUTemplate;
 }
 export class QOPTreeTemplate implements IQOPTreeTemplate {
-	public keydown: { [key: string]: object };
-	public keyup: { [key: string]: object };
+	public keydown: TreeKDKUTemplate;
+	public keyup: TreeKDKUTemplate;
 	constructor() {
-		this.keydown = {};
-		this.keyup = {};
+		this.keydown = {} as TreeKDKUTemplate;
+		this.keyup = {} as TreeKDKUTemplate;
 	}
 }
 
@@ -440,26 +486,6 @@ export const DeltaTypeMaps: DeltaTypeMapsString = [
 	'NoteIDDeltaMap',
 	'CentsDeltaMap'
 ];
-type QOPListsString = [
-	'ValveList',
-	'ChartList',
-	'FretSetList',
-	'PadSetList',
-	'ComboSetList',
-	'GutList'
-];
-export const QOPLists: QOPListsString = [
-	'ValveList',
-	'ChartList',
-	'FretSetList',
-	'PadSetList',
-	'ComboSetList',
-	'GutList'
-];
-type QOPSetListsString = ['FretSetList', 'PadSetList', 'ComboSetList'];
-export const QOPSetLists: QOPSetListsString = ['FretSetList', 'PadSetList', 'ComboSetList'];
-type QOPSingleListsString = ['GutList', 'ValveList', 'ChartList'];
-export const QOPSingleLists: QOPSingleListsString = ['GutList', 'ValveList', 'ChartList'];
 type ActionTypesString = [
 	'Sustain',
 	'AntiSustain',
@@ -551,6 +577,13 @@ const ActionTypeTrees: ActionTypeTreesString = [
 
 function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): void {
 	for (let gutIndex = 0; gutIndex < QOPUserData.GutList.length; gutIndex++) {
+		QOP.GutList.RequireFretMap.push(QOPUserData.GutList[gutIndex].RequireFret);
+		QOP.GutList.RequireValveMap.push(QOPUserData.GutList[gutIndex].RequireValve);
+		QOP.GutList.RequireComboMap.push(QOPUserData.GutList[gutIndex].RequireCombo);
+		QOP.GutList.OpenGutNoteIDMap.push(QOPUserData.GutList[gutIndex].OpenGutNoteID);
+
+		QOP.GutList.TranspositionState.push([0, 0]);
+
 		const emptyArray: SimpleWaveformTypeString[] = [];
 		QOP.Oscillators.OscWaveType.push(emptyArray);
 		for (let scale = 0; scale < QOPUserData.ScaleList.length; scale++) {
@@ -558,18 +591,16 @@ function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): voi
 				QOPUserData.GutList[gutIndex].OpenGutWaveType[scale];
 		}
 
-		QOP.GutList.RequireFretMap.push(QOPUserData.GutList[gutIndex].RequireFret);
-		QOP.GutList.RequireValveMap.push(QOPUserData.GutList[gutIndex].RequireValve);
-		QOP.GutList.RequireComboMap.push(QOPUserData.GutList[gutIndex].RequireCombo);
-		QOP.GutList.OpenGutNoteIDMap.push(QOPUserData.GutList[gutIndex].OpenGutNoteID);
-
 		for (let propNum = 0; propNum < ActionTypeTrackers.length; propNum++) {
 			const eventCodeProp = EventCodeProperties[propNum];
 			const actionState = ActionTypeStates[propNum];
 			const actionMap = ActionTypeMaps[propNum];
 			const actionTracker = ActionTypeTrackers[propNum];
+			const actionTree = ActionTypeTrees[propNum];
+
 			QOP.GutList[actionState].push(false);
 			QOP.GutList[actionTracker].push({});
+
 			if (Object.keys(QOPUserData.GutList[gutIndex][eventCodeProp]).length > 0) {
 				for (const key in QOPUserData.GutList[gutIndex][eventCodeProp]) {
 					const eventCode = key as QOPValidEventCodesString;
@@ -577,19 +608,61 @@ function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): voi
 					if (eventValue !== undefined) {
 						QOP.GutList[actionMap][eventCode][gutIndex] = eventValue;
 						QOP.GutList[actionTracker][gutIndex][key] = false;
+
+						for (let eNumber = 0; eNumber < 2; eNumber++) {
+							let kdku: 'keydown' | 'keyup' = 'keydown';
+							if (eNumber === 1) {
+								kdku = 'keyup';
+							}
+
+							if (eventValue[eNumber] !== 0 || eventValue[eNumber] !== 0) {
+								if (QOP[actionTree][kdku][eventCode] === undefined) {
+									QOP[actionTree][kdku][eventCode] = new TreeListsTemplate();
+									const KEventCode = QOP[actionTree][kdku][eventCode];
+									if (KEventCode !== undefined) {
+										KEventCode.GutList.push(gutIndex);
+									}
+								} else {
+									const KEventCode = QOP[actionTree][kdku][eventCode];
+									if (KEventCode !== undefined) {
+										KEventCode.GutList.push(gutIndex);
+									}
+								}
+							}
+						}
 					}
 				}
 			}
 		}
 
-		QOP.GutList.TranspositionState.push([0, 0]);
 		if (Object.keys(QOPUserData.GutList[gutIndex]['TranspositionEventCodes']).length > 0) {
 			for (const key in QOPUserData.GutList[gutIndex]['TranspositionEventCodes']) {
 				const eventCode = key as QOPValidEventCodesString;
 				const eventValue = QOPUserData.GutList[gutIndex].TranspositionEventCodes[eventCode];
-
 				if (eventValue !== undefined) {
 					QOP.GutList.TranspositionMap[eventCode][gutIndex] = eventValue;
+				
+					for (let eNumber = 0; eNumber < 2; eNumber++) {
+						let kdku: 'keydown' | 'keyup' = 'keydown';
+						if (eNumber === 1) {
+							kdku = 'keyup';
+						}
+
+						if (eventValue[eNumber][0] !== 0 || eventValue[eNumber][1] !== 0) {
+							if (QOP.TranspositionTree[kdku][eventCode] === undefined) {
+								QOP.TranspositionTree[kdku][eventCode] = new TreeListsTemplate();
+								const KEventCode = QOP.TranspositionTree[kdku][eventCode];
+								if (KEventCode !== undefined) {
+									KEventCode.GutList.push(gutIndex);
+								}
+							} else {
+								const KEventCode = QOP.TranspositionTree[kdku][eventCode];
+								if (KEventCode !== undefined) {
+									KEventCode.GutList.push(gutIndex);
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -769,7 +842,7 @@ function HydrateQOP(QOPUserData: QOPUserDataTemplate) {
 	HydrateChartList(QOPUserData, QOP);
 	HydratePadSetList(QOPUserData, QOP);
 	HydrateComboSetList(QOPUserData, QOP);
-	
+
 	for (let gut = 0; gut < QOP.GutList.ButtonState.length; gut++) {
 		QOP.Oscillators.OscNodes.push([]);
 		QOP.Oscillators.OscGainNodes.push([]);
