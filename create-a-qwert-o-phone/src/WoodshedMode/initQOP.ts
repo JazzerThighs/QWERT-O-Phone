@@ -50,12 +50,12 @@ interface IQOPTemplate {
 	PadSetList: QOPPadSetTemplate[];
 	ComboSetList: QOPComboSetTemplate[];
 
-	ButtonTree: QOPTreeTemplate;
-	SustainTree: QOPTreeTemplate;
-	AntiSustainTree: QOPTreeTemplate;
-	SostenutoTree: QOPTreeTemplate;
-	AntiSostenutoTree: QOPTreeTemplate;
-	TranspositionTree: QOPTreeTemplate;
+	ButtonTree: QOPTreeATTemplate;
+	SustainTree: QOPTreeATTemplate;
+	AntiSustainTree: QOPTreeATTemplate;
+	SostenutoTree: QOPTreeATTemplate;
+	AntiSostenutoTree: QOPTreeATTemplate;
+	TranspositionTree: QOPTreeTRTemplate;
 }
 export class QOPTemplate implements IQOPTemplate {
 	public StateMachine: QOPStateMachineTemplate;
@@ -70,12 +70,12 @@ export class QOPTemplate implements IQOPTemplate {
 	public PadSetList: QOPPadSetTemplate[];
 	public ComboSetList: QOPComboSetTemplate[];
 
-	public ButtonTree: QOPTreeTemplate;
-	public SustainTree: QOPTreeTemplate;
-	public AntiSustainTree: QOPTreeTemplate;
-	public SostenutoTree: QOPTreeTemplate;
-	public AntiSostenutoTree: QOPTreeTemplate;
-	public TranspositionTree: QOPTreeTemplate;
+	public ButtonTree: QOPTreeATTemplate;
+	public SustainTree: QOPTreeATTemplate;
+	public AntiSustainTree: QOPTreeATTemplate;
+	public SostenutoTree: QOPTreeATTemplate;
+	public AntiSostenutoTree: QOPTreeATTemplate;
+	public TranspositionTree: QOPTreeTRTemplate;
 
 	constructor() {
 		this.StateMachine = new QOPStateMachineTemplate();
@@ -90,12 +90,12 @@ export class QOPTemplate implements IQOPTemplate {
 		this.PadSetList = [new QOPPadSetTemplate()];
 		this.ComboSetList = [new QOPComboSetTemplate()];
 
-		this.ButtonTree = new QOPTreeTemplate();
-		this.SustainTree = new QOPTreeTemplate();
-		this.AntiSustainTree = new QOPTreeTemplate();
-		this.SostenutoTree = new QOPTreeTemplate();
-		this.AntiSostenutoTree = new QOPTreeTemplate();
-		this.TranspositionTree = new QOPTreeTemplate();
+		this.ButtonTree = new QOPTreeATTemplate();
+		this.SustainTree = new QOPTreeATTemplate();
+		this.AntiSustainTree = new QOPTreeATTemplate();
+		this.SostenutoTree = new QOPTreeATTemplate();
+		this.AntiSostenutoTree = new QOPTreeATTemplate();
+		this.TranspositionTree = new QOPTreeTRTemplate();
 	}
 }
 
@@ -411,43 +411,74 @@ export class QOPComboSetTemplate implements IQOPComboSetTemplate {
 		this.TranspositionMap = {} as QOPTranspositionMapType;
 	}
 }
-interface ITreeListsTemplate {
+
+interface ITreeATListsTemplate {
+	GutList: number[];
+	ValveList: number[];
+	FretSetList: { [index: number]: number[] };
+	PadSetList: { [index: number]: number[] };
+}
+class TreeATListsTemplate implements ITreeATListsTemplate {
+	public GutList: number[];
+	public ValveList: number[];
+	public FretSetList: { [index: number]: number[] };
+	public PadSetList: { [index: number]: number[] };
+	constructor() {
+		this.GutList = [];
+		this.ValveList = [];
+		this.FretSetList = {};
+		this.PadSetList = {};
+	}
+}
+type ATTreeKDKUTemplateObj = Partial<{
+	[QOPValidEventCode in QOPValidEventCodesString]: TreeATListsTemplate;
+}>;
+interface IQOPTreeATTemplate {
+	keydown: ATTreeKDKUTemplateObj;
+	keyup: ATTreeKDKUTemplateObj;
+}
+export class QOPTreeATTemplate implements IQOPTreeATTemplate {
+	public keydown: ATTreeKDKUTemplateObj;
+	public keyup: ATTreeKDKUTemplateObj;
+	constructor() {
+		this.keydown = {} as ATTreeKDKUTemplateObj;
+		this.keyup = {} as ATTreeKDKUTemplateObj;
+	}
+}
+interface ITreeTRListsTemplate {
 	GutList: number[];
 	ValveList: number[];
 	ChartList: number[];
 	FretSetList: { [index: number]: number[] };
-	PadSetList: { [index: number]: number[] };
 	ComboSetList: { [index: number]: number[] };
 }
-class TreeListsTemplate implements ITreeListsTemplate {
+class TreeTRListsTemplate implements ITreeTRListsTemplate {
 	public GutList: number[];
 	public ValveList: number[];
 	public ChartList: number[];
 	public FretSetList: { [index: number]: number[] };
-	public PadSetList: { [index: number]: number[] };
 	public ComboSetList: { [index: number]: number[] };
 	constructor() {
 		this.GutList = [];
 		this.ValveList = [];
 		this.ChartList = [];
 		this.FretSetList = {};
-		this.PadSetList = {};
 		this.ComboSetList = {};
 	}
 }
-type TreeKDKUTemplate = Partial<{
-	[QOPValidEventCode in QOPValidEventCodesString]: TreeListsTemplate;
+type TRTreeKDKUTemplateObj = Partial<{
+	[QOPValidEventCode in QOPValidEventCodesString]: TreeTRListsTemplate;
 }>;
-interface IQOPTreeTemplate {
-	keydown: TreeKDKUTemplate;
-	keyup: TreeKDKUTemplate;
+interface IQOPTreeTRTemplate {
+	keydown: TRTreeKDKUTemplateObj;
+	keyup: TRTreeKDKUTemplateObj;
 }
-export class QOPTreeTemplate implements IQOPTreeTemplate {
-	public keydown: TreeKDKUTemplate;
-	public keyup: TreeKDKUTemplate;
+export class QOPTreeTRTemplate implements IQOPTreeTRTemplate {
+	public keydown: TRTreeKDKUTemplateObj;
+	public keyup: TRTreeKDKUTemplateObj;
 	constructor() {
-		this.keydown = {} as TreeKDKUTemplate;
-		this.keyup = {} as TreeKDKUTemplate;
+		this.keydown = {} as TRTreeKDKUTemplateObj;
+		this.keyup = {} as TRTreeKDKUTemplateObj;
 	}
 }
 
@@ -563,16 +594,14 @@ type ActionTypeTreesString = [
 	'SustainTree',
 	'AntiSustainTree',
 	'SostenutoTree',
-	'AntiSostenutoTree',
-	'TranspositionTree'
+	'AntiSostenutoTree'
 ];
 const ActionTypeTrees: ActionTypeTreesString = [
 	'ButtonTree',
 	'SustainTree',
 	'AntiSustainTree',
 	'SostenutoTree',
-	'AntiSostenutoTree',
-	'TranspositionTree'
+	'AntiSostenutoTree'
 ];
 
 function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): void {
@@ -614,7 +643,7 @@ function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): voi
 
 							if (eventValue[eNumber] !== 0 || eventValue[eNumber] !== 0) {
 								if (QOP[actionTree][kdku][eventCode] === undefined) {
-									QOP[actionTree][kdku][eventCode] = new TreeListsTemplate();
+									QOP[actionTree][kdku][eventCode] = new TreeATListsTemplate();
 									const KEventCode = QOP[actionTree][kdku][eventCode];
 									if (KEventCode !== undefined) {
 										KEventCode.GutList.push(gutIndex);
@@ -649,7 +678,7 @@ function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): voi
 
 						if (eventValue[eNumber][0] !== 0 || eventValue[eNumber][1] !== 0) {
 							if (QOP.TranspositionTree[kdku][eventCode] === undefined) {
-								QOP.TranspositionTree[kdku][eventCode] = new TreeListsTemplate();
+								QOP.TranspositionTree[kdku][eventCode] = new TreeTRListsTemplate();
 								const KEventCode = QOP.TranspositionTree[kdku][eventCode];
 								if (KEventCode !== undefined) {
 									KEventCode.GutList.push(gutIndex);
@@ -699,7 +728,7 @@ function HydrateFretSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate):
 
 								if (eventValue[eNumber] !== 0 || eventValue[eNumber] !== 0) {
 									if (QOP[actionTree][kdku][eventCode] === undefined) {
-										QOP[actionTree][kdku][eventCode] = new TreeListsTemplate();
+										QOP[actionTree][kdku][eventCode] = new TreeATListsTemplate();
 										const KEventCode = QOP[actionTree][kdku][eventCode];
 										if (KEventCode !== undefined) {
 											KEventCode.FretSetList[gutIndex].push(fretIndex);
@@ -734,7 +763,7 @@ function HydrateFretSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate):
 
 							if (eventValue[eNumber][0] !== 0 || eventValue[eNumber][1] !== 0) {
 								if (QOP.TranspositionTree[kdku][eventCode] === undefined) {
-									QOP.TranspositionTree[kdku][eventCode] = new TreeListsTemplate();
+									QOP.TranspositionTree[kdku][eventCode] = new TreeTRListsTemplate();
 									const KEventCode = QOP.TranspositionTree[kdku][eventCode];
 									if (KEventCode !== undefined) {
 										KEventCode.FretSetList[gutIndex].push(fretIndex);
@@ -786,7 +815,7 @@ function HydrateValveList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): v
 
 							if (eventValue[eNumber] !== 0 || eventValue[eNumber] !== 0) {
 								if (QOP[actionTree][kdku][eventCode] === undefined) {
-									QOP[actionTree][kdku][eventCode] = new TreeListsTemplate();
+									QOP[actionTree][kdku][eventCode] = new TreeATListsTemplate();
 									const KEventCode = QOP[actionTree][kdku][eventCode];
 									if (KEventCode !== undefined) {
 										KEventCode.ValveList.push(valveIndex);
@@ -820,7 +849,7 @@ function HydrateValveList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): v
 
 						if (eventValue[eNumber][0] !== 0 || eventValue[eNumber][1] !== 0) {
 							if (QOP.TranspositionTree[kdku][eventCode] === undefined) {
-								QOP.TranspositionTree[kdku][eventCode] = new TreeListsTemplate();
+								QOP.TranspositionTree[kdku][eventCode] = new TreeTRListsTemplate();
 								const KEventCode = QOP.TranspositionTree[kdku][eventCode];
 								if (KEventCode !== undefined) {
 									KEventCode.ValveList.push(valveIndex);
@@ -867,7 +896,7 @@ function HydrateChartList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): v
 
 						if (eventValue[eNumber][0] !== 0 || eventValue[eNumber][1] !== 0) {
 							if (QOP.TranspositionTree[kdku][eventCode] === undefined) {
-								QOP.TranspositionTree[kdku][eventCode] = new TreeListsTemplate();
+								QOP.TranspositionTree[kdku][eventCode] = new TreeTRListsTemplate();
 								const KEventCode = QOP.TranspositionTree[kdku][eventCode];
 								if (KEventCode !== undefined) {
 									KEventCode.ChartList.push(chartIndex);
@@ -916,7 +945,7 @@ function HydratePadSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): 
 
 								if (eventValue[eNumber] !== 0 || eventValue[eNumber] !== 0) {
 									if (QOP[actionTree][kdku][eventCode] === undefined) {
-										QOP[actionTree][kdku][eventCode] = new TreeListsTemplate();
+										QOP[actionTree][kdku][eventCode] = new TreeATListsTemplate();
 										const KEventCode = QOP[actionTree][kdku][eventCode];
 										if (KEventCode !== undefined) {
 											KEventCode.PadSetList[chartIndex].push(padIndex);
@@ -969,7 +998,7 @@ function HydrateComboSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate)
 
 							if (eventValue[eNumber][0] !== 0 || eventValue[eNumber][1] !== 0) {
 								if (QOP.TranspositionTree[kdku][eventCode] === undefined) {
-									QOP.TranspositionTree[kdku][eventCode] = new TreeListsTemplate();
+									QOP.TranspositionTree[kdku][eventCode] = new TreeTRListsTemplate();
 									const KEventCode = QOP.TranspositionTree[kdku][eventCode];
 									if (KEventCode !== undefined) {
 										KEventCode.ComboSetList[chartIndex].push(comboIndex);
