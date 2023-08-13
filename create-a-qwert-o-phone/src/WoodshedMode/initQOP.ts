@@ -223,44 +223,53 @@ type QOPTranspositionMapType = {
 };
 interface IQOPActionTypes {
 	SustainState: boolean[];
-	SustainTracker?: QOPActionTrackerType[];
-	SustainMap?: QOPActionMapType;
+	SustainTracker: QOPActionTrackerType[];
+	SustainMap: QOPActionMapType;
 	AntiSustainState: boolean[];
-	AntiSustainTracker?: QOPActionTrackerType[][];
-	AntiSustainMap?: QOPActionMapType;
+	AntiSustainTracker: QOPActionTrackerType[][];
+	AntiSustainMap: QOPActionMapType;
 	ButtonState: boolean[];
-	ButtonTracker?: QOPActionTrackerType[][];
-	ButtonMap?: QOPActionMapType;
+	ButtonTracker: QOPActionTrackerType[][];
+	ButtonMap: QOPActionMapType;
 	SostenutoState: boolean[];
-	SostenutoTracker?: QOPActionTrackerType[][];
-	SostenutoMap?: QOPActionMapType;
+	SostenutoTracker: QOPActionTrackerType[][];
+	SostenutoMap: QOPActionMapType;
 	AntiSostenutoState: boolean[];
-	AntiSostenutoTracker?: QOPActionTrackerType[];
-	AntiSostenutoMap?: QOPActionMapType;
+	AntiSostenutoTracker: QOPActionTrackerType[];
+	AntiSostenutoMap: QOPActionMapType;
 }
 export class QOPActionTypes implements IQOPActionTypes {
-	SustainState: boolean[];
-	SustainTracker?: QOPActionTrackerType[];
-	SustainMap?: QOPActionMapType;
-	AntiSustainState: boolean[];
-	AntiSustainTracker?: QOPActionTrackerType[][];
-	AntiSustainMap?: QOPActionMapType;
-	ButtonState: boolean[];
-	ButtonTracker?: QOPActionTrackerType[][];
-	ButtonMap?: QOPActionMapType;
-	SostenutoState: boolean[];
-	SostenutoTracker?: QOPActionTrackerType[][];
-	SostenutoMap?: QOPActionMapType;
-	AntiSostenutoState: boolean[];
-	AntiSostenutoTracker?: QOPActionTrackerType[];
-	AntiSostenutoMap?: QOPActionMapType;
-
+	public SustainState: boolean[];
+	public SustainTracker: QOPActionTrackerType[];
+	public SustainMap: QOPActionMapType;
+	public AntiSustainState: boolean[];
+	public AntiSustainTracker: QOPActionTrackerType[][];
+	public AntiSustainMap: QOPActionMapType;
+	public ButtonState: boolean[];
+	public ButtonTracker: QOPActionTrackerType[][];
+	public ButtonMap: QOPActionMapType;
+	public SostenutoState: boolean[];
+	public SostenutoTracker: QOPActionTrackerType[][];
+	public SostenutoMap: QOPActionMapType;
+	public AntiSostenutoState: boolean[];
+	public AntiSostenutoTracker: QOPActionTrackerType[];
+	public AntiSostenutoMap: QOPActionMapType;
 	constructor() {
 		this.SustainState = [];
+		this.SustainTracker = [];
+		this.SustainMap = {} as QOPActionMapType;
 		this.AntiSustainState = [];
+		this.AntiSustainTracker = [];
+		this.AntiSustainMap = {} as QOPActionMapType;
 		this.ButtonState = [];
+		this.ButtonTracker = [];
+		this.ButtonMap = {} as QOPActionMapType;
 		this.SostenutoState = [];
+		this.SostenutoTracker = [];
+		this.SostenutoMap = {} as QOPActionMapType;
 		this.AntiSostenutoState = [];
+		this.AntiSostenutoTracker = [];
+		this.AntiSostenutoMap = {} as QOPActionMapType;
 	}
 }
 interface IQOPGutTemplate {
@@ -269,7 +278,7 @@ interface IQOPGutTemplate {
 	RequireComboMap: boolean[];
 	OpenGutNoteIDMap: number[][];
 	TranspositionState: QOPTranspositionStateType;
-	TranspositionMap?: QOPTranspositionMapType;
+	TranspositionMap: QOPTranspositionMapType;
 }
 export class QOPGutTemplate extends QOPActionTypes implements IQOPGutTemplate {
 	public RequireFretMap: boolean[];
@@ -277,7 +286,7 @@ export class QOPGutTemplate extends QOPActionTypes implements IQOPGutTemplate {
 	public RequireComboMap: boolean[];
 	public OpenGutNoteIDMap: number[][];
 	public TranspositionState: QOPTranspositionStateType;
-	public TranspositionMap?: QOPTranspositionMapType;
+	public TranspositionMap: QOPTranspositionMapType;
 	constructor() {
 		super();
 		this.RequireFretMap = [];
@@ -296,7 +305,7 @@ interface IQOPFretSetTemplate {
 	ResultantNoteIDDelta: number;
 	ResultantCentsDelta: number;
 	TranspositionState: QOPTranspositionStateType;
-	TranspositionMap?: QOPTranspositionMapType;
+	TranspositionMap: QOPTranspositionMapType;
 }
 export class QOPFretSetTemplate extends QOPActionTypes implements IQOPFretSetTemplate {
 	public HighestFretPressed: number;
@@ -306,7 +315,7 @@ export class QOPFretSetTemplate extends QOPActionTypes implements IQOPFretSetTem
 	public ResultantNoteIDDelta: number;
 	public ResultantCentsDelta: number;
 	public TranspositionState: QOPTranspositionStateType;
-	public TranspositionMap?: QOPTranspositionMapType;
+	public TranspositionMap: QOPTranspositionMapType;
 	constructor() {
 		super();
 		this.HighestFretPressed = 0;
@@ -326,7 +335,7 @@ interface IQOPValveTemplate {
 	ResultantNoteIDDelta: number[];
 	ResultantCentsDelta: number[];
 	TranspositionState: QOPTranspositionStateType;
-	TranspositionMap?: QOPTranspositionMapType;
+	TranspositionMap: QOPTranspositionMapType;
 }
 export class QOPValveTemplate extends QOPActionTypes implements IQOPValveTemplate {
 	public DeltaTypeMap: string[][];
@@ -335,7 +344,7 @@ export class QOPValveTemplate extends QOPActionTypes implements IQOPValveTemplat
 	public ResultantNoteIDDelta: number[];
 	public ResultantCentsDelta: number[];
 	public TranspositionState: QOPTranspositionStateType;
-	public TranspositionMap?: QOPTranspositionMapType;
+	public TranspositionMap: QOPTranspositionMapType;
 	constructor() {
 		super();
 		this.DeltaTypeMap = [];
@@ -349,11 +358,11 @@ export class QOPValveTemplate extends QOPActionTypes implements IQOPValveTemplat
 }
 interface IQOPChartTemplate {
 	TranspositionState: QOPTranspositionStateType;
-	TranspositionMap?: QOPTranspositionMapType;
+	TranspositionMap: QOPTranspositionMapType;
 }
 export class QOPChartTemplate implements IQOPChartTemplate {
 	public TranspositionState: QOPTranspositionStateType;
-	public TranspositionMap?: QOPTranspositionMapType;
+	public TranspositionMap: QOPTranspositionMapType;
 	constructor() {
 		this.TranspositionState = [];
 		this.TranspositionMap = {} as QOPTranspositionMapType;
@@ -377,7 +386,7 @@ interface IQOPComboSetTemplate {
 	ResultantNoteIDDelta: number[];
 	ResultantCentsDelta: number[];
 	TranspositionState: QOPTranspositionStateType;
-	TranspositionMap?: QOPTranspositionMapType;
+	TranspositionMap: QOPTranspositionMapType;
 }
 export class QOPComboSetTemplate implements IQOPComboSetTemplate {
 	public ComboMap: { TrueIndexes: number[]; ComboIndex: number }[][];
@@ -387,7 +396,7 @@ export class QOPComboSetTemplate implements IQOPComboSetTemplate {
 	public ResultantNoteIDDelta: number[];
 	public ResultantCentsDelta: number[];
 	public TranspositionState: QOPTranspositionStateType;
-	public TranspositionMap?: QOPTranspositionMapType;
+	public TranspositionMap: QOPTranspositionMapType;
 	constructor() {
 		this.ComboMap = [];
 		this.DeltaTypeMap = [];
