@@ -456,7 +456,18 @@ export const QOPLists: QOPListsString = [
 	'ComboSetList',
 	'GutList'
 ];
-type ActionTypesString = ['Sustain', 'AntiSustain', 'Button', 'Sostenuto', 'AntiSostenuto', 'Transposition'];
+type QOPSetListsString = ['FretSetList', 'PadSetList', 'ComboSetList'];
+export const QOPSetLists: QOPSetListsString = ['FretSetList', 'PadSetList', 'ComboSetList'];
+type QOPSingleListsString = ['GutList', 'ValveList', 'ChartList'];
+export const QOPSingleLists: QOPSingleListsString = ['GutList', 'ValveList', 'ChartList'];
+type ActionTypesString = [
+	'Sustain',
+	'AntiSustain',
+	'Button',
+	'Sostenuto',
+	'AntiSostenuto',
+	'Transposition'
+];
 export const ActionTypes: ActionTypesString = [
 	'Sustain',
 	'AntiSustain',
@@ -520,6 +531,22 @@ export const ActionTypeTrackers: ActionTypeTrackerString = [
 	'AntiSustainTracker',
 	'SostenutoTracker',
 	'AntiSostenutoTracker'
+];
+type ActionTypeTreesString = [
+	'ButtonTree',
+	'SustainTree',
+	'AntiSustainTree',
+	'SostenutoTree',
+	'AntiSostenutoTree',
+	'TranspositionTree'
+];
+const ActionTypeTrees: ActionTypeTreesString = [
+	'ButtonTree',
+	'SustainTree',
+	'AntiSustainTree',
+	'SostenutoTree',
+	'AntiSostenutoTree',
+	'TranspositionTree'
 ];
 
 function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): void {
@@ -732,23 +759,30 @@ function HydrateComboSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate)
 }
 
 function HydrateActionTypeTree(QOP: QOPTemplate): void {
-	const processListObject = (listObject: any, prop: string, propIndex: number | null) => {
-		ActionTypes.forEach((actionType: string) => {
-			const actionTypeMap = listObject[actionType + 'Map'];
-			if (actionTypeMap) {
-				for (const code in actionTypeMap) {
-					for (const n in actionTypeMap[code]) {
-						const value = actionTypeMap[code][n];
-						const actionTypeTree
-						if (QOP[`${actionType}Tree`] === undefined) {
-							QOP[`${actionType}Tree`] = { keydown: {}, keyup: {} };
-						}
+	const processListObject = (
+		listObject:
+			| QOPGutTemplate
+			| QOPFretSetTemplate
+			| QOPValveTemplate
+			| QOPChartTemplate
+			| QOPPadSetTemplate
+			| QOPComboSetTemplate,
+		prop: string,
+		propIndex: number | null
+	) => {
+		for (let propNum = 0; propNum < ActionTypeTrees.length; propNum++) {
+			const actionTree = ActionTypeTrees[propNum];
+			const actionMap = ActionTypeMaps[propNum];
+			if (actionMap) {
+				for (let code = 0; code < actionMap.length; code++) {
+					for (let n = 0; n < actionMap[code].length; n++) {
+						const value = actionMap[code][n];
 
-						const PassedTreeTest = (downOrUp: string, QOP: QOPTemplate) => {
-							if (QOP[`${actionType}Tree`][downOrUp][code] === undefined) {
-								QOP[`${actionType}Tree`][downOrUp][code] = {};
+						const PassedTreeTest = (QOP: QOPTemplate, downOrUp: string) => {
+							if (QOP[actionTree][downOrUp][code] === undefined) {
+								QOP[actionTree][downOrUp][code] = {};
 							}
-							let target = QOP[`${actionType}Tree`][downOrUp][code];
+							let target = QOP[actionTree][downOrUp][code];
 							if (Array.isArray(QOP[prop])) {
 								if (target[prop] === undefined) {
 									target[prop] = {};
@@ -763,43 +797,45 @@ function HydrateActionTypeTree(QOP: QOPTemplate): void {
 								}
 								target[prop].push(parseInt(n));
 							}
-						}
+						};
 
 						// Test for use keydown
 						if (Array.isArray(value[0])) {
 							if (value[0].some((num) => num !== 0)) {
-								PassedTreeTest('keydown', QOP);
+								PassedTreeTest(QOP, 'keydown');
 							}
 						} else {
 							if (value[0] !== 0) {
-								PassedTreeTest('keydown', QOP);
+								PassedTreeTest(QOP, 'keydown');
 							}
 						}
 
 						// Test for use keyup
 						if (Array.isArray(value[1])) {
 							if (value[1].some((num) => num !== 0)) {
-								PassedTreeTest('keyup', QOP);
+								PassedTreeTest(QOP, 'keyup');
 							}
 						} else {
 							if (value[1] !== 0) {
-								PassedTreeTest('keyup', QOP);
+								PassedTreeTest(QOP, 'keyup');
 							}
 						}
 					}
 				}
 			}
-		});
-	};
-
-	for (const prop of QOPLists) {
-		if (Array.isArray(QOP[prop])) {
-			QOP[prop].forEach((listObject: any, index: number) =>
-				processListObject(listObject, prop, index)
-			);
-		} else {
-			processListObject(QOP[prop], prop, null);
 		}
+	};
+	for (let propNum = 0; propNum < QOPSetLists.length; propNum++) {
+		const setObjString = QOPSetLists[propNum];
+		QOP[setObjString].forEach(
+			(listObject: QOPFretSetTemplate | QOPPadSetTemplate | QOPComboSetTemplate, index: number) =>
+				processListObject(listObject, setObjString, index)
+		);
+	}
+	for (let propNum = 0; propNum < QOPSingleLists.length; propNum++) {
+		const singleObjString = QOPSingleLists[propNum];
+		const singleObj = QOP[QOPSingleLists[propNum]];
+		processListObject(singleObj, singleObjString, null);
 	}
 }
 
