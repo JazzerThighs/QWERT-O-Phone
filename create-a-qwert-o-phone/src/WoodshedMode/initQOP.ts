@@ -582,8 +582,6 @@ function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): voi
 		QOP.GutList.RequireComboMap.push(QOPUserData.GutList[gutIndex].RequireCombo);
 		QOP.GutList.OpenGutNoteIDMap.push(QOPUserData.GutList[gutIndex].OpenGutNoteID);
 
-		QOP.GutList.TranspositionState.push([0, 0]);
-
 		const emptyArray: SimpleWaveformTypeString[] = [];
 		QOP.Oscillators.OscWaveType.push(emptyArray);
 		for (let scale = 0; scale < QOPUserData.ScaleList.length; scale++) {
@@ -597,7 +595,6 @@ function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): voi
 			const actionMap = ActionTypeMaps[propNum];
 			const actionTracker = ActionTypeTrackers[propNum];
 			const actionTree = ActionTypeTrees[propNum];
-
 			QOP.GutList[actionState].push(false);
 			QOP.GutList[actionTracker].push({});
 
@@ -635,10 +632,12 @@ function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): voi
 			}
 		}
 
+		QOP.GutList.TranspositionState.push([0, 0]);
 		if (Object.keys(QOPUserData.GutList[gutIndex]['TranspositionEventCodes']).length > 0) {
 			for (const key in QOPUserData.GutList[gutIndex]['TranspositionEventCodes']) {
 				const eventCode = key as QOPValidEventCodesString;
 				const eventValue = QOPUserData.GutList[gutIndex].TranspositionEventCodes[eventCode];
+				
 				if (eventValue !== undefined) {
 					QOP.GutList.TranspositionMap[eventCode][gutIndex] = eventValue;
 				
@@ -673,21 +672,46 @@ function HydrateFretSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate):
 		QOP.FretSetList[gutIndex] = new QOPFretSetTemplate();
 		const fretSetIndex = QOP.FretSetList[gutIndex];
 		const UDGut = QOPUserData.GutList[gutIndex];
-		for (let fret = 0; fret < UDGut.FretSet.length; fret++) {
+		
+		for (let fretIndex = 0; fretIndex < UDGut.FretSet.length; fretIndex++) {
 			for (let propNum = 0; propNum < ActionTypeTrackers.length; propNum++) {
 				const eventCodeProp = EventCodeProperties[propNum];
 				const actionState = ActionTypeStates[propNum];
 				const actionMap = ActionTypeMaps[propNum];
 				const actionTracker = ActionTypeTrackers[propNum];
+				const actionTree = ActionTypeTrees[propNum];
 				fretSetIndex[actionState].push(false);
 				fretSetIndex[actionTracker].push({});
-				if (Object.keys(UDGut.FretSet[fret][eventCodeProp]).length > 0) {
-					for (const key in UDGut.FretSet[fret][eventCodeProp]) {
+
+				if (Object.keys(UDGut.FretSet[fretIndex][eventCodeProp]).length > 0) {
+					for (const key in UDGut.FretSet[fretIndex][eventCodeProp]) {
 						const eventCode = key as QOPValidEventCodesString;
-						const eventValue = UDGut.FretSet[fret][eventCodeProp][eventCode];
+						const eventValue = UDGut.FretSet[fretIndex][eventCodeProp][eventCode];
 						if (eventValue !== undefined) {
-							fretSetIndex[actionMap][eventCode][gutIndex] = eventValue;
-							fretSetIndex[actionTracker][gutIndex][key] = false;
+							fretSetIndex[actionMap][eventCode][fretIndex] = eventValue;
+							fretSetIndex[actionTracker][fretIndex][key] = false;
+
+							for (let eNumber = 0; eNumber < 2; eNumber++) {
+								let kdku: 'keydown' | 'keyup' = 'keydown';
+								if (eNumber === 1) {
+									kdku = 'keyup';
+								}
+
+								if (eventValue[eNumber] !== 0 || eventValue[eNumber] !== 0) {
+									if (QOP[actionTree][kdku][eventCode] === undefined) {
+										QOP[actionTree][kdku][eventCode] = new TreeListsTemplate();
+										const KEventCode = QOP[actionTree][kdku][eventCode];
+										if (KEventCode !== undefined) {
+											KEventCode.FretSetList[gutIndex].push(fretIndex);
+										}
+									} else {
+										const KEventCode = QOP[actionTree][kdku][eventCode];
+										if (KEventCode !== undefined) {
+											KEventCode.FretSetList[gutIndex].push(fretIndex);
+										}
+									}
+								}
+							}
 						}
 					}
 				}
@@ -701,13 +725,35 @@ function HydrateFretSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate):
 
 					if (eventValue !== undefined) {
 						fretSetIndex.TranspositionMap[eventCode][gutIndex] = eventValue;
+
+						for (let eNumber = 0; eNumber < 2; eNumber++) {
+							let kdku: 'keydown' | 'keyup' = 'keydown';
+							if (eNumber === 1) {
+								kdku = 'keyup';
+							}
+
+							if (eventValue[eNumber][0] !== 0 || eventValue[eNumber][1] !== 0) {
+								if (QOP.TranspositionTree[kdku][eventCode] === undefined) {
+									QOP.TranspositionTree[kdku][eventCode] = new TreeListsTemplate();
+									const KEventCode = QOP.TranspositionTree[kdku][eventCode];
+									if (KEventCode !== undefined) {
+										KEventCode.FretSetList[gutIndex].push(fretIndex);
+									}
+								} else {
+									const KEventCode = QOP.TranspositionTree[kdku][eventCode];
+									if (KEventCode !== undefined) {
+										KEventCode.FretSetList[gutIndex].push(fretIndex);
+									}
+								}
+							}
+						}
 					}
 				}
 			}
 
 			for (let propNum = 0; propNum < DeltaTypes.length; propNum++) {
 				const deltaProp = DeltaTypes[propNum];
-				fretSetIndex[DeltaTypeMaps[propNum]][fret] = UDGut.FretSet[fret][deltaProp];
+				fretSetIndex[DeltaTypeMaps[propNum]][fretIndex] = UDGut.FretSet[fretIndex][deltaProp];
 			}
 		}
 	}
@@ -719,8 +765,11 @@ function HydrateValveList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): v
 			const actionState = ActionTypeStates[propNum];
 			const actionMap = ActionTypeMaps[propNum];
 			const actionTracker = ActionTypeTrackers[propNum];
+			const actionTree = ActionTypeTrees[propNum];
+
 			QOP.ValveList[actionState].push(false);
 			QOP.ValveList[actionTracker].push({});
+
 			if (Object.keys(QOPUserData.ValveList[valveIndex][eventCodeProp]).length > 0) {
 				for (const key in QOPUserData.ValveList[valveIndex][eventCodeProp]) {
 					const eventCode = key as QOPValidEventCodesString;
@@ -728,6 +777,28 @@ function HydrateValveList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): v
 					if (eventValue !== undefined) {
 						QOP.ValveList[actionMap][eventCode][valveIndex] = eventValue;
 						QOP.ValveList[actionTracker][valveIndex][key] = false;
+
+						for (let eNumber = 0; eNumber < 2; eNumber++) {
+							let kdku: 'keydown' | 'keyup' = 'keydown';
+							if (eNumber === 1) {
+								kdku = 'keyup';
+							}
+
+							if (eventValue[eNumber] !== 0 || eventValue[eNumber] !== 0) {
+								if (QOP[actionTree][kdku][eventCode] === undefined) {
+									QOP[actionTree][kdku][eventCode] = new TreeListsTemplate();
+									const KEventCode = QOP[actionTree][kdku][eventCode];
+									if (KEventCode !== undefined) {
+										KEventCode.ValveList.push(valveIndex);
+									}
+								} else {
+									const KEventCode = QOP[actionTree][kdku][eventCode];
+									if (KEventCode !== undefined) {
+										KEventCode.ValveList.push(valveIndex);
+									}
+								}
+							}
+						}
 					}
 				}
 			}
@@ -740,6 +811,28 @@ function HydrateValveList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): v
 				const eventValue = QOPUserData.ValveList[valveIndex].TranspositionEventCodes[eventCode];
 				if (eventValue !== undefined) {
 					QOP.ValveList.TranspositionMap[eventCode][valveIndex] = eventValue;
+
+					for (let eNumber = 0; eNumber < 2; eNumber++) {
+						let kdku: 'keydown' | 'keyup' = 'keydown';
+						if (eNumber === 1) {
+							kdku = 'keyup';
+						}
+
+						if (eventValue[eNumber][0] !== 0 || eventValue[eNumber][1] !== 0) {
+							if (QOP.TranspositionTree[kdku][eventCode] === undefined) {
+								QOP.TranspositionTree[kdku][eventCode] = new TreeListsTemplate();
+								const KEventCode = QOP.TranspositionTree[kdku][eventCode];
+								if (KEventCode !== undefined) {
+									KEventCode.ValveList.push(valveIndex);
+								}
+							} else {
+								const KEventCode = QOP.TranspositionTree[kdku][eventCode];
+								if (KEventCode !== undefined) {
+									KEventCode.ValveList.push(valveIndex);
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -762,8 +855,31 @@ function HydrateChartList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): v
 			for (const key in QOPUserData.ChartList[chartIndex]['TranspositionEventCodes']) {
 				const eventCode = key as QOPValidEventCodesString;
 				const eventValue = QOPUserData.ChartList[chartIndex].TranspositionEventCodes[eventCode];
+				
 				if (eventValue !== undefined) {
 					QOP.ChartList.TranspositionMap[eventCode][chartIndex] = eventValue;
+				
+					for (let eNumber = 0; eNumber < 2; eNumber++) {
+						let kdku: 'keydown' | 'keyup' = 'keydown';
+						if (eNumber === 1) {
+							kdku = 'keyup';
+						}
+
+						if (eventValue[eNumber][0] !== 0 || eventValue[eNumber][1] !== 0) {
+							if (QOP.TranspositionTree[kdku][eventCode] === undefined) {
+								QOP.TranspositionTree[kdku][eventCode] = new TreeListsTemplate();
+								const KEventCode = QOP.TranspositionTree[kdku][eventCode];
+								if (KEventCode !== undefined) {
+									KEventCode.ChartList.push(chartIndex);
+								}
+							} else {
+								const KEventCode = QOP.TranspositionTree[kdku][eventCode];
+								if (KEventCode !== undefined) {
+									KEventCode.ChartList.push(chartIndex);
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -774,21 +890,45 @@ function HydratePadSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): 
 		QOP.PadSetList[chartIndex] = new QOPPadSetTemplate();
 		const padSetIndex = QOP.PadSetList[chartIndex];
 		const UDChart = QOPUserData.ChartList[chartIndex];
-		for (let pad = 0; pad < UDChart.PadSet.length; pad++) {
+		for (let padIndex = 0; padIndex < UDChart.PadSet.length; padIndex++) {
 			for (let propNum = 0; propNum < ActionTypeTrackers.length; propNum++) {
 				const eventCodeProp = EventCodeProperties[propNum];
 				const actionState = ActionTypeStates[propNum];
 				const actionMap = ActionTypeMaps[propNum];
 				const actionTracker = ActionTypeTrackers[propNum];
+				const actionTree = ActionTypeTrees[propNum];
 				padSetIndex[actionState].push(false);
 				padSetIndex[actionTracker].push({});
-				if (Object.keys(UDChart.PadSet[pad][eventCodeProp]).length > 0) {
-					for (const key in UDChart.PadSet[pad][eventCodeProp]) {
+
+				if (Object.keys(UDChart.PadSet[padIndex][eventCodeProp]).length > 0) {
+					for (const key in UDChart.PadSet[padIndex][eventCodeProp]) {
 						const eventCode = key as QOPValidEventCodesString;
-						const eventValue = UDChart.PadSet[pad][eventCodeProp][eventCode];
+						const eventValue = UDChart.PadSet[padIndex][eventCodeProp][eventCode];
 						if (eventValue !== undefined) {
 							padSetIndex[actionMap][eventCode][chartIndex] = eventValue;
 							padSetIndex[actionTracker][chartIndex][key] = false;
+
+							for (let eNumber = 0; eNumber < 2; eNumber++) {
+								let kdku: 'keydown' | 'keyup' = 'keydown';
+								if (eNumber === 1) {
+									kdku = 'keyup';
+								}
+
+								if (eventValue[eNumber] !== 0 || eventValue[eNumber] !== 0) {
+									if (QOP[actionTree][kdku][eventCode] === undefined) {
+										QOP[actionTree][kdku][eventCode] = new TreeListsTemplate();
+										const KEventCode = QOP[actionTree][kdku][eventCode];
+										if (KEventCode !== undefined) {
+											KEventCode.PadSetList[chartIndex].push(padIndex);
+										}
+									} else {
+										const KEventCode = QOP[actionTree][kdku][eventCode];
+										if (KEventCode !== undefined) {
+											KEventCode.PadSetList[chartIndex].push(padIndex);
+										}
+									}
+								}
+							}
 						}
 					}
 				}
@@ -810,6 +950,39 @@ function HydrateComboSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate)
 						UDChart.ComboSet[comboIndex].DeltaSet[gutIndex][deltaProp];
 					comboSetIndex.ResultantNoteIDDelta.push(0);
 					comboSetIndex.ResultantCentsDelta.push(0);
+				}
+			}
+
+			if (Object.keys(UDChart['TranspositionEventCodes']).length > 0) {
+				for (const key in UDChart['TranspositionEventCodes']) {
+					const eventCode = key as QOPValidEventCodesString;
+					const eventValue = UDChart.TranspositionEventCodes[eventCode];
+
+					if (eventValue !== undefined) {
+						comboSetIndex.TranspositionMap[eventCode][chartIndex] = eventValue;
+
+						for (let eNumber = 0; eNumber < 2; eNumber++) {
+							let kdku: 'keydown' | 'keyup' = 'keydown';
+							if (eNumber === 1) {
+								kdku = 'keyup';
+							}
+
+							if (eventValue[eNumber][0] !== 0 || eventValue[eNumber][1] !== 0) {
+								if (QOP.TranspositionTree[kdku][eventCode] === undefined) {
+									QOP.TranspositionTree[kdku][eventCode] = new TreeListsTemplate();
+									const KEventCode = QOP.TranspositionTree[kdku][eventCode];
+									if (KEventCode !== undefined) {
+										KEventCode.ComboSetList[chartIndex].push(comboIndex);
+									}
+								} else {
+									const KEventCode = QOP.TranspositionTree[kdku][eventCode];
+									if (KEventCode !== undefined) {
+										KEventCode.ComboSetList[chartIndex].push(comboIndex);
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 		}
