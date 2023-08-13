@@ -758,87 +758,6 @@ function HydrateComboSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate)
 	}
 }
 
-function HydrateActionTypeTree(QOP: QOPTemplate): void {
-	const processListObject = (
-		listObject:
-			| QOPGutTemplate
-			| QOPFretSetTemplate
-			| QOPValveTemplate
-			| QOPChartTemplate
-			| QOPPadSetTemplate
-			| QOPComboSetTemplate,
-		prop: string,
-		propIndex: number | null
-	) => {
-		for (let propNum = 0; propNum < ActionTypeTrees.length; propNum++) {
-			const actionTree = ActionTypeTrees[propNum];
-			const actionMap = ActionTypeMaps[propNum];
-			if (actionMap) {
-				for (let code = 0; code < actionMap.length; code++) {
-					for (let n = 0; n < actionMap[code].length; n++) {
-						const value = actionMap[code][n];
-
-						const PassedTreeTest = (QOP: QOPTemplate, downOrUp: string) => {
-							if (QOP[actionTree][downOrUp][code] === undefined) {
-								QOP[actionTree][downOrUp][code] = {};
-							}
-							let target = QOP[actionTree][downOrUp][code];
-							if (Array.isArray(QOP[prop])) {
-								if (target[prop] === undefined) {
-									target[prop] = {};
-								}
-								if (target[prop][propIndex] === undefined) {
-									target[prop][propIndex] = [];
-								}
-								target[prop][propIndex].push(parseInt(n));
-							} else {
-								if (target[prop] === undefined) {
-									target[prop] = [];
-								}
-								target[prop].push(parseInt(n));
-							}
-						};
-
-						// Test for use keydown
-						if (Array.isArray(value[0])) {
-							if (value[0].some((num) => num !== 0)) {
-								PassedTreeTest(QOP, 'keydown');
-							}
-						} else {
-							if (value[0] !== 0) {
-								PassedTreeTest(QOP, 'keydown');
-							}
-						}
-
-						// Test for use keyup
-						if (Array.isArray(value[1])) {
-							if (value[1].some((num) => num !== 0)) {
-								PassedTreeTest(QOP, 'keyup');
-							}
-						} else {
-							if (value[1] !== 0) {
-								PassedTreeTest(QOP, 'keyup');
-							}
-						}
-					}
-				}
-			}
-		}
-	};
-	for (let propNum = 0; propNum < QOPSetLists.length; propNum++) {
-		const setObjString = QOPSetLists[propNum];
-		QOP[setObjString].forEach(
-			(listObject: QOPFretSetTemplate | QOPPadSetTemplate | QOPComboSetTemplate, index: number) =>
-				processListObject(listObject, setObjString, index)
-		);
-	}
-	for (let propNum = 0; propNum < QOPSingleLists.length; propNum++) {
-		const singleObjString = QOPSingleLists[propNum];
-		const singleObj = QOP[QOPSingleLists[propNum]];
-		processListObject(singleObj, singleObjString, null);
-	}
-}
-
 export const audioContext = new (AudioContext || window.AudioContext)();
 function HydrateQOP(QOPUserData: QOPUserDataTemplate) {
 	const QOP = new QOPTemplate();
@@ -850,9 +769,7 @@ function HydrateQOP(QOPUserData: QOPUserDataTemplate) {
 	HydrateChartList(QOPUserData, QOP);
 	HydratePadSetList(QOPUserData, QOP);
 	HydrateComboSetList(QOPUserData, QOP);
-
-	HydrateActionTypeTree(QOP);
-
+	
 	for (let gut = 0; gut < QOP.GutList.ButtonState.length; gut++) {
 		QOP.Oscillators.OscNodes.push([]);
 		QOP.Oscillators.OscGainNodes.push([]);
