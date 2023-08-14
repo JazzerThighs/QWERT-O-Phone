@@ -7,6 +7,36 @@ import type {
 import { FindClosestMIDINote } from './woodshedMIDIOUT.js';
 import { QOPMutator } from './mutateQOPLoop.js';
 
+export function WoodshedMode(QOPUserData: QOPUserDataTemplate) {
+	function WoodshedTriggerKeydown(event: KeyboardEvent) {
+		QOPMutator(event, 0, QOP);
+	}
+	function WoodshedTriggerKeyup(event: KeyboardEvent) {
+		QOPMutator(event, 1, QOP);
+	}
+	DeltaSetValidator(QOPUserData);
+	OpenGutValidator(QOPUserData);
+	const QOP = HydrateQOP(QOPUserData);
+	window.addEventListener('keydown', WoodshedTriggerKeydown);
+	window.addEventListener('keyup', WoodshedTriggerKeyup);
+}
+
+export const audioContext = new (AudioContext || window.AudioContext)();
+function HydrateQOP(QOPUserData: QOPUserDataTemplate) {
+	const QOP = new QOPTemplate();
+
+	HydrateScaleList(QOPUserData, QOP);
+
+	HydrateGutList(QOPUserData, QOP);
+	HydrateFretSetList(QOPUserData, QOP);
+	HydrateValveList(QOPUserData, QOP);
+	HydrateChartList(QOPUserData, QOP);
+	HydratePadSetList(QOPUserData, QOP);
+	HydrateComboSetList(QOPUserData, QOP);
+
+	return QOP;
+}
+
 export function CreateWoodshedModeButton(QOPUserData: QOPUserDataTemplate) {
 	const button = document.createElement('button');
 	button.innerText = 'Activate Woodshed Mode';
@@ -21,20 +51,6 @@ export function CreateWoodshedModeButton(QOPUserData: QOPUserDataTemplate) {
 	button.addEventListener('click', () => WoodshedMode(QOPUserData));
 
 	document.body.appendChild(button);
-}
-
-export function WoodshedMode(QOPUserData: QOPUserDataTemplate) {
-	function WoodshedTriggerKeydown(event: KeyboardEvent) {
-		QOPMutator(event, 0, QOP);
-	}
-	function WoodshedTriggerKeyup(event: KeyboardEvent) {
-		QOPMutator(event, 1, QOP);
-	}
-	DeltaSetValidator(QOPUserData);
-	OpenGutValidator(QOPUserData);
-	const QOP = HydrateQOP(QOPUserData);
-	window.addEventListener('keydown', WoodshedTriggerKeydown);
-	window.addEventListener('keyup', WoodshedTriggerKeyup);
 }
 
 interface IQOPTemplate {
@@ -112,7 +128,7 @@ interface IQOPStateMachineTemplate {
 	PrevTotalFrequency: number[][];
 	GutSoundState: boolean[];
 }
-export class QOPStateMachineTemplate implements IQOPStateMachineTemplate {
+class QOPStateMachineTemplate implements IQOPStateMachineTemplate {
 	public ChangedActionTypes: ActionTypesString[];
 	public ChangedLists: QOPActionTypeLists[];
 	public ChangedTransposition: boolean;
@@ -145,7 +161,7 @@ interface IQOPOscillatorsTemplate {
 	OscWaveform: SimpleWaveformTypeString[][];
 	OscNodesMute: boolean[];
 }
-export class QOPOscillatorsTemplate implements IQOPOscillatorsTemplate {
+class QOPOscillatorsTemplate implements IQOPOscillatorsTemplate {
 	public OscNodes: OscillatorNode[][];
 	public OscGainNodes: GainNode[][];
 	public OscWaveform: SimpleWaveformTypeString[][];
@@ -161,13 +177,120 @@ export class QOPOscillatorsTemplate implements IQOPOscillatorsTemplate {
 interface IQOPMIDIOutputTemplate {
 	GutMIDIOUTDisabled: boolean[];
 }
-export class QOPMIDIOutputTemplate implements IQOPMIDIOutputTemplate {
+class QOPMIDIOutputTemplate implements IQOPMIDIOutputTemplate {
 	public GutMIDIOUTDisabled: boolean[];
 
 	constructor() {
 		this.GutMIDIOUTDisabled = [];
 	}
 }
+
+type QOPActionTypeLists = 'GutList' | 'FretSetList' | 'ValveList' | 'PadSetList';
+export const QOPActionTypeListsArray: QOPActionTypeLists[] = [
+	'GutList',
+	'FretSetList',
+	'ValveList',
+	'PadSetList'
+];
+type DeltaTypesString = 'DeltaType' | 'NoteIDDelta' | 'CentsDelta';
+const DeltaTypes: DeltaTypesString[] = ['DeltaType', 'NoteIDDelta', 'CentsDelta'];
+export type DeltaTypeMapsString = 'DeltaTypeMap' | 'NoteIDDeltaMap' | 'CentsDeltaMap';
+export const DeltaTypeMaps: DeltaTypeMapsString[] = [
+	'DeltaTypeMap',
+	'NoteIDDeltaMap',
+	'CentsDeltaMap'
+];
+export type ActionTypesString =
+	| 'Sustain'
+	| 'AntiSustain'
+	| 'Button'
+	| 'Sostenuto'
+	| 'AntiSostenuto';
+export const ActionTypes: ActionTypesString[] = [
+	'Sustain',
+	'AntiSustain',
+	'Button',
+	'Sostenuto',
+	'AntiSostenuto'
+];
+type ActionTypesEventCodeString = 
+	| 'SustainEventCodes'
+	| 'AntiSustainEventCodes'
+	| 'ButtonEventCodes'
+	| 'SostenutoEventCodes'
+	| 'AntiSostenutoEventCodes';
+const ActionTypesEventCode: ActionTypesEventCodeString[] = [
+	'SustainEventCodes',
+	'AntiSustainEventCodes',
+	'ButtonEventCodes',
+	'SostenutoEventCodes',
+	'AntiSostenutoEventCodes'
+];
+export type ActionTypesStateString = 
+	| 'SustainState'
+	| 'AntiSustainState'
+	| 'ButtonState'
+	| 'SostenutoState'
+	| 'AntiSostenutoState';
+const ActionTypesState: ActionTypesStateString[] = [
+	'SustainState',
+	'AntiSustainState',
+	'ButtonState',
+	'SostenutoState',
+	'AntiSostenutoState'
+];
+type ActionTypesMapString = 
+	|'ButtonMap'
+	|'SustainMap'
+	|'AntiSustainMap'
+	|'SostenutoMap'
+	| 'AntiSostenutoMap';
+const ActionTypesMap: ActionTypesMapString[] = [
+	'SustainMap',
+	'AntiSustainMap',
+	'ButtonMap',
+	'SostenutoMap',
+	'AntiSostenutoMap'
+];
+export type ActionTypesTrackerString =
+	| 'SustainTracker'
+	| 'AntiSustainTracker'
+	| 'ButtonTracker'
+	| 'SostenutoTracker'
+	| 'AntiSostenutoTracker'
+const ActionTypesTracker: ActionTypesTrackerString[] = [
+	'SustainTracker',
+	'AntiSustainTracker',
+	'ButtonTracker',
+	'SostenutoTracker',
+	'AntiSostenutoTracker'
+];
+export type ActionTypesTreeString = 
+	| 'SustainTree'
+	| 'AntiSustainTree'
+	| 'ButtonTree'
+	| 'SostenutoTree'
+	| 'AntiSostenutoTree';
+const ActionTypesTree: ActionTypesTreeString[] = [
+	'SustainTree',
+	'AntiSustainTree',
+	'ButtonTree',
+	'SostenutoTree',
+	'AntiSostenutoTree'
+];
+
+type QOPActionTrackerType = { [key: string]: boolean };
+type QOPActionMapType = {
+	[key: string]: {
+		[key: string]: [number, number];
+	};
+};
+type QOPTranspositionStateType = [number, number][];
+type QOPTranspositionMapType = {
+	[key: string]: {
+		[key: string]: [[number, number], [number, number]];
+	};
+};
 
 interface IQOPScaleTemplate {
 	PitchHz: number;
@@ -191,122 +314,6 @@ class QOPScaleTemplate implements IQOPScaleTemplate {
 		this.PitchBendMSB = 64;
 	}
 }
-
-export type QOPSingleListsString = ['GutList', 'ValveList', 'ChartList'];
-export const QOPSingleLists: QOPSingleListsString = ['GutList', 'ValveList', 'ChartList'];
-export type QOPSetListsString = ['FretSetList', 'PadSetList', 'ComboSetList'];
-export const QOPSetLists: QOPSetListsString = ['FretSetList', 'PadSetList', 'ComboSetList'];
-export type QOPActionTypeLists = 'GutList' | 'FretSetList' | 'ValveList' | 'PadSetList';
-export const QOPActionTypeListsArray: QOPActionTypeLists[] = [
-	'GutList',
-	'FretSetList',
-	'ValveList',
-	'PadSetList'
-];
-export type DeltaTypesString = ['DeltaType', 'NoteIDDelta', 'CentsDelta'];
-export const DeltaTypes: DeltaTypesString = ['DeltaType', 'NoteIDDelta', 'CentsDelta'];
-export type DeltaTypeMapsString = ['DeltaTypeMap', 'NoteIDDeltaMap', 'CentsDeltaMap'];
-export const DeltaTypeMaps: DeltaTypeMapsString = [
-	'DeltaTypeMap',
-	'NoteIDDeltaMap',
-	'CentsDeltaMap'
-];
-export type ActionTypesString =
-	| 'Sustain'
-	| 'AntiSustain'
-	| 'Button'
-	| 'Sostenuto'
-	| 'AntiSostenuto';
-export const ActionTypes: ActionTypesString[] = [
-	'Sustain',
-	'AntiSustain',
-	'Button',
-	'Sostenuto',
-	'AntiSostenuto'
-];
-export type QOPActionEventCodesString = [
-	'ButtonEventCodes',
-	'SustainEventCodes',
-	'AntiSustainEventCodes',
-	'SostenutoEventCodes',
-	'AntiSostenutoEventCodes'
-];
-export const EventCodeProperties: QOPActionEventCodesString = [
-	'ButtonEventCodes',
-	'SustainEventCodes',
-	'AntiSustainEventCodes',
-	'SostenutoEventCodes',
-	'AntiSostenutoEventCodes'
-];
-export type ActionTypeStateString = [
-	'ButtonState',
-	'SustainState',
-	'AntiSustainState',
-	'SostenutoState',
-	'AntiSostenutoState'
-];
-export const ActionTypeStates: ActionTypeStateString = [
-	'ButtonState',
-	'SustainState',
-	'AntiSustainState',
-	'SostenutoState',
-	'AntiSostenutoState'
-];
-export type ActionTypeMapString = [
-	'ButtonMap',
-	'SustainMap',
-	'AntiSustainMap',
-	'SostenutoMap',
-	'AntiSostenutoMap'
-];
-export const ActionTypeMaps: ActionTypeMapString = [
-	'ButtonMap',
-	'SustainMap',
-	'AntiSustainMap',
-	'SostenutoMap',
-	'AntiSostenutoMap'
-];
-export type ActionTypeTrackerString = [
-	'ButtonTracker',
-	'SustainTracker',
-	'AntiSustainTracker',
-	'SostenutoTracker',
-	'AntiSostenutoTracker'
-];
-export const ActionTypeTrackers: ActionTypeTrackerString = [
-	'ButtonTracker',
-	'SustainTracker',
-	'AntiSustainTracker',
-	'SostenutoTracker',
-	'AntiSostenutoTracker'
-];
-export type ActionTypeTreesString = [
-	'ButtonTree',
-	'SustainTree',
-	'AntiSustainTree',
-	'SostenutoTree',
-	'AntiSostenutoTree'
-];
-export const ActionTypeTrees: ActionTypeTreesString = [
-	'ButtonTree',
-	'SustainTree',
-	'AntiSustainTree',
-	'SostenutoTree',
-	'AntiSostenutoTree'
-];
-
-export type QOPActionTrackerType = { [key: string]: boolean };
-export type QOPActionMapType = {
-	[key: string]: {
-		[key: string]: [number, number];
-	};
-};
-export type QOPTranspositionStateType = [number, number][];
-export type QOPTranspositionMapType = {
-	[key: string]: {
-		[key: string]: [[number, number], [number, number]];
-	};
-};
 interface IQOPActionTypes {
 	SustainState: boolean[];
 	SustainTracker: QOPActionTrackerType[];
@@ -324,7 +331,7 @@ interface IQOPActionTypes {
 	AntiSostenutoTracker: QOPActionTrackerType[];
 	AntiSostenutoMap: QOPActionMapType;
 }
-export class QOPActionTypes implements IQOPActionTypes {
+class QOPActionTypes implements IQOPActionTypes {
 	public SustainState: boolean[];
 	public SustainTracker: QOPActionTrackerType[];
 	public SustainMap: QOPActionMapType;
@@ -366,7 +373,7 @@ interface IQOPGutTemplate {
 	TranspositionState: QOPTranspositionStateType;
 	TranspositionMap: QOPTranspositionMapType;
 }
-export class QOPGutTemplate extends QOPActionTypes implements IQOPGutTemplate {
+class QOPGutTemplate extends QOPActionTypes implements IQOPGutTemplate {
 	public RequireFretMap: boolean[];
 	public RequireValveMap: boolean[];
 	public RequireComboMap: boolean[];
@@ -393,7 +400,7 @@ interface IQOPFretSetTemplate {
 	TranspositionState: QOPTranspositionStateType;
 	TranspositionMap: QOPTranspositionMapType;
 }
-export class QOPFretSetTemplate extends QOPActionTypes implements IQOPFretSetTemplate {
+class QOPFretSetTemplate extends QOPActionTypes implements IQOPFretSetTemplate {
 	public HighestFretPressed: number;
 	public DeltaTypeMap: string[];
 	public NoteIDDeltaMap: number[];
@@ -423,7 +430,7 @@ interface IQOPValveTemplate {
 	TranspositionState: QOPTranspositionStateType;
 	TranspositionMap: QOPTranspositionMapType;
 }
-export class QOPValveTemplate extends QOPActionTypes implements IQOPValveTemplate {
+class QOPValveTemplate extends QOPActionTypes implements IQOPValveTemplate {
 	public DeltaTypeMap: string[][];
 	public NoteIDDeltaMap: number[][];
 	public CentsDeltaMap: number[][];
@@ -446,7 +453,7 @@ interface IQOPChartTemplate {
 	TranspositionState: QOPTranspositionStateType;
 	TranspositionMap: QOPTranspositionMapType;
 }
-export class QOPChartTemplate implements IQOPChartTemplate {
+class QOPChartTemplate implements IQOPChartTemplate {
 	public TranspositionState: QOPTranspositionStateType;
 	public TranspositionMap: QOPTranspositionMapType;
 	constructor() {
@@ -457,7 +464,7 @@ export class QOPChartTemplate implements IQOPChartTemplate {
 interface IQOPPadSetTemplate {
 	PressedPads: number[];
 }
-export class QOPPadSetTemplate extends QOPActionTypes implements IQOPPadSetTemplate {
+class QOPPadSetTemplate extends QOPActionTypes implements IQOPPadSetTemplate {
 	public PressedPads: number[];
 	constructor() {
 		super();
@@ -474,7 +481,7 @@ interface IQOPComboSetTemplate {
 	TranspositionState: QOPTranspositionStateType;
 	TranspositionMap: QOPTranspositionMapType;
 }
-export class QOPComboSetTemplate implements IQOPComboSetTemplate {
+class QOPComboSetTemplate implements IQOPComboSetTemplate {
 	public ComboMap: { TrueIndexes: number[]; ComboIndex: number }[][];
 	public DeltaTypeMap: string[][];
 	public NoteIDDeltaMap: number[][];
@@ -501,7 +508,7 @@ interface ITreeATListsTemplate {
 	FretSetList: { [index: number]: number[] };
 	PadSetList: { [index: number]: number[] };
 }
-export class TreeATListsTemplate implements ITreeATListsTemplate {
+class TreeATListsTemplate implements ITreeATListsTemplate {
 	public GutList: number[];
 	public ValveList: number[];
 	public FretSetList: { [index: number]: number[] };
@@ -520,7 +527,7 @@ interface IQOPTreeATTemplate {
 	keydown: ATTreeKDKUTemplateObj;
 	keyup: ATTreeKDKUTemplateObj;
 }
-export class QOPTreeATTemplate implements IQOPTreeATTemplate {
+class QOPTreeATTemplate implements IQOPTreeATTemplate {
 	public keydown: ATTreeKDKUTemplateObj;
 	public keyup: ATTreeKDKUTemplateObj;
 	constructor() {
@@ -535,7 +542,7 @@ interface ITreeTRListsTemplate {
 	FretSetList: { [index: number]: number[] };
 	ComboSetList: { [index: number]: number[] };
 }
-export class TreeTRListsTemplate implements ITreeTRListsTemplate {
+class TreeTRListsTemplate implements ITreeTRListsTemplate {
 	public GutList: number[];
 	public ValveList: number[];
 	public ChartList: number[];
@@ -556,7 +563,7 @@ interface IQOPTreeTRTemplate {
 	keydown: TRTreeKDKUTemplateObj;
 	keyup: TRTreeKDKUTemplateObj;
 }
-export class QOPTreeTRTemplate implements IQOPTreeTRTemplate {
+class QOPTreeTRTemplate implements IQOPTreeTRTemplate {
 	public keydown: TRTreeKDKUTemplateObj;
 	public keyup: TRTreeKDKUTemplateObj;
 	constructor() {
@@ -634,12 +641,12 @@ function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): voi
 			QOP.StateMachine.PrevTotalFrequency[gutIndex].push(0);
 		}
 
-		for (let propNum = 0; propNum < ActionTypeTrackers.length; propNum++) {
-			const eventCodeProp = EventCodeProperties[propNum];
-			const actionState = ActionTypeStates[propNum];
-			const actionMap = ActionTypeMaps[propNum];
-			const actionTracker = ActionTypeTrackers[propNum];
-			const actionTree = ActionTypeTrees[propNum];
+		for (let propNum = 0; propNum < ActionTypesTracker.length; propNum++) {
+			const eventCodeProp = ActionTypesEventCode[propNum];
+			const actionState = ActionTypesState[propNum];
+			const actionMap = ActionTypesMap[propNum];
+			const actionTracker = ActionTypesTracker[propNum];
+			const actionTree = ActionTypesTree[propNum];
 			QOP.GutList[actionState].push(false);
 			QOP.GutList[actionTracker].push({});
 
@@ -719,12 +726,12 @@ function HydrateFretSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate):
 		const UDGut = QOPUserData.GutList[gutIndex];
 
 		for (let fretIndex = 0; fretIndex < UDGut.FretSet.length; fretIndex++) {
-			for (let propNum = 0; propNum < ActionTypeTrackers.length; propNum++) {
-				const eventCodeProp = EventCodeProperties[propNum];
-				const actionState = ActionTypeStates[propNum];
-				const actionMap = ActionTypeMaps[propNum];
-				const actionTracker = ActionTypeTrackers[propNum];
-				const actionTree = ActionTypeTrees[propNum];
+			for (let propNum = 0; propNum < ActionTypesTracker.length; propNum++) {
+				const eventCodeProp = ActionTypesEventCode[propNum];
+				const actionState = ActionTypesState[propNum];
+				const actionMap = ActionTypesMap[propNum];
+				const actionTracker = ActionTypesTracker[propNum];
+				const actionTree = ActionTypesTree[propNum];
 				fretSetIndex[actionState].push(false);
 				fretSetIndex[actionTracker].push({});
 
@@ -805,12 +812,12 @@ function HydrateFretSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate):
 }
 function HydrateValveList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): void {
 	for (let valveIndex = 0; valveIndex < QOPUserData.ValveList.length; valveIndex++) {
-		for (let propNum = 0; propNum < ActionTypeTrackers.length; propNum++) {
-			const eventCodeProp = EventCodeProperties[propNum];
-			const actionState = ActionTypeStates[propNum];
-			const actionMap = ActionTypeMaps[propNum];
-			const actionTracker = ActionTypeTrackers[propNum];
-			const actionTree = ActionTypeTrees[propNum];
+		for (let propNum = 0; propNum < ActionTypesTracker.length; propNum++) {
+			const eventCodeProp = ActionTypesEventCode[propNum];
+			const actionState = ActionTypesState[propNum];
+			const actionMap = ActionTypesMap[propNum];
+			const actionTracker = ActionTypesTracker[propNum];
+			const actionTree = ActionTypesTree[propNum];
 
 			QOP.ValveList[actionState].push(false);
 			QOP.ValveList[actionTracker].push({});
@@ -936,12 +943,12 @@ function HydratePadSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): 
 		const padSetIndex = QOP.PadSetList[chartIndex];
 		const UDChart = QOPUserData.ChartList[chartIndex];
 		for (let padIndex = 0; padIndex < UDChart.PadSet.length; padIndex++) {
-			for (let propNum = 0; propNum < ActionTypeTrackers.length; propNum++) {
-				const eventCodeProp = EventCodeProperties[propNum];
-				const actionState = ActionTypeStates[propNum];
-				const actionMap = ActionTypeMaps[propNum];
-				const actionTracker = ActionTypeTrackers[propNum];
-				const actionTree = ActionTypeTrees[propNum];
+			for (let propNum = 0; propNum < ActionTypesTracker.length; propNum++) {
+				const eventCodeProp = ActionTypesEventCode[propNum];
+				const actionState = ActionTypesState[propNum];
+				const actionMap = ActionTypesMap[propNum];
+				const actionTracker = ActionTypesTracker[propNum];
+				const actionTree = ActionTypesTree[propNum];
 				padSetIndex[actionState].push(false);
 				padSetIndex[actionTracker].push({});
 
@@ -1047,20 +1054,4 @@ function HydrateComboSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate)
 			comboSetIndex.ComboMap[trueIndexes.length].push(comboMapPiece); // Add trueIndexes to the appropriate element of ComboMap
 		});
 	}
-}
-
-export const audioContext = new (AudioContext || window.AudioContext)();
-function HydrateQOP(QOPUserData: QOPUserDataTemplate) {
-	const QOP = new QOPTemplate();
-
-	HydrateScaleList(QOPUserData, QOP);
-
-	HydrateGutList(QOPUserData, QOP);
-	HydrateFretSetList(QOPUserData, QOP);
-	HydrateValveList(QOPUserData, QOP);
-	HydrateChartList(QOPUserData, QOP);
-	HydratePadSetList(QOPUserData, QOP);
-	HydrateComboSetList(QOPUserData, QOP);
-
-	return QOP;
 }

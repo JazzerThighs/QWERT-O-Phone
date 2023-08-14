@@ -1,28 +1,19 @@
 import type { QOPValidEventCodesString } from '../UserDataMode/initQOPUD.js';
-import type { QOPTemplate, ActionTypesString } from './initQOP.js';
+import type {
+	QOPTemplate,
+	ActionTypesString,
+	ActionTypesTrackerString,
+	ActionTypesStateString,
+	ActionTypesTreeString
+} from './initQOP.js';
 import { ActionTypes, QOPActionTypeListsArray } from './initQOP.js';
 //import { MIDIOutputPacket } from './woodshedMIDIOUT.js';
 import { OscNodesUpdate } from './woodshedOscNodes.js';
 
-type ActionTypesTrackerString =
-	| 'SustainTracker'
-	| 'AntiSustainTracker'
-	| 'ButtonTracker'
-	| 'SostenutoTracker'
-	| 'AntiSostenutoTracker';
-type ActionTypesStateString =
-	| 'SustainState'
-	| 'AntiSustainState'
-	| 'ButtonState'
-	| 'SostenutoState'
-	| 'AntiSostenutoState';
-type ActionTypesTreeString =
-	| 'SustainTree'
-	| 'AntiSustainTree'
-	| 'ButtonTree'
-	| 'SostenutoTree'
-	| 'AntiSostenutoTree';
 type QOPTRListsString = ['GutList', 'FretSetList', 'ValveList', 'ChartList', 'ComboSetList'];
+type QOPSingleObjString = 'GutList' | 'ValveList';
+type QOPSetObjString = 'FretSetList' | 'PadSetList';
+
 const QOPTRLists: QOPTRListsString = [
 	'GutList',
 	'FretSetList',
@@ -30,9 +21,6 @@ const QOPTRLists: QOPTRListsString = [
 	'ChartList',
 	'ComboSetList'
 ];
-type QOPSingleObjString = 'GutList' | 'ValveList';
-type QOPSetObjString = 'FretSetList' | 'PadSetList';
-
 export function QOPMutator(event: KeyboardEvent, eNumber: 0 | 1, QOP: QOPTemplate) {
 	if (event.repeat || event.metaKey) {
 		return;
@@ -64,8 +52,7 @@ export function QOPMutator(event: KeyboardEvent, eNumber: 0 | 1, QOP: QOPTemplat
 						if (list === 'GutList' || list === 'ValveList') {
 							const actionTypeTree_Event_Code_List = actionTypeTree_Event_Code[list];
 							for (const q of actionTypeTree_Event_Code_List) {
-								const bool = QOP[list][actionTracker][q];
-								bool[code] = !bool[code];
+								QOP[list][actionTracker][q][code] = !QOP[list][actionTracker][q][code];
 							}
 						} else {
 							const actionTypeTree_Event_Code_List = actionTypeTree_Event_Code[list];
@@ -73,8 +60,8 @@ export function QOPMutator(event: KeyboardEvent, eNumber: 0 | 1, QOP: QOPTemplat
 								const actionTypeTree_Event_Code_List_Member =
 									actionTypeTree_Event_Code_List[member];
 								for (const q of actionTypeTree_Event_Code_List_Member) {
-									const bool = QOP[list][member][actionTracker][q];
-									bool[code] = !bool[code];
+									QOP[list][member][actionTracker][q][code] =
+										!QOP[list][member][actionTracker][q][code];
 								}
 							}
 						}
@@ -94,11 +81,10 @@ export function QOPMutator(event: KeyboardEvent, eNumber: 0 | 1, QOP: QOPTemplat
 					const actionTypeTree_Event_Code_List = Q_TR_T_e_Code[list];
 					for (const q of actionTypeTree_Event_Code_List) {
 						if (QOP[list]['TranspositionMap'][code][q] !== undefined) {
-							const state = QOP[list]['TranspositionState'][q];
-							const delta = QOP[list]['TranspositionMap'][code][q][eNumber];
-							state[0] += delta[0];
-							state[1] += delta[1];
-							//state = state.map((value, index) => value + delta[index]);
+							QOP[list]['TranspositionState'][q][0] +=
+								QOP[list]['TranspositionMap'][code][q][eNumber][0];
+							QOP[list]['TranspositionState'][q][1] +=
+								QOP[list]['TranspositionMap'][code][q][eNumber][1];
 						}
 					}
 				} else {
@@ -108,11 +94,10 @@ export function QOPMutator(event: KeyboardEvent, eNumber: 0 | 1, QOP: QOPTemplat
 						const actionTypeTree_Event_Code_List_Set = actionTypeTree_Event_Code_List[member];
 						for (let q = 0; q < actionTypeTree_Event_Code_List_Set.length; q++) {
 							if (QOP[list][member]['TranspositionMap'][code][q] !== undefined) {
-								const state = QOP[list][member]['TranspositionState'][q];
-								const delta = QOP[list][member]['TranspositionMap'][code][q][eNumber];
-								state[0] += delta[0];
-								state[1] += delta[1];
-								// state = state.map((value, index) => value + delta[index]);
+								QOP[list][member]['TranspositionState'][q][0] +=
+									QOP[list][member]['TranspositionMap'][code][q][eNumber][0];
+								QOP[list][member]['TranspositionState'][q][1] +=
+									QOP[list][member]['TranspositionMap'][code][q][eNumber][1];
 							}
 						}
 					}
@@ -137,7 +122,6 @@ export function QOPMutator(event: KeyboardEvent, eNumber: 0 | 1, QOP: QOPTemplat
 		for (const xList of ChangedLists) {
 			if (xList === 'GutList' || xList === 'ValveList') {
 				const listString = xList as QOPSingleObjString;
-				const QOP_xObj = QOP[listString];
 				for (const xActionType of ChangedActionTypes) {
 					const actionTracker = (xActionType + 'Tracker') as ActionTypesTrackerString;
 					if (actionTracker !== undefined) {
@@ -145,62 +129,78 @@ export function QOPMutator(event: KeyboardEvent, eNumber: 0 | 1, QOP: QOPTemplat
 						for (let q = 0; q < actionTracker.length; q++) {
 							switch (xActionType) {
 								case 'Sostenuto':
-									if (!QOP_xObj[actionState][q]) {
+									if (!QOP[listString][actionState][q]) {
 										if (
-											Object.values(QOP_xObj[actionTracker][q]).some((b: boolean) => b === true) &&
-											QOP_xObj['ButtonState'][q]
+											Object.values(QOP[listString][actionTracker][q]).some(
+												(b: boolean) => b === true
+											) &&
+											QOP[listString]['ButtonState'][q]
 										) {
-											QOP_xObj[actionState][q] = true;
+											QOP[listString][actionState][q] = true;
 										}
 									} else {
 										if (
-											!Object.values(QOP_xObj[actionTracker][q]).some((b: boolean) => b === true)
+											!Object.values(QOP[listString][actionTracker][q]).some(
+												(b: boolean) => b === true
+											)
 										) {
-											QOP_xObj[actionState][q] = false;
+											QOP[listString][actionState][q] = false;
 										}
 									}
 									break;
 								case 'AntiSostenuto':
-									if (!QOP_xObj[actionState][q]) {
+									if (!QOP[listString][actionState][q]) {
 										if (
-											Object.values(QOP_xObj[actionTracker][q]).some((b: boolean) => b === true) &&
-											!QOP_xObj['ButtonState'][q]
+											Object.values(QOP[listString][actionTracker][q]).some(
+												(b: boolean) => b === true
+											) &&
+											!QOP[listString]['ButtonState'][q]
 										) {
-											QOP_xObj[actionState][q] = true;
+											QOP[listString][actionState][q] = true;
 										}
 									} else {
 										if (
-											!Object.values(QOP_xObj[actionTracker][q]).some((b: boolean) => b === true)
+											!Object.values(QOP[listString][actionTracker][q]).some(
+												(b: boolean) => b === true
+											)
 										) {
-											QOP_xObj[actionState][q] = false;
+											QOP[listString][actionState][q] = false;
 										}
 									}
 									break;
 								case 'Button':
 									if (!actionState[q]) {
 										if (
-											Object.values(QOP_xObj[actionTracker][q]).some((b: boolean) => b === true) &&
-											!QOP_xObj['AntiSustainState'][q] &&
-											!QOP_xObj['AntiSostenutoState'][q]
+											Object.values(QOP[listString][actionTracker][q]).some(
+												(b: boolean) => b === true
+											) &&
+											!QOP[listString]['AntiSustainState'][q] &&
+											!QOP[listString]['AntiSostenutoState'][q]
 										) {
-											QOP_xObj[actionState][q] = true;
+											QOP[listString][actionState][q] = true;
 										}
 									} else {
 										if (
-											!Object.values(QOP_xObj[actionTracker][q]).some((b: boolean) => b === true) &&
-											!QOP_xObj['SustainState'][q] &&
-											!QOP_xObj['SostenutoState'][q]
+											!Object.values(QOP[listString][actionTracker][q]).some(
+												(b: boolean) => b === true
+											) &&
+											!QOP[listString]['SustainState'][q] &&
+											!QOP[listString]['SostenutoState'][q]
 										) {
-											QOP_xObj[actionState][q] = false;
+											QOP[listString][actionState][q] = false;
 										}
 									}
 									break;
 								case 'Sustain':
 								case 'AntiSustain':
-									if (Object.values(QOP_xObj[actionTracker][q]).some((b: boolean) => b === true)) {
-										QOP_xObj[actionState][q] = true;
+									if (
+										Object.values(QOP[listString][actionTracker][q]).some(
+											(b: boolean) => b === true
+										)
+									) {
+										QOP[listString][actionState][q] = true;
 									} else {
-										QOP_xObj[actionState][q] = false;
+										QOP[listString][actionState][q] = false;
 									}
 									break;
 							}
@@ -210,8 +210,6 @@ export function QOPMutator(event: KeyboardEvent, eNumber: 0 | 1, QOP: QOPTemplat
 			} else {
 				for (let member = 0; member < QOP[xList].length; member++) {
 					const listString = xList as QOPSetObjString;
-					const QOP_xList = QOP[listString];
-					const QOP_xObj = QOP_xList[member];
 					for (const xActionType of ChangedActionTypes) {
 						const actionTracker = (xActionType + 'Tracker') as ActionTypesTrackerString;
 						if (actionTracker !== undefined) {
@@ -219,72 +217,78 @@ export function QOPMutator(event: KeyboardEvent, eNumber: 0 | 1, QOP: QOPTemplat
 							for (let q = 0; q < actionTracker.length; q++) {
 								switch (xActionType) {
 									case 'Sostenuto':
-										if (!QOP_xObj[actionState][q]) {
+										if (!QOP[listString][member][actionState][q]) {
 											if (
-												Object.values(QOP_xObj[actionTracker][q]).some(
+												Object.values(QOP[listString][member][actionTracker][q]).some(
 													(b: boolean) => b === true
 												) &&
-												QOP_xObj['ButtonState'][q]
+												QOP[listString][member]['ButtonState'][q]
 											) {
-												QOP_xObj[actionState][q] = true;
+												QOP[listString][member][actionState][q] = true;
 											}
 										} else {
 											if (
-												!Object.values(QOP_xObj[actionTracker][q]).some((b: boolean) => b === true)
+												!Object.values(QOP[listString][member][actionTracker][q]).some(
+													(b: boolean) => b === true
+												)
 											) {
-												QOP_xObj[actionState][q] = false;
+												QOP[listString][member][actionState][q] = false;
 											}
 										}
 										break;
 									case 'AntiSostenuto':
-										if (!QOP_xObj[actionState][q]) {
+										if (!QOP[listString][member][actionState][q]) {
 											if (
-												Object.values(QOP_xObj[actionTracker][q]).some(
+												Object.values(QOP[listString][member][actionTracker][q]).some(
 													(b: boolean) => b === true
 												) &&
-												!QOP_xObj['ButtonState'][q]
+												!QOP[listString][member]['ButtonState'][q]
 											) {
-												QOP_xObj[actionState][q] = true;
+												QOP[listString][member][actionState][q] = true;
 											}
 										} else {
 											if (
-												!Object.values(QOP_xObj[actionTracker][q]).some((b: boolean) => b === true)
+												!Object.values(QOP[listString][member][actionTracker][q]).some(
+													(b: boolean) => b === true
+												)
 											) {
-												QOP_xObj[actionState][q] = false;
+												QOP[listString][member][actionState][q] = false;
 											}
 										}
 										break;
 									case 'Button':
 										if (!actionState[q]) {
 											if (
-												Object.values(QOP_xObj[actionTracker][q]).some(
+												Object.values(QOP[listString][member][actionTracker][q]).some(
 													(b: boolean) => b === true
 												) &&
-												!QOP_xObj['AntiSustainState'][q] &&
-												!QOP_xObj['AntiSostenutoState'][q]
+												!QOP[listString][member]['AntiSustainState'][q] &&
+												!QOP[listString][member]['AntiSostenutoState'][q]
 											) {
-												QOP_xObj[actionState][q] = true;
+												QOP[listString][member][actionState][q] = true;
 											}
 										} else {
 											if (
-												!Object.values(QOP_xObj[actionTracker][q]).some(
+												!Object.values(QOP[listString][member][actionTracker][q]).some(
 													(b: boolean) => b === true
 												) &&
-												!QOP_xObj['SustainState'][q] &&
-												!QOP_xObj['SostenutoState'][q]
+												!QOP[listString][member]['SustainState'][q] &&
+												!QOP[listString][member]['SostenutoState'][q]
 											) {
-												QOP_xObj[actionState][q] = false;
+												QOP[listString][member][actionState][q] = false;
 											}
 										}
 										break;
 									case 'Sustain':
 									case 'AntiSustain':
 										if (
-											Object.values(QOP_xObj[actionTracker][q]).some((b: boolean) => b === true)
+											Object.values(QOP[listString][member][actionTracker][q]).some(
+												(b: boolean) => b === true
+											)
 										) {
-											QOP_xObj[actionState][q] = true;
+											QOP[listString][member][actionState][q] = true;
 										} else {
-											QOP_xObj[actionState][q] = false;
+											QOP[listString][member][actionState][q] = false;
 										}
 										break;
 								}
@@ -323,6 +327,7 @@ export function QOPMutator(event: KeyboardEvent, eNumber: 0 | 1, QOP: QOPTemplat
 			OscNodesUpdate(QOP);
 		}
 	}
+	return QOP;
 }
 
 function CalculateValveListDeltaChord(QOP: QOPTemplate) {
@@ -361,27 +366,30 @@ function CalculateFretDelta(QOP: QOPTemplate) {
 	const { FretSetList } = QOP;
 
 	for (let fs = 0; fs < FretSetList.length; fs++) {
-		const fretSet = FretSetList[fs];
-		fretSet.ResultantNoteIDDelta = 0;
-		fretSet.ResultantCentsDelta = 0;
-		if (fretSet.ButtonState.includes(true)) {
+		FretSetList[fs].ResultantNoteIDDelta = 0;
+		FretSetList[fs].ResultantCentsDelta = 0;
+		if (FretSetList[fs].ButtonState.includes(true)) {
 			QOP.StateMachine.FretConfirm[fs] = true;
-			fretSet.HighestFretPressed = fretSet.ButtonState.lastIndexOf(true);
-			const highFret = fretSet.HighestFretPressed;
+			FretSetList[fs].HighestFretPressed = FretSetList[fs].ButtonState.lastIndexOf(true);
+			const highFret = FretSetList[fs].HighestFretPressed;
 			if (
-				fretSet.DeltaTypeMap[highFret] === 'NoteID' ||
-				fretSet.DeltaTypeMap[highFret] === 'Both'
+				FretSetList[fs].DeltaTypeMap[highFret] === 'NoteID' ||
+				FretSetList[fs].DeltaTypeMap[highFret] === 'Both'
 			) {
-				fretSet.ResultantNoteIDDelta =
-					fretSet.NoteIDDeltaMap[highFret] + fretSet.TranspositionState[highFret][0];
+				FretSetList[fs].ResultantNoteIDDelta =
+					FretSetList[fs].NoteIDDeltaMap[highFret] +
+					FretSetList[fs].TranspositionState[highFret][0];
 			}
-			if (fretSet.DeltaTypeMap[highFret] === 'Cents' || fretSet.DeltaTypeMap[highFret] === 'Both') {
-				fretSet.ResultantCentsDelta =
-					fretSet.CentsDeltaMap[highFret] + fretSet.TranspositionState[highFret][1];
+			if (
+				FretSetList[fs].DeltaTypeMap[highFret] === 'Cents' ||
+				FretSetList[fs].DeltaTypeMap[highFret] === 'Both'
+			) {
+				FretSetList[fs].ResultantCentsDelta =
+					FretSetList[fs].CentsDeltaMap[highFret] + FretSetList[fs].TranspositionState[highFret][1];
 			}
 		} else {
 			QOP.StateMachine.FretConfirm[fs] = false;
-			fretSet.HighestFretPressed = -1;
+			FretSetList[fs].HighestFretPressed = -1;
 		}
 	}
 }
@@ -392,22 +400,26 @@ function CalculateComboSetListDeltaChord(QOP: QOPTemplate) {
 	ComboConfirm = false;
 	for (let chartIndex = 0; chartIndex < PadSetList.length; chartIndex++) {
 		//PressedPads Determination
-		const padSet = PadSetList[chartIndex];
-		const comboSet = ComboSetList[chartIndex];
-		padSet.PressedPads = [];
+		PadSetList[chartIndex].PressedPads = [];
 
-		for (let pad = 0; pad < padSet.ButtonState.length; pad++) {
-			if (padSet.ButtonState[pad]) {
-				padSet.PressedPads.push(pad);
+		for (let pad = 0; pad < PadSetList[chartIndex].ButtonState.length; pad++) {
+			if (PadSetList[chartIndex].ButtonState[pad]) {
+				PadSetList[chartIndex].PressedPads.push(pad);
 			}
 		}
+		
 		//Combo Validation
-		const searchArray = comboSet.ComboMap[padSet.PressedPads.length];
+		const searchArray =
+			ComboSetList[chartIndex].ComboMap[PadSetList[chartIndex].PressedPads.length];
 		let matchedCombo = -1;
 		if (searchArray !== null) {
 			for (let combo = 0; combo < searchArray.length; combo++) {
 				const { TrueIndexes, ComboIndex } = searchArray[combo];
-				if (padSet.PressedPads.every((element, index) => element === TrueIndexes[index])) {
+				if (
+					PadSetList[chartIndex].PressedPads.every(
+						(element, index) => element === TrueIndexes[index]
+					)
+				) {
 					matchedCombo = ComboIndex;
 					// eslint-disable-next-line @typescript-eslint/no-unused-vars
 					ComboConfirm = true;
@@ -418,28 +430,28 @@ function CalculateComboSetListDeltaChord(QOP: QOPTemplate) {
 		for (let deltaIndex = 0; deltaIndex < GutList.ButtonState.length; deltaIndex++) {
 			if (matchedCombo > -1) {
 				if (
-					comboSet.DeltaTypeMap[deltaIndex][matchedCombo] === 'NoteID' ||
-					comboSet.DeltaTypeMap[deltaIndex][matchedCombo] === 'Both'
+					ComboSetList[chartIndex].DeltaTypeMap[deltaIndex][matchedCombo] === 'NoteID' ||
+					ComboSetList[chartIndex].DeltaTypeMap[deltaIndex][matchedCombo] === 'Both'
 				) {
-					comboSet.ResultantNoteIDDelta[deltaIndex] =
-						comboSet.NoteIDDeltaMap[deltaIndex][matchedCombo] +
-						comboSet.TranspositionState[matchedCombo][0];
+					ComboSetList[chartIndex].ResultantNoteIDDelta[deltaIndex] =
+						ComboSetList[chartIndex].NoteIDDeltaMap[deltaIndex][matchedCombo] +
+						ComboSetList[chartIndex].TranspositionState[matchedCombo][0];
 				} else {
-					comboSet.ResultantNoteIDDelta[deltaIndex] = 0;
+					ComboSetList[chartIndex].ResultantNoteIDDelta[deltaIndex] = 0;
 				}
 				if (
-					comboSet.DeltaTypeMap[deltaIndex][matchedCombo] === 'Cents' ||
-					comboSet.DeltaTypeMap[deltaIndex][matchedCombo] === 'Both'
+					ComboSetList[chartIndex].DeltaTypeMap[deltaIndex][matchedCombo] === 'Cents' ||
+					ComboSetList[chartIndex].DeltaTypeMap[deltaIndex][matchedCombo] === 'Both'
 				) {
-					comboSet.ResultantCentsDelta[deltaIndex] =
-						comboSet.CentsDeltaMap[deltaIndex][matchedCombo] +
-						comboSet.TranspositionState[matchedCombo][1];
+					ComboSetList[chartIndex].ResultantCentsDelta[deltaIndex] =
+						ComboSetList[chartIndex].CentsDeltaMap[deltaIndex][matchedCombo] +
+						ComboSetList[chartIndex].TranspositionState[matchedCombo][1];
 				} else {
-					comboSet.ResultantCentsDelta[deltaIndex] = 0;
+					ComboSetList[chartIndex].ResultantCentsDelta[deltaIndex] = 0;
 				}
 			} else {
-				comboSet.ResultantNoteIDDelta[deltaIndex] = 0;
-				comboSet.ResultantCentsDelta[deltaIndex] = 0;
+				ComboSetList[chartIndex].ResultantNoteIDDelta[deltaIndex] = 0;
+				ComboSetList[chartIndex].ResultantCentsDelta[deltaIndex] = 0;
 			}
 		}
 	}
@@ -485,5 +497,3 @@ function CalculateTotalFrequency(QOP: QOPTemplate) {
 		}
 	}
 }
-
-
