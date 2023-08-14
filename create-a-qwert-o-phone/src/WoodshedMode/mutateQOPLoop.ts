@@ -327,7 +327,6 @@ export function QOPMutator(event: KeyboardEvent, eNumber: 0 | 1, QOP: QOPTemplat
 			OscNodesUpdate(QOP);
 		}
 	}
-	return QOP;
 }
 
 function CalculateValveListDeltaChord(QOP: QOPTemplate) {
