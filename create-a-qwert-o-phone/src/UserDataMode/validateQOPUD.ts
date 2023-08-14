@@ -77,9 +77,9 @@ export function OpenGutValidator(QOPUserData: QOPUserDataTemplate) {
 				GutList[gut].OpenGutNoteID.push(69);
 			}
 		}
-		if (GutList[gut].OpenGutWaveType.length < ScaleList.length) {
-			while (GutList[gut].OpenGutWaveType.length < ScaleList.length) {
-				GutList[gut].OpenGutWaveType.push('sine');
+		if (GutList[gut].OscWaveType.length < ScaleList.length) {
+			while (GutList[gut].OscWaveType.length < ScaleList.length) {
+				GutList[gut].OscWaveType.push('sine');
 			}
 		}
 	}
