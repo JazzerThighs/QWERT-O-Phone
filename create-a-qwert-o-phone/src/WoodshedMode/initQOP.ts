@@ -25,6 +25,10 @@ export const audioContext = new (AudioContext || window.AudioContext)();
 function HydrateQOP(QOPUserData: QOPUserDataTemplate) {
 	const QOP = new QOPTemplate();
 
+	QOP.StateMachine.DebounceTimer = QOPUserData.DebounceTimer;
+	QOP.Oscillators.OscModeToggle = QOPUserData.OscModeToggle;
+	QOP.MIDIOutput.MIDIOutputModeToggle = QOPUserData.MIDIOutputModeToggle;
+
 	HydrateScaleList(QOPUserData, QOP);
 
 	HydrateGutList(QOPUserData, QOP);
@@ -33,6 +37,8 @@ function HydrateQOP(QOPUserData: QOPUserDataTemplate) {
 	HydrateChartList(QOPUserData, QOP);
 	HydratePadSetList(QOPUserData, QOP);
 	HydrateComboSetList(QOPUserData, QOP);
+
+	
 
 	return QOP;
 }
@@ -127,6 +133,7 @@ interface IQOPStateMachineTemplate {
 	TotalFrequency: number[][];
 	PrevTotalFrequency: number[][];
 	GutSoundState: boolean[];
+	DebounceTimer: number;
 }
 class QOPStateMachineTemplate implements IQOPStateMachineTemplate {
 	public ChangedActionTypes: ActionTypesString[];
@@ -140,6 +147,7 @@ class QOPStateMachineTemplate implements IQOPStateMachineTemplate {
 	public TotalFrequency: number[][];
 	public PrevTotalFrequency: number[][];
 	public GutSoundState: boolean[];
+	public DebounceTimer: number;
 
 	constructor() {
 		this.ChangedActionTypes = [] as ActionTypesString[];
@@ -153,6 +161,7 @@ class QOPStateMachineTemplate implements IQOPStateMachineTemplate {
 		this.TotalFrequency = [];
 		this.PrevTotalFrequency = [];
 		this.GutSoundState = [];
+		this.DebounceTimer = 0;
 	}
 }
 interface IQOPOscillatorsTemplate {
@@ -162,12 +171,14 @@ interface IQOPOscillatorsTemplate {
 	OscNodesMute: boolean[];
 }
 class QOPOscillatorsTemplate implements IQOPOscillatorsTemplate {
+	public OscModeToggle: boolean;
 	public OscNodes: OscillatorNode[][];
 	public OscGainNodes: GainNode[][];
 	public OscWaveform: SimpleWaveformTypeString[][];
 	public OscNodesMute: boolean[];
 
 	constructor() {
+		this.OscModeToggle = false;
 		this.OscNodes = [];
 		this.OscGainNodes = [];
 		this.OscWaveform = [];
@@ -175,12 +186,15 @@ class QOPOscillatorsTemplate implements IQOPOscillatorsTemplate {
 	}
 }
 interface IQOPMIDIOutputTemplate {
+	MIDIOutputModeToggle: boolean;
 	GutMIDIOUTDisabled: boolean[];
 }
 class QOPMIDIOutputTemplate implements IQOPMIDIOutputTemplate {
+	public MIDIOutputModeToggle: boolean;
 	public GutMIDIOUTDisabled: boolean[];
 
 	constructor() {
+		this.MIDIOutputModeToggle = false;
 		this.GutMIDIOUTDisabled = [];
 	}
 }
@@ -194,8 +208,8 @@ export const QOPActionTypeListsArray: QOPActionTypeLists[] = [
 ];
 type DeltaTypesString = 'DeltaType' | 'NoteIDDelta' | 'CentsDelta';
 const DeltaTypes: DeltaTypesString[] = ['DeltaType', 'NoteIDDelta', 'CentsDelta'];
-export type DeltaTypeMapsString = 'DeltaTypeMap' | 'NoteIDDeltaMap' | 'CentsDeltaMap';
-export const DeltaTypeMaps: DeltaTypeMapsString[] = [
+type DeltaTypeMapsString = 'DeltaTypeMap' | 'NoteIDDeltaMap' | 'CentsDeltaMap';
+const DeltaTypeMaps: DeltaTypeMapsString[] = [
 	'DeltaTypeMap',
 	'NoteIDDeltaMap',
 	'CentsDeltaMap'

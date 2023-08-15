@@ -7,9 +7,6 @@
     <h1>QOP User Data:</h1>
     <pre>{JSON.stringify(QOPUserData, null, 2)}</pre>
 
-	
-
-
 <style>
-    /* You can style your component here */
+
 </style>

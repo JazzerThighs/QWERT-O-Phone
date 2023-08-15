@@ -29,6 +29,9 @@ export function QOPMutator(event: KeyboardEvent, eNumber: 0 | 1, QOP: QOPTemplat
 	const e = event.type as 'keydown' | 'keyup';
 	const code = event.code as QOPValidEventCodesString;
 	let { ChangedActionTypes, ChangedLists, ChangedTransposition } = QOP.StateMachine;
+	const { DebounceTimer } = QOP.StateMachine;
+	const { OscModeToggle } = QOP.Oscillators;
+	const { MIDIOutputModeToggle } = QOP.MIDIOutput;
 
 	ChangedActionTypes.length = 0;
 	ChangedLists.length = 0;
@@ -317,14 +320,29 @@ export function QOPMutator(event: KeyboardEvent, eNumber: 0 | 1, QOP: QOPTemplat
 			}
 		}
 
-		CalculateTotalFrequency(QOP);
-		//MIDIOutputPacket(QOP);
-		OscNodesUpdate(QOP);
+		let debounceTimer = DebounceTimer;
+		if (DebounceTimer !== null) {
+			clearTimeout(debounceTimer);
+		}
+
+		debounceTimer = window.setTimeout(() => {
+			CalculateTotalFrequency(QOP);
+			// if (MIDIOutputModeToggle) {
+			// MIDIOutputPacket(QOP);
+			// }
+			if (OscModeToggle) {
+				OscNodesUpdate(QOP);
+			}
+		}, 10);
 	} else {
 		if (ChangedTransposition === true) {
 			CalculateTotalFrequency(QOP);
-			//MIDIOutputPacket(QOP);
-			OscNodesUpdate(QOP);
+			// if (MIDIOutputModeToggle) {
+			// MIDIOutputPacket(QOP);
+			// }
+			if (OscModeToggle) {
+				OscNodesUpdate(QOP);
+			}
 		}
 	}
 }
@@ -406,7 +424,7 @@ function CalculateComboSetListDeltaChord(QOP: QOPTemplate) {
 				PadSetList[chartIndex].PressedPads.push(pad);
 			}
 		}
-		
+
 		//Combo Validation
 		const searchArray =
 			ComboSetList[chartIndex].ComboMap[PadSetList[chartIndex].PressedPads.length];

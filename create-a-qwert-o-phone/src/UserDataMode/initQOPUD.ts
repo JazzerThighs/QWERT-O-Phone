@@ -7,6 +7,11 @@ interface IQOPUserDataTemplate {
 	Timestamp: string;
 	Deprecated: boolean;
 	Description: string;
+
+	OscModeToggle: boolean;
+	MIDIOutputModeToggle: boolean;
+	DebounceTimer: number;
+
 	ScaleList: ScaleUDTemplate[];
 	GutList: GutUDTemplate[];
 	ValveList: ValveUDTemplate[];
@@ -19,6 +24,10 @@ export class QOPUserDataTemplate implements IQOPUserDataTemplate {
 	public Deprecated: boolean;
 	public Description: string;
 
+	public OscModeToggle: boolean;
+	public MIDIOutputModeToggle: boolean;
+	public DebounceTimer: number;
+
 	public ScaleList: ScaleUDTemplate[];
 	public GutList: GutUDTemplate[];
 	public ValveList: ValveUDTemplate[];
@@ -30,6 +39,10 @@ export class QOPUserDataTemplate implements IQOPUserDataTemplate {
 		this.Timestamp = QOPUDTimestamp();
 		this.Deprecated = false;
 		this.Description = 'Create-A-QWERT-O-Phone';
+
+		this.OscModeToggle = true;
+		this.MIDIOutputModeToggle = false;
+		this.DebounceTimer = 10;
 		
 		this.ScaleList = [new ScaleUDTemplate()];
 		this.GutList = [new GutUDTemplate()];
@@ -353,6 +366,8 @@ interface IGutUDTemplate {
 	OscWaveType: SimpleWaveformTypeString[];
 	OscGain: number[];
 
+	GutMIDIOutputToggle: boolean;
+
 	TranspositionEventCodes: TranspositionObject;
 	RequireFret: boolean;
 	RequireValve: boolean;
@@ -365,6 +380,8 @@ export class GutUDTemplate extends ActionTypeUDTemplate implements IGutUDTemplat
 	public GutOscMute: boolean;
 	public OscWaveType: SimpleWaveformTypeString[];
 	public OscGain: number[];
+
+	public GutMIDIOutputToggle: boolean;
 
 	public TranspositionEventCodes: TranspositionObject;
 	public RequireFret: boolean;
@@ -379,10 +396,12 @@ export class GutUDTemplate extends ActionTypeUDTemplate implements IGutUDTemplat
 		this.OscWaveType = ['sine'];
 		this.OscGain = [0.25];
 
+		this.GutMIDIOutputToggle = false;
+
 		this.TranspositionEventCodes = {} as TranspositionObject;
-		this.RequireFret = false; // For use with Frets
-		this.RequireValve = false; // For use with Valves
-		this.RequireCombo = false; // For use with PadComboCharts
+		this.RequireFret = false
+		this.RequireValve = false;
+		this.RequireCombo = false;
 		this.FretSet = [new FretUDTemplate()];
 	}
 }
