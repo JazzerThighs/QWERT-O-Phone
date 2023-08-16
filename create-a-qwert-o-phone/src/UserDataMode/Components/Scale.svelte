@@ -1,5 +1,6 @@
 <script lang='ts'>
-    import { NoteUDTemplate, type IScaleUDTemplate, ScaleUDTemplate, type ScaleTypeString } from "../../UserDataMode/initQOPUD";
+    import { QOPUserData } from '../initQOPUD';
+    import { NoteUDTemplate, type IScaleUDTemplate, ScaleUDTemplate, type ScaleTypeString } from "../initQOPUD";
     export let scale: IScaleUDTemplate = new ScaleUDTemplate();
     import Note from "./Note.svelte";
 

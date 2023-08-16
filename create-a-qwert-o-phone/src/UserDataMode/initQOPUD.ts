@@ -1,7 +1,9 @@
+import { writable } from 'svelte/store';
+
 import { MIDILUT } from '../WoodshedMode/woodshedMIDIOUT';
 export const CurrentQOPVersion = 'qop0.0.69';
 
-interface IQOPUserDataTemplate {
+export interface IQOPUserDataTemplate {
 	Name: string;
 	Version: string;
 	Timestamp: string;
@@ -54,12 +56,8 @@ export class QOPUserDataTemplate implements IQOPUserDataTemplate {
 /* QOPUserData stores all of the settings on the app. 
 This data, in its straightforward format, is the object that matches the format of a downloadable JSON file that the User can store and use later. 
 QOP, which is optimized for speed, is created using the criteria inside the QOPUserData object that the building function is passed.*/
-export function BlankQOPUserData() {
-	const QOPUserData = new QOPUserDataTemplate();
-	HydrateScaleForUD(QOPUserData, QOPUserData.ScaleList[0], false);
-
-	return QOPUserData;
-}
+const blankUD = new QOPUserDataTemplate()
+export const QOPUserData = writable(blankUD);
 
 export function QOPUDTimestamp() {
 	const now = new Date();

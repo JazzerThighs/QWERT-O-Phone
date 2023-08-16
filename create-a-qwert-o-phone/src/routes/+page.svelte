@@ -1,14 +1,34 @@
 <!-- YOU CAN DELETE EVERYTHING IN THIS PAGE -->
 <script lang="ts">
-	import { BlankQOPUserData } from '../UserDataMode/initQOPUD';
-    const QOPUserData = BlankQOPUserData();
+	import EditorUI from '../UserDataMode/Components/EditorUI.svelte';
+	import WoodshedUI from '../WoodshedMode/Components/WoodshedUI.svelte';
 
-    import UDScale from './UDMode/Scale.svelte';
+	let WoodshedModeToggle: boolean = false;
+	function toggleMode() {
+		WoodshedModeToggle = !WoodshedModeToggle;
+	}
 </script>
 
-    <h1>QOP User Data:</h1>
-    <pre>{JSON.stringify(QOPUserData, null, 2)}</pre>
-    
-<style>
+<button on:click={toggleMode}> Toggle Mode </button>
 
+{#if WoodshedModeToggle}
+	<WoodshedUI />
+{:else}
+	<EditorUI />
+{/if}
+
+<style>
+	button {
+		padding: 10px 15px;
+		border: none;
+		background-color: #007bff;
+		color: white;
+		cursor: pointer;
+		border-radius: 5px;
+		margin-bottom: 20px;
+	}
+
+	button:hover {
+		background-color: #0056b3;
+	}
 </style>
