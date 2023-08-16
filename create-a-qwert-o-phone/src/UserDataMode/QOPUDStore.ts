@@ -13,6 +13,8 @@ import {
 	DeltaUDTemplate
 } from './initQOPUD';
 
+export const QOPUserData = CreateQOPUserData();
+
 function CreateQOPUserData() {
 	const { subscribe, set, update } = writable<QOPUserDataTemplate>(new QOPUserDataTemplate());
 
@@ -317,4 +319,4 @@ function HydrateScaleForUD() {
 	return passedScale;
 }
 
-export const QOPUserData = CreateQOPUserData();
+
