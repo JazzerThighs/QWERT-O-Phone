@@ -7,7 +7,17 @@
 	} from '../initQOPUD';
 	import Note from './Note.svelte';
 	export let scaleData: IScaleUDTemplate = new ScaleUDTemplate();
-
+	let {
+		Name,
+		Description,
+		ScaleType,
+		ScaleID,
+		ReferenceNote,
+		TuningHz,
+		OctaveDivisions,
+		NoteClassSet,
+		NoteSet
+	} = scaleData;
 	const scaleTypeOptions: ScaleTypeString[] = [
 		'Equal Temperament',
 		'Just Intonation',
@@ -25,31 +35,24 @@
 		'Bohlen-Pierce Scale (microtonal Music)'
 	];
 
-	$: for (let idNum = 0; idNum < scaleData.NoteSet.length; idNum++) {
-		scaleData.NoteSet[idNum].NoteID = idNum;
-	}
-
-	function addNote() {
-		scaleData.NoteSet = [...scaleData.NoteSet, new NoteUDTemplate()];
-	}
-
-	function removeNote() {
-		scaleData.NoteSet.length = scaleData.NoteSet.length - 1;
+	$: for (let idNum = 0; idNum < NoteSet.length; idNum++) {
+		NoteSet[idNum].NoteID = idNum;
 	}
 </script>
 
 <div class="scale">
+	<div>Scale ID: {ScaleID}</div>
 	<div>
 		Scale Name:
-		<input type="text" bind:value={scaleData.Name} />
+		<input type="text" bind:value={Name} />
 	</div>
 	<div>
 		Description:
-		<input type="text" bind:value={scaleData.Description} />
+		<input type="text" bind:value={Description} />
 	</div>
 	<div>
 		Scale Type:
-		<select bind:value={scaleData.ScaleType}>
+		<select bind:value={ScaleType}>
 			{#each scaleTypeOptions as option}
 				<option value={option}>{option}</option>
 			{/each}
@@ -57,25 +60,19 @@
 	</div>
 	<div>
 		Reference Note ID:
-		<input
-			type="number"
-			min="0"
-			max={scaleData.NoteSet.length - 1}
-			step="1"
-			bind:value={scaleData.ReferenceNote}
-		/>
+		<input type="number" min="0" max={NoteSet.length - 1} step="1" bind:value={ReferenceNote} />
 	</div>
 	<div>
 		Tuning:
-		<input type="number" bind:value={scaleData.TuningHz} />Hz
+		<input type="number" bind:value={TuningHz} />Hz
 	</div>
 	<div>
 		Octave Divisions:
-		<input type="number" min="1" step="1" bind:value={scaleData.OctaveDivisions} />
+		<input type="number" min="1" step="1" bind:value={OctaveDivisions} />
 	</div>
 	<div>
 		Note Class Set:
-		{#each scaleData.NoteClassSet as classSet, classSetIndex}
+		{#each NoteClassSet as classSet, classSetIndex}
 			<div class="note-class">
 				{#each classSet[classSetIndex] as note, nameIndex}
 					<input type="text" bind:value={note[nameIndex]} class="note-class-string" />
@@ -85,7 +82,7 @@
 	</div>
 	<div>
 		Note Set:
-		{#each scaleData.NoteSet as noteItem (noteItem.NoteID)}
+		{#each NoteSet as noteItem (noteItem.NoteID)}
 			<Note noteData={noteItem} />
 		{/each}
 	</div>

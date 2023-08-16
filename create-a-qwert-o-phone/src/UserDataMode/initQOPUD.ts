@@ -222,7 +222,7 @@ export interface IScaleUDTemplate {
 	TuningHz: number;
 	OctaveDivisions: number;
 	NoteClassSet: string[][];
-	NoteSet: [NoteUDTemplate, ...NoteUDTemplate[]];
+	NoteSet: NoteUDTemplate[];
 }
 export class ScaleUDTemplate implements IScaleUDTemplate {
 	public ScaleID: number;
@@ -233,7 +233,7 @@ export class ScaleUDTemplate implements IScaleUDTemplate {
 	public TuningHz: number;
 	public OctaveDivisions: number;
 	public NoteClassSet: string[][];
-	public NoteSet: [NoteUDTemplate, ...NoteUDTemplate[]];
+	public NoteSet: NoteUDTemplate[];
 	constructor() {
 		this.ScaleID = 0;
 		this.Name = '';

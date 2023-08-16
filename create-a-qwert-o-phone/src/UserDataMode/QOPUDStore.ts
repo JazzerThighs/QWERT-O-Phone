@@ -22,70 +22,80 @@ function CreateQOPUserData() {
 
 		addScale: (newScale = HydrateScaleForUD()) => {
 			update((userData) => {
-				userData.ScaleList.push(newScale);
+				userData.ScaleList = [...userData.ScaleList, newScale];
 				return userData;
 			});
 		},
 		removeScale: (scaleIndex: number) => {
 			update((userData) => {
 				if (userData.ScaleList[scaleIndex]) {
-					userData.ScaleList.splice(scaleIndex, 1);
+					userData.ScaleList = userData.ScaleList.filter((_, index) => index !== scaleIndex);
 				}
 				return userData;
 			});
 		},
-        
-        addGut: (newGut = new GutUDTemplate(), newDelta = new DeltaUDTemplate()) => {
-            update((userData) => {
-                userData.GutList.push(newGut);
-                for (let propIndex = 0; propIndex < userData.ValveList.length; propIndex++) {
-                    userData.ValveList[propIndex].DeltaSet.push(newDelta);
-                    for (
-                        let comboIndex = 0;
-                        comboIndex < userData.ChartList[propIndex].ComboSet.length;
-                        comboIndex++
-                    ) {
-                        userData.ChartList[propIndex].ComboSet[comboIndex].DeltaSet.push(newDelta);
-                    }
-                }
-                return userData;
-            });
-        },
+
+		addGut: (newGut = new GutUDTemplate(), newDelta = new DeltaUDTemplate()) => {
+			update((userData) => {
+				userData.GutList = [...userData.GutList, newGut];
+
+				userData.ValveList = userData.ValveList.map((valve) => ({
+					...valve,
+					DeltaSet: [...valve.DeltaSet, newDelta]
+				}));
+
+				userData.ChartList = userData.ChartList.map((chart) => ({
+					...chart,
+					ComboSet: chart.ComboSet.map((combo) => ({
+						...combo,
+						DeltaSet: [...combo.DeltaSet, newDelta]
+					}))
+				}));
+
+				return userData;
+			});
+		},
 		removeGut: (gutIndex: number) => {
 			update((userData) => {
 				if (userData.GutList[gutIndex]) {
-                    userData.GutList.splice(gutIndex, 1);
-                    for (let propIndex = 0; propIndex < userData.ValveList.length; propIndex++) {
-					    userData.ValveList[propIndex].DeltaSet.splice(
-						    userData.ValveList[propIndex].DeltaSet.length - 1,
-						    1
-					    );
-                        for (
-                            let comboIndex = 0;
-                            comboIndex < userData.ChartList[propIndex].ComboSet.length;
-                            comboIndex++
-                        ) {
-                            userData.ChartList[propIndex].ComboSet[comboIndex].DeltaSet.splice(
-                                userData.ChartList[propIndex].ComboSet[comboIndex].DeltaSet.length - 1,
-                                1
-                            );
-                        }
-                    }
-                }
+					userData.GutList = userData.GutList.filter((_, index) => index !== gutIndex);
+
+					userData.ValveList = userData.ValveList.map((valve) => ({
+						...valve,
+						DeltaSet: valve.DeltaSet.slice(0, -1)
+					}));
+
+					userData.ChartList = userData.ChartList.map((chart) => ({
+						...chart,
+						ComboSet: chart.ComboSet.map((combo) => ({
+							...combo,
+							DeltaSet: combo.DeltaSet.slice(0, -1)
+						}))
+					}));
+				}
+
 				return userData;
 			});
-        },
-        
+		},
+
 		addNote: (scaleIndex: number, newNote = new NoteUDTemplate()) => {
 			update((userData) => {
-				userData.ScaleList[scaleIndex].NoteSet.push(newNote);
+				if (userData.ScaleList[scaleIndex]) {
+					const updatedNoteSet = [...userData.ScaleList[scaleIndex].NoteSet, newNote];
+					userData.ScaleList[scaleIndex] = {
+						...userData.ScaleList[scaleIndex],
+						NoteSet: updatedNoteSet
+					};
+				}
 				return userData;
 			});
 		},
 		removeNote: (scaleIndex: number, noteIndex: number) => {
 			update((userData) => {
-				if (userData.ScaleList[scaleIndex].NoteSet[noteIndex]) {
-					userData.ScaleList[scaleIndex].NoteSet.splice(noteIndex, 1);
+				if (userData.ScaleList[scaleIndex] && userData.ScaleList[scaleIndex].NoteSet[noteIndex]) {
+					userData.ScaleList[scaleIndex].NoteSet = userData.ScaleList[scaleIndex].NoteSet.filter(
+						(_, index) => index !== noteIndex
+					);
 				}
 				return userData;
 			});
@@ -93,75 +103,125 @@ function CreateQOPUserData() {
 
 		addFret: (gutIndex: number, newFret = new FretUDTemplate()) => {
 			update((userData) => {
-				userData.GutList[gutIndex].FretSet.push(newFret);
+				if (userData.GutList[gutIndex]) {
+					const updatedGut = {
+						...userData.GutList[gutIndex],
+						FretSet: [...userData.GutList[gutIndex].FretSet, newFret]
+					};
+
+					userData.GutList = [
+						...userData.GutList.slice(0, gutIndex),
+						updatedGut,
+						...userData.GutList.slice(gutIndex + 1)
+					];
+				}
+
 				return userData;
 			});
 		},
 		removeFret: (gutIndex: number, fretIndex: number) => {
 			update((userData) => {
-				if (userData.GutList[gutIndex].FretSet[fretIndex]) {
-					userData.GutList[gutIndex].FretSet.splice(fretIndex, 1);
+				if (userData.GutList[gutIndex] && userData.GutList[gutIndex].FretSet[fretIndex]) {
+					const updatedGut = {
+						...userData.GutList[gutIndex],
+						FretSet: userData.GutList[gutIndex].FretSet.filter((_, index) => index !== fretIndex)
+					};
+
+					userData.GutList = [
+						...userData.GutList.slice(0, gutIndex),
+						updatedGut,
+						...userData.GutList.slice(gutIndex + 1)
+					];
 				}
+
 				return userData;
 			});
 		},
 
 		addValve: (newValve = new ValveUDTemplate()) => {
 			update((userData) => {
-				userData.ValveList.push(newValve);
-				return userData;
+				return {
+					...userData,
+					ValveList: [...userData.ValveList, newValve]
+				};
 			});
 		},
 		removeValve: (valveIndex: number) => {
 			update((userData) => {
-				if (userData.ValveList[valveIndex]) {
-					userData.ValveList.splice(valveIndex, 1);
-				}
-				return userData;
+				return {
+					...userData,
+					ValveList: userData.ValveList.filter((_, index) => index !== valveIndex)
+				};
 			});
 		},
 
 		addChart: (newChart = new ChartUDTemplate()) => {
 			update((userData) => {
-				userData.ChartList.push(newChart);
+				userData.ChartList = [...userData.ChartList, newChart];
 				return userData;
 			});
 		},
 		removeChart: (chartIndex: number) => {
 			update((userData) => {
-				if (userData.ChartList[chartIndex]) {
-					userData.ChartList.splice(chartIndex, 1);
-				}
+				userData.ChartList = userData.ChartList.filter((_, index) => index !== chartIndex);
 				return userData;
 			});
 		},
 
 		addPad: (chartIndex: number, newPad = new ActionTypeUDTemplate()) => {
 			update((userData) => {
-				userData.ChartList[chartIndex].PadSet.push(newPad);
+				const updatedChartList = [...userData.ChartList];
+
+				if (updatedChartList[chartIndex]) {
+					updatedChartList[chartIndex] = {
+						...updatedChartList[chartIndex],
+						PadSet: [...updatedChartList[chartIndex].PadSet, newPad]
+					};
+				}
+
+				userData.ChartList = updatedChartList;
 				return userData;
 			});
 		},
 		removePad: (chartIndex: number, padIndex: number) => {
 			update((userData) => {
-				if (userData.ChartList[chartIndex].PadSet[padIndex]) {
-					userData.ChartList[chartIndex].PadSet.splice(padIndex, 1);
+				const updatedChartList = [...userData.ChartList];
+
+				if (updatedChartList[chartIndex] && updatedChartList[chartIndex].PadSet[padIndex]) {
+					updatedChartList[chartIndex] = {
+						...updatedChartList[chartIndex],
+						PadSet: updatedChartList[chartIndex].PadSet.filter((_, index) => index !== padIndex)
+					};
 				}
+
+				userData.ChartList = updatedChartList;
 				return userData;
 			});
 		},
 
 		addCombo: (chartIndex: number, newCombo = new ComboUDTemplate()) => {
 			update((userData) => {
-				userData.ChartList[chartIndex].ComboSet.push(newCombo);
+				const targetChart = userData.ChartList[chartIndex];
+				targetChart.ComboSet = [...targetChart.ComboSet, newCombo];
+				userData.ChartList = [
+					...userData.ChartList.slice(0, chartIndex),
+					targetChart,
+					...userData.ChartList.slice(chartIndex + 1)
+				];
+
 				return userData;
 			});
 		},
 		removeCombo: (chartIndex: number, comboIndex: number) => {
 			update((userData) => {
-				if (userData.ChartList[chartIndex].ComboSet[comboIndex]) {
-					userData.ChartList[chartIndex].ComboSet.splice(comboIndex, 1);
-				}
+                const targetChart = userData.ChartList[chartIndex];
+                targetChart.ComboSet = targetChart.ComboSet.filter((_, index) => index !== comboIndex);
+                userData.ChartList = [
+					...userData.ChartList.slice(0, chartIndex),
+					targetChart,
+					...userData.ChartList.slice(chartIndex + 1)
+				];
+
 				return userData;
 			});
 		}
