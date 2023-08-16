@@ -43,7 +43,7 @@ export class QOPUserDataTemplate implements IQOPUserDataTemplate {
 		this.OscModeToggle = true;
 		this.MIDIOutputModeToggle = false;
 		this.DebounceTimer = 10;
-		
+
 		this.ScaleList = [new ScaleUDTemplate()];
 		this.GutList = [new GutUDTemplate()];
 		this.ValveList = [new ValveUDTemplate()];
@@ -90,7 +90,7 @@ export function HydrateScaleForUD(
 	];
 
 	if (ScaleType === 'Equal Temperament' && OctaveDivisions === 12 && TuningHz === 440) {
-		passedScale.Name = 'MIDI';
+		passedScale.Description = 'MIDI';
 		NoteClassSet = standardMIDINoteNames;
 		let octave = -2; // MIDI note 0 corresponds to C-2.
 		for (let note = 0; note < 127; note++) {
@@ -158,8 +158,7 @@ export function HydrateScaleForUD(
 	}
 }
 
-export const i32HexRegExp = /^#[0-9A-Fa-f]{8}$/;
-type DeltaTypesString = 'NoteID' | 'Cents' | 'Both'
+type DeltaTypesString = 'NoteID' | 'Cents' | 'Both';
 export type SimpleWaveformTypeString = 'sine' | 'triangle' | 'square' | 'sawtooth';
 export type ScaleTypeString =
 	| 'Equal Temperament'
@@ -265,7 +264,7 @@ export class NoteUDTemplate implements INoteUDTemplate {
 		this.Name = [];
 		this.Description = '';
 		this.PitchHz = 0; //FLOAT Frequency in Hz of this note (0 < x)
-		this.ColorHex = '#FFFFFFFF';
+		this.ColorHex = '#FFFFFF';
 	}
 }
 interface IActionTypeUDTemplate {
@@ -391,7 +390,7 @@ export class GutUDTemplate extends ActionTypeUDTemplate implements IGutUDTemplat
 	constructor() {
 		super();
 		this.OpenGutNoteID = [69]; // The 69th MIDI note is A4=440Hz
-		
+
 		this.GutOscMute = false;
 		this.OscWaveType = ['sine'];
 		this.OscGain = [0.25];
@@ -399,7 +398,7 @@ export class GutUDTemplate extends ActionTypeUDTemplate implements IGutUDTemplat
 		this.GutMIDIOutputToggle = false;
 
 		this.TranspositionEventCodes = {} as TranspositionObject;
-		this.RequireFret = false
+		this.RequireFret = false;
 		this.RequireValve = false;
 		this.RequireCombo = false;
 		this.FretSet = [new FretUDTemplate()];
