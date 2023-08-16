@@ -1,10 +1,13 @@
 <script lang="ts">
-    import { NoteUDTemplate } from './initQOPUD
-    export let note: NoteUDTemplate = new NoteUDTemplate();
+    import { NoteUDTemplate, type INoteUDTemplate } from '../initQOPUD'
+    export const note: INoteUDTemplate = new NoteUDTemplate();
 
 </script>
 
 <div class="class_note" style="background-color: {note.ColorHex}">
+    <div>NoteID: 
+        <input type="number" bind:value={note.NoteID} />
+    </div>
     <div>Note Name:
         <input type="text" bind:value={note.Name[0]} />
         <!--input type="text" bind:value={note.Description} /-->

@@ -1,6 +1,7 @@
 <script lang='ts'>
-    import { NoteUDTemplate, type ScaleUDTemplate, type ScaleTypeString } from "../../UserDataMode/initQOPUD";
-    export let scale: ScaleUDTemplate;
+    import { NoteUDTemplate, type IScaleUDTemplate, ScaleUDTemplate, type ScaleTypeString } from "../../UserDataMode/initQOPUD";
+    export let scale: IScaleUDTemplate = new ScaleUDTemplate();
+    import Note from "./Note.svelte";
 
     const scaleTypeOptions: ScaleTypeString[] = [
     'Equal Temperament',
@@ -18,10 +19,17 @@
     'Hexany System (Native American Music)',
     'Bohlen-Pierce Scale (microtonal Music)'
     ];
-
+    
+    $: {
+        for (let idNum = 0; idNum < scale.NoteSet.length; idNum++) {
+            scale.NoteSet[idNum].NoteID = idNum;
+        }
+    }
+   
     function addNote() {
         scale.NoteSet = [...scale.NoteSet, new NoteUDTemplate()];
     }
+    
     function removeNote() {
         scale.NoteSet.length = scale.NoteSet.length - 1;
     }
@@ -60,20 +68,20 @@
         bind:value={scale.OctaveDivisions} />
     </div>
     <div>Note Class Set:
-        {#each scale.NoteClassSet as classSet, i}
+        {#each scale.NoteClassSet as classSet, classSetIndex}
         <div class="note-class">
-            {#each classSet[i] as note, j}
+            {#each classSet[classSetIndex] as note, nameIndex}
             <input 
                 type="text" 
-                bind:value={note[j]} 
+                bind:value={note[nameIndex]} 
                 class="note-class-string" />
             {/each}
         </div>
         {/each}
     </div>
     <div>Note Set:
-        {#each scale.NoteSet as noteItem, i}
-            <!--Note note={noteItem[i]} /-->
+        {#each scale.NoteSet as noteItem (noteItem.NoteID)}
+            <Note note={noteItem} />
         {/each}
     </div>
 

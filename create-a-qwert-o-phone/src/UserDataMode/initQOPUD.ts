@@ -97,6 +97,7 @@ export function HydrateScaleForUD(
 			NoteSet.push(new NoteUDTemplate());
 		}
 		for (let note = 0; note < NoteSet.length; note++) {
+			NoteSet[note].NoteID = note;
 			NoteSet[note].PitchHz = MIDILUT[note];
 
 			for (let noteClass = 0; noteClass < NoteClassSet[note % 12].length; noteClass++) {
@@ -147,6 +148,7 @@ export function HydrateScaleForUD(
 					NoteSet.push(new NoteUDTemplate());
 				}
 				for (let note = 0; note < NoteSet.length; note++) {
+					NoteSet[note].NoteID = note;
 					NoteSet[note].PitchHz = TuningHz * Math.pow(2, (note - ReferenceNote) / OctaveDivisions);
 				}
 				break;
@@ -249,18 +251,21 @@ export type TranspositionObject = Partial<{
 	[QOPValidEventCode in QOPValidEventCodesString]: [[number, number], [number, number]];
 }>;
 
-interface INoteUDTemplate {
+export interface INoteUDTemplate {
+	NoteID: number;
 	Name: string[];
 	Description: string;
 	PitchHz: number;
 	ColorHex: string;
 }
 export class NoteUDTemplate implements INoteUDTemplate {
+	public NoteID: number;
 	public Name: string[];
 	public Description: string;
 	public PitchHz: number;
 	public ColorHex: string;
 	constructor() {
+		this.NoteID = 0;
 		this.Name = [];
 		this.Description = '';
 		this.PitchHz = 0; //FLOAT Frequency in Hz of this note (0 < x)
@@ -294,7 +299,7 @@ export class ActionTypeUDTemplate implements IActionTypeUDTemplate {
 		this.AntiSostenutoEventCodes = {} as ActionEventCodes;
 	}
 }
-interface IDeltaUDTemplate {
+export interface IDeltaUDTemplate {
 	DeltaType: DeltaTypesString;
 	NoteIDDelta: number;
 	CentsDelta: number;
@@ -309,7 +314,7 @@ export class DeltaUDTemplate implements IDeltaUDTemplate {
 		this.CentsDelta = 0; // FLOAT (any)
 	}
 }
-interface IScaleUDTemplate {
+export interface IScaleUDTemplate {
 	Name: string;
 	Description: string;
 	ScaleType: ScaleTypeString;
@@ -317,7 +322,7 @@ interface IScaleUDTemplate {
 	TuningHz: number;
 	OctaveDivisions: number;
 	NoteClassSet: string[][];
-	NoteSet: NoteUDTemplate[];
+	NoteSet: [NoteUDTemplate, ...NoteUDTemplate[]];
 }
 export class ScaleUDTemplate implements IScaleUDTemplate {
 	public Name: string;
@@ -327,7 +332,7 @@ export class ScaleUDTemplate implements IScaleUDTemplate {
 	public TuningHz: number;
 	public OctaveDivisions: number;
 	public NoteClassSet: string[][];
-	public NoteSet: NoteUDTemplate[];
+	public NoteSet: [NoteUDTemplate, ...NoteUDTemplate[]];
 	constructor() {
 		this.Name = '';
 		this.Description = '';
@@ -339,7 +344,7 @@ export class ScaleUDTemplate implements IScaleUDTemplate {
 		this.NoteSet = [new NoteUDTemplate()];
 	}
 }
-interface IFretUDTemplate {
+export interface IFretUDTemplate {
 	TranspositionEventCodes: TranspositionObject;
 	DeltaType: DeltaTypesString;
 	NoteIDDelta: number;
@@ -358,7 +363,7 @@ export class FretUDTemplate extends ActionTypeUDTemplate implements IFretUDTempl
 		this.CentsDelta = 0;
 	}
 }
-interface IGutUDTemplate {
+export interface IGutUDTemplate {
 	OpenGutNoteID: number[];
 
 	GutOscMute: boolean;
@@ -404,7 +409,7 @@ export class GutUDTemplate extends ActionTypeUDTemplate implements IGutUDTemplat
 		this.FretSet = [new FretUDTemplate()];
 	}
 }
-interface IValveUDTemplate {
+export interface IValveUDTemplate {
 	TranspositionEventCodes: TranspositionObject;
 	DeltaSet: DeltaUDTemplate[];
 }
@@ -417,7 +422,7 @@ export class ValveUDTemplate extends ActionTypeUDTemplate implements IValveUDTem
 		this.DeltaSet = [new DeltaUDTemplate()];
 	}
 }
-interface IComboUDTemplate {
+export interface IComboUDTemplate {
 	Name: string;
 	Description: string;
 	Combo: boolean[];
@@ -438,7 +443,7 @@ export class ComboUDTemplate implements IComboUDTemplate {
 		this.DeltaSet = [new DeltaUDTemplate()]; //Array of Objects
 	}
 }
-interface IChartUDTemplate {
+export interface IChartUDTemplate {
 	Name: string;
 	Description: string;
 	TranspositionEventCodes: TranspositionObject;
