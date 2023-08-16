@@ -1,6 +1,5 @@
-import { writable } from 'svelte/store';
 
-import { MIDILUT } from '../WoodshedMode/woodshedMIDIOUT';
+
 export const CurrentQOPVersion = 'qop0.0.69';
 
 export interface IQOPUserDataTemplate {
@@ -53,110 +52,12 @@ export class QOPUserDataTemplate implements IQOPUserDataTemplate {
 	}
 }
 
-/* QOPUserData stores all of the settings on the app. 
-This data, in its straightforward format, is the object that matches the format of a downloadable JSON file that the User can store and use later. 
-QOP, which is optimized for speed, is created using the criteria inside the QOPUserData object that the building function is passed.*/
-const blankUD = new QOPUserDataTemplate()
-export const QOPUserData = writable(blankUD);
-
 export function QOPUDTimestamp() {
 	const now = new Date();
 	const formattedDateTime = now.toISOString().slice(0, 16).replace('T', '_').replace(/:/g, '-');
 	return formattedDateTime;
 }
-export function HydrateScaleForUD(
-	QOPUserData: QOPUserDataTemplate,
-	passedScale: ScaleUDTemplate = new ScaleUDTemplate(),
-	isNewAddition = true
-) {
-	let { NoteClassSet } = passedScale;
-	const { NoteSet, ScaleType, OctaveDivisions, TuningHz, ReferenceNote } = passedScale;
-	const numNotes = (OctaveDivisions / 12) * 128;
-	const standardMIDINoteNames = [
-		['C', 'B♯'],
-		['C♯', 'D♭'],
-		['D'],
-		['D♯', 'E♭'],
-		['E', 'F♭'],
-		['F', 'E♯'],
-		['F♯', 'G♭'],
-		['G'],
-		['G♯', 'A♭'],
-		['A'],
-		['A♯', 'B♭'],
-		['B', 'C♭']
-	];
 
-	if (ScaleType === 'Equal Temperament' && OctaveDivisions === 12 && TuningHz === 440) {
-		passedScale.Description = 'MIDI';
-		NoteClassSet = standardMIDINoteNames;
-		let octave = -2; // MIDI note 0 corresponds to C-2.
-		for (let note = 0; note < 127; note++) {
-			NoteSet.push(new NoteUDTemplate());
-		}
-		for (let note = 0; note < NoteSet.length; note++) {
-			NoteSet[note].NoteID = note;
-			NoteSet[note].PitchHz = MIDILUT[note];
-
-			for (let noteClass = 0; noteClass < NoteClassSet[note % 12].length; noteClass++) {
-				switch (standardMIDINoteNames[note % 12][noteClass]) {
-					case 'B♯':
-						NoteSet[note].Name = [
-							...NoteSet[note].Name,
-							standardMIDINoteNames[note % 12][noteClass] + [octave - 1]
-						];
-						continue;
-					case 'C':
-					case 'C♯':
-					case 'D♭':
-					case 'D':
-					case 'D♯':
-					case 'E♭':
-					case 'E':
-					case 'E♯':
-					case 'F♭':
-					case 'F':
-					case 'F♯':
-					case 'G♭':
-					case 'G':
-					case 'G♯':
-					case 'A♭':
-					case 'A':
-					case 'A♯':
-					case 'B♭':
-					case 'B':
-						NoteSet[note].Name = [
-							...NoteSet[note].Name,
-							standardMIDINoteNames[note % 12][noteClass] + [octave]
-						];
-						continue;
-					case 'C♭':
-						NoteSet[note].Name = [
-							...NoteSet[note].Name,
-							standardMIDINoteNames[note % 12][noteClass] + [octave + 1]
-						];
-						octave++;
-				}
-			}
-		}
-	} else {
-		switch (ScaleType) {
-			case 'Equal Temperament':
-				for (let note = 0; note < numNotes; note++) {
-					NoteSet.push(new NoteUDTemplate());
-				}
-				for (let note = 0; note < NoteSet.length; note++) {
-					NoteSet[note].NoteID = note;
-					NoteSet[note].PitchHz = TuningHz * Math.pow(2, (note - ReferenceNote) / OctaveDivisions);
-				}
-				break;
-		}
-	}
-
-	if (isNewAddition) {
-		QOPUserData.ScaleList.push(passedScale);
-	}
-}
 
 type DeltaTypesString = 'NoteID' | 'Cents' | 'Both';
 export type SimpleWaveformTypeString = 'sine' | 'triangle' | 'square' | 'sawtooth';
@@ -313,6 +214,7 @@ export class DeltaUDTemplate implements IDeltaUDTemplate {
 	}
 }
 export interface IScaleUDTemplate {
+	ScaleID: number;
 	Name: string;
 	Description: string;
 	ScaleType: ScaleTypeString;
@@ -323,6 +225,7 @@ export interface IScaleUDTemplate {
 	NoteSet: [NoteUDTemplate, ...NoteUDTemplate[]];
 }
 export class ScaleUDTemplate implements IScaleUDTemplate {
+	public ScaleID: number;
 	public Name: string;
 	public Description: string;
 	public ScaleType: ScaleTypeString;
@@ -332,6 +235,7 @@ export class ScaleUDTemplate implements IScaleUDTemplate {
 	public NoteClassSet: string[][];
 	public NoteSet: [NoteUDTemplate, ...NoteUDTemplate[]];
 	constructor() {
+		this.ScaleID = 0;
 		this.Name = '';
 		this.Description = '';
 		this.ScaleType = 'Equal Temperament';
