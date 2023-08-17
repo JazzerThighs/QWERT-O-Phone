@@ -1,13 +1,16 @@
 <script lang="ts">
+	import { writable } from 'svelte/store';
 	import { QOPUserData } from '../QOPUDStore';
 	import {
 		NoteUDTemplate,
-		type IScaleUDTemplate,
 		ScaleUDTemplate,
 		type ScaleTypeString
 	} from '../initQOPUD';
 	import Note from './Note.svelte';
-	export let scaleData: IScaleUDTemplate = new ScaleUDTemplate();
+	export let scaleData: ScaleUDTemplate = new ScaleUDTemplate();
+	
+	
+	
 	let {
 		Name,
 		Description,
@@ -19,6 +22,7 @@
 		NoteClassSet,
 		NoteSet
 	} = scaleData;
+	
 	const scaleTypeOptions: ScaleTypeString[] = [
 		'Equal Temperament',
 		'Just Intonation',
@@ -38,7 +42,10 @@
 
 	$: for (let idNum = 0; idNum < NoteSet.length; idNum++) {
 		NoteSet[idNum].NoteID = idNum;
+		NoteSet[idNum].ScaleID = ScaleID;
 	}
+
+	$: scaleData = $QOPUserData.ScaleList[ScaleID];
 
 	function handleAddNote(scaleIndex: number) {
 		QOPUserData.addNote(scaleIndex);
@@ -80,26 +87,26 @@
 	</div>
 	<div>
 		Note Class Set:
-		{#each NoteClassSet as classSet, classSetIndex}
+		{#each $QOPUserData.ScaleList[ScaleID].NoteClassSet as classSet, classSetIndex}
 			<div class="note-class">
-				{#each classSet[classSetIndex] as note, nameIndex}
-					<input type="text" bind:value={note[nameIndex]} class="note-class-string" />
+				{#each classSet as note}
+					<input type="text" bind:value={note} />
 				{/each}
 			</div>
 		{/each}
 	</div>
-	<div>
+	<div class="note">
 		Note Set:
 		<div>
 			<button on:click={() => handleAddNote(ScaleID)}>Add Note</button>
 			<div>
-				{#each NoteSet as note, noteIndex}
+				{#each $QOPUserData.ScaleList[ScaleID].NoteSet as note, noteIndex}
 					<button on:click={() => handleRemoveNote(ScaleID, noteIndex)} />
 					<Note noteData={note} />
 				{/each}
 			</div>
 		</div>
-	</div>
+	</div>                     
 </div>
 
 <style>
@@ -107,7 +114,10 @@
 	.note-class {
 		display: block;
 	}
-	.note-class-string {
-		display: inline-block;
+	.note {
+		overflow: scroll;
+	}
+	* {
+		color: black;
 	}
 </style>

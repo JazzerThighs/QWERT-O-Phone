@@ -22,7 +22,7 @@ function CreateQOPUserData() {
 		subscribe,
 		reset: () => set(new QOPUserDataTemplate()),
 
-		addScale: (newScale = new ScaleUDTemplate()) => {
+		addScale: (newScale = HydrateScaleForUD()) => {
 			update((userData) => {
 				userData.ScaleList = [...userData.ScaleList, newScale];
 				return userData;
@@ -216,9 +216,9 @@ function CreateQOPUserData() {
 		},
 		removeCombo: (chartIndex: number, comboIndex: number) => {
 			update((userData) => {
-                const targetChart = userData.ChartList[chartIndex];
-                targetChart.ComboSet = targetChart.ComboSet.filter((_, index) => index !== comboIndex);
-                userData.ChartList = [
+				const targetChart = userData.ChartList[chartIndex];
+				targetChart.ComboSet = targetChart.ComboSet.filter((_, index) => index !== comboIndex);
+				userData.ChartList = [
 					...userData.ChartList.slice(0, chartIndex),
 					targetChart,
 					...userData.ChartList.slice(chartIndex + 1)
@@ -232,91 +232,71 @@ function CreateQOPUserData() {
 
 function HydrateScaleForUD() {
 	const passedScale: ScaleUDTemplate = new ScaleUDTemplate();
+
 	let { NoteClassSet } = passedScale;
-	const { NoteSet, ScaleType, OctaveDivisions, TuningHz, ReferenceNote } = passedScale;
-	const numNotes = (OctaveDivisions / 12) * 128;
+	const { NoteSet } = passedScale;
 	const standardMIDINoteNames = [
-		['C', 'B♯'],
-		['C♯', 'D♭'],
-		['D'],
-		['D♯', 'E♭'],
-		['E', 'F♭'],
-		['F', 'E♯'],
-		['F♯', 'G♭'],
-		['G'],
-		['G♯', 'A♭'],
-		['A'],
-		['A♯', 'B♭'],
-		['B', 'C♭']
+		'C / B♯',
+		'C♯ / D♭',
+		'D',
+		'D♯ / E♭',
+		'E / F♭',
+		'F / E♯',
+		'F♯ / G♭',
+		'G',
+		'G♯ / A♭',
+		'A',
+		'A♯ / B♭',
+		'B / C♭'
 	];
 
-	if (ScaleType === 'Equal Temperament' && OctaveDivisions === 12 && TuningHz === 440) {
-		passedScale.Description = 'MIDI';
-		NoteClassSet = standardMIDINoteNames;
-		let octave = -2; // MIDI note 0 corresponds to C-2.
+	passedScale.Description = 'MIDI';
+	NoteClassSet = standardMIDINoteNames;
+	let octave = -2; // MIDI note 0 corresponds to C-2.
+	if (passedScale.NoteSet.length < 128) {
 		for (let note = 0; note < 127; note++) {
 			NoteSet.push(new NoteUDTemplate());
 		}
-		for (let note = 0; note < NoteSet.length; note++) {
-			NoteSet[note].NoteID = note;
-			NoteSet[note].PitchHz = MIDILUT[note];
+	}
+	for (let note = 0; note < NoteSet.length; note++) {
+		NoteSet[note].NoteID = note;
+		NoteSet[note].PitchHz = MIDILUT[note];
+		NoteSet[note].ScaleID = passedScale.ScaleID;
 
-			for (let noteClass = 0; noteClass < NoteClassSet[note % 12].length; noteClass++) {
-				switch (standardMIDINoteNames[note % 12][noteClass]) {
-					case 'B♯':
-						NoteSet[note].Name = [
-							...NoteSet[note].Name,
-							standardMIDINoteNames[note % 12][noteClass] + [octave - 1]
-						];
-						continue;
-					case 'C':
-					case 'C♯':
-					case 'D♭':
-					case 'D':
-					case 'D♯':
-					case 'E♭':
-					case 'E':
-					case 'E♯':
-					case 'F♭':
-					case 'F':
-					case 'F♯':
-					case 'G♭':
-					case 'G':
-					case 'G♯':
-					case 'A♭':
-					case 'A':
-					case 'A♯':
-					case 'B♭':
-					case 'B':
-						NoteSet[note].Name = [
-							...NoteSet[note].Name,
-							standardMIDINoteNames[note % 12][noteClass] + [octave]
-						];
-						continue;
-					case 'C♭':
-						NoteSet[note].Name = [
-							...NoteSet[note].Name,
-							standardMIDINoteNames[note % 12][noteClass] + [octave + 1]
-						];
-						octave++;
-				}
+		for (let noteClass = 0; noteClass < NoteClassSet[note % 12].length; noteClass++) {
+			switch (standardMIDINoteNames[note % 12][noteClass]) {
+				case 'B♯':
+					NoteSet[note].Name = standardMIDINoteNames[note % 12][noteClass] + [octave - 1];
+					continue;
+				case 'C':
+				case 'C♯':
+				case 'D♭':
+				case 'D':
+				case 'D♯':
+				case 'E♭':
+				case 'E':
+				case 'E♯':
+				case 'F♭':
+				case 'F':
+				case 'F♯':
+				case 'G♭':
+				case 'G':
+				case 'G♯':
+				case 'A♭':
+				case 'A':
+				case 'A♯':
+				case 'B♭':
+				case 'B':
+					NoteSet[note].Name = 
+						standardMIDINoteNames[note % 12][noteClass] + [octave];
+					continue;
+				case 'C♭':
+					NoteSet[note].Name = 
+						standardMIDINoteNames[note % 12][noteClass] + [octave + 1];
+					octave++;
 			}
-		}
-	} else {
-		switch (ScaleType) {
-			case 'Equal Temperament':
-				for (let note = 0; note < numNotes; note++) {
-					NoteSet.push(new NoteUDTemplate());
-				}
-				for (let note = 0; note < NoteSet.length; note++) {
-					NoteSet[note].NoteID = note;
-					NoteSet[note].PitchHz = TuningHz * Math.pow(2, (note - ReferenceNote) / OctaveDivisions);
-				}
-				break;
 		}
 	}
 
 	return passedScale;
 }
-
-

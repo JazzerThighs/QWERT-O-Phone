@@ -3,20 +3,17 @@
 	import Scale from './Scale.svelte';
 
 	function handleAddScale() {
-		QOPUserData.addScale();
+		QOPUserData.addScale();	
 	}
 	function handleRemoveScale(scaleIndex: number) {
 		QOPUserData.removeScale(scaleIndex);
-		return QOPUserData;
 	}
-
-    $: QOPUD = $QOPUserData;
 </script>
 
 <h1>Editor Mode</h1>
 
 <button on:click={handleAddScale}>Add Scale</button>
-{#each QOPUD.ScaleList as scale, scaleIndex}
+{#each $QOPUserData.ScaleList as scale, scaleIndex}
 	<button on:click={() => handleRemoveScale(scaleIndex)}>Remove Scale {scaleIndex}</button>
 	<Scale scaleData={scale} />
 {/each}

@@ -1,14 +1,22 @@
 <script lang="ts">
-    import { NoteUDTemplate, type INoteUDTemplate } from '../initQOPUD'
-    export const noteData: INoteUDTemplate = new NoteUDTemplate();
-    let {NoteID, Name, PitchHz, ColorHex} = noteData;
+	import { QOPUserData } from '../QOPUDStore';
+    import { NoteUDTemplate } from '../initQOPUD'
+    export let noteData: NoteUDTemplate = new NoteUDTemplate();
+    let { ScaleID, NoteID, Name, PitchHz, ColorHex } = noteData;
 
+    $: {
+        ScaleID = $QOPUserData.ScaleList[ScaleID].NoteSet[NoteID].ScaleID;
+        NoteID = $QOPUserData.ScaleList[ScaleID].NoteSet[NoteID].NoteID;
+        PitchHz = $QOPUserData.ScaleList[ScaleID].NoteSet[NoteID].PitchHz;
+        ColorHex = $QOPUserData.ScaleList[ScaleID].NoteSet[NoteID].ColorHex;
+        noteData = $QOPUserData.ScaleList[ScaleID].NoteSet[NoteID];
+    }
 </script>
 
 <div class="class_note" style="background-color: {ColorHex}">
     <div>NoteID: {NoteID}</div>
     <div>Note Name:
-        <input type="text" bind:value={Name[0]} />
+        <input type="text" bind:value={Name} />
         <!--input type="text" bind:value={note.Description} /-->
     </div>
     <div>
@@ -23,6 +31,9 @@
 
 <style>
     .class_note {
-        display: inline-block
+        display: inline-block;
+    }
+    * {
+        color: black;
     }
 </style>

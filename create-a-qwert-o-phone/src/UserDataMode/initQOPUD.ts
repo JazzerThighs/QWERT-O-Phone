@@ -1,5 +1,4 @@
-import { MIDILUT } from '../WoodshedMode/woodshedMIDIOUT';
-
+import { MIDILUT } from "../WoodshedMode/woodshedMIDIOUT";
 export const CurrentQOPVersion = 'qop0.sk.69';
 
 export interface IQOPUserDataTemplate {
@@ -150,21 +149,24 @@ export type TranspositionObject = Partial<{
 }>;
 
 export interface INoteUDTemplate {
+	ScaleID: number;
 	NoteID: number;
-	Name: string[];
+	Name: string;
 	Description: string;
 	PitchHz: number;
 	ColorHex: string;
 }
 export class NoteUDTemplate implements INoteUDTemplate {
+	public ScaleID: number;
 	public NoteID: number;
-	public Name: string[];
+	public Name: string;
 	public Description: string;
 	public PitchHz: number;
 	public ColorHex: string;
 	constructor() {
+		this.ScaleID = 0;
 		this.NoteID = 0;
-		this.Name = [];
+		this.Name = '';
 		this.Description = '';
 		this.PitchHz = 0; //FLOAT Frequency in Hz of this note (0 < x)
 		this.ColorHex = '#FFFFFF';
@@ -220,7 +222,7 @@ export interface IScaleUDTemplate {
 	ReferenceNote: number;
 	TuningHz: number;
 	OctaveDivisions: number;
-	NoteClassSet: string[][];
+	NoteClassSet: string[];
 	NoteSet: NoteUDTemplate[];
 }
 export class ScaleUDTemplate implements IScaleUDTemplate {
@@ -231,7 +233,7 @@ export class ScaleUDTemplate implements IScaleUDTemplate {
 	public ReferenceNote: number;
 	public TuningHz: number;
 	public OctaveDivisions: number;
-	public NoteClassSet: string[][];
+	public NoteClassSet: string[];
 	public NoteSet: NoteUDTemplate[];
 	constructor() {
 		this.ScaleID = 0;
@@ -241,26 +243,14 @@ export class ScaleUDTemplate implements IScaleUDTemplate {
 		this.ReferenceNote = 0; //INT (0 <= x)
 		this.TuningHz = 440; //FLOAT Frequency in Hz of this.referenceNote (0 < x)
 		this.OctaveDivisions = 12;
-		this.NoteClassSet = [
-			['C', 'B♯'],
-			['C♯', 'D♭'],
-			['D'],
-			['D♯', 'E♭'],
-			['E', 'F♭'],
-			['F', 'E♯'],
-			['F♯', 'G♭'],
-			['G'],
-			['G♯', 'A♭'],
-			['A'],
-			['A♯', 'B♭'],
-			['B', 'C♭']
-		];
+		this.NoteClassSet = [];
 		this.NoteSet = [];
 
 		for (let noteIndex = 0; noteIndex < 128; noteIndex++) {
 			this.NoteSet = [...this.NoteSet, new NoteUDTemplate()];
 			this.NoteSet[noteIndex].NoteID = noteIndex;
 			this.NoteSet[noteIndex].PitchHz = MIDILUT[noteIndex];
+			this.NoteSet[noteIndex].ScaleID = this.ScaleID;
 		}
 	}
 }
