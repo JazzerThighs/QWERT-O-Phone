@@ -1,3 +1,5 @@
+import { MIDILUT } from '../WoodshedMode/woodshedMIDIOUT';
+
 export const CurrentQOPVersion = 'qop0.sk.69';
 
 export interface IQOPUserDataTemplate {
@@ -239,8 +241,27 @@ export class ScaleUDTemplate implements IScaleUDTemplate {
 		this.ReferenceNote = 0; //INT (0 <= x)
 		this.TuningHz = 440; //FLOAT Frequency in Hz of this.referenceNote (0 < x)
 		this.OctaveDivisions = 12;
-		this.NoteClassSet = [];
-		this.NoteSet = [new NoteUDTemplate()];
+		this.NoteClassSet = [
+			['C', 'B♯'],
+			['C♯', 'D♭'],
+			['D'],
+			['D♯', 'E♭'],
+			['E', 'F♭'],
+			['F', 'E♯'],
+			['F♯', 'G♭'],
+			['G'],
+			['G♯', 'A♭'],
+			['A'],
+			['A♯', 'B♭'],
+			['B', 'C♭']
+		];
+		this.NoteSet = [];
+
+		for (let noteIndex = 0; noteIndex < 128; noteIndex++) {
+			this.NoteSet = [...this.NoteSet, new NoteUDTemplate()];
+			this.NoteSet[noteIndex].NoteID = noteIndex;
+			this.NoteSet[noteIndex].PitchHz = MIDILUT[noteIndex];
+		}
 	}
 }
 export interface IFretUDTemplate {

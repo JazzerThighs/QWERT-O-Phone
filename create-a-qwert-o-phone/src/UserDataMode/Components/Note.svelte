@@ -6,9 +6,7 @@
 </script>
 
 <div class="class_note" style="background-color: {ColorHex}">
-    <div>NoteID: 
-        <input type="number" bind:value={NoteID} />
-    </div>
+    <div>NoteID: {NoteID}</div>
     <div>Note Name:
         <input type="text" bind:value={Name[0]} />
         <!--input type="text" bind:value={note.Description} /-->
