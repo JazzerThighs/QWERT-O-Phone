@@ -22,7 +22,7 @@ function CreateQOPUserData() {
 		subscribe,
 		reset: () => set(new QOPUserDataTemplate()),
 
-		addScale: (newScale = HydrateScaleForUD()) => {
+		addScale: (newScale = new ScaleUDTemplate()) => {
 			update((userData) => {
 				userData.ScaleList = [...userData.ScaleList, newScale];
 				return userData;
