@@ -24,9 +24,6 @@
 	<EditorUI />
 {/if}
 
-
-
-
 <style>
 	.animate-gradient {
 		background-size: 200% 100%;
