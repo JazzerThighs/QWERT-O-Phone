@@ -1,6 +1,4 @@
-
-
-export const CurrentQOPVersion = 'qop0.0.69';
+export const CurrentQOPVersion = 'qop0.sk.69';
 
 export interface IQOPUserDataTemplate {
 	Name: string;
@@ -57,7 +55,6 @@ export function QOPUDTimestamp() {
 	const formattedDateTime = now.toISOString().slice(0, 16).replace('T', '_').replace(/:/g, '-');
 	return formattedDateTime;
 }
-
 
 type DeltaTypesString = 'NoteID' | 'Cents' | 'Both';
 export type SimpleWaveformTypeString = 'sine' | 'triangle' | 'square' | 'sawtooth';

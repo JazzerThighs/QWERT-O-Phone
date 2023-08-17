@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { QOPUserData } from '../QOPUDStore';
 	import {
 		NoteUDTemplate,
 		type IScaleUDTemplate,
@@ -37,6 +38,13 @@
 
 	$: for (let idNum = 0; idNum < NoteSet.length; idNum++) {
 		NoteSet[idNum].NoteID = idNum;
+	}
+
+	function handleAddNote(scaleIndex: number) {
+		QOPUserData.addNote(scaleIndex);
+	}
+	function handleRemoveNote(scaleIndex: number, noteIndex: number) {
+		QOPUserData.removeNote(scaleIndex, noteIndex);
 	}
 </script>
 
@@ -82,9 +90,15 @@
 	</div>
 	<div>
 		Note Set:
-		{#each NoteSet as noteItem (noteItem.NoteID)}
-			<Note noteData={noteItem} />
-		{/each}
+		<div>
+			<button on:click={() => handleAddNote(ScaleID)}>Add Note</button>
+			<div>
+				{#each NoteSet as note, noteIndex}
+					<button on:click={() => handleRemoveNote(ScaleID, noteIndex)} />
+					<Note noteData={note} />
+				{/each}
+			</div>
+		</div>
 	</div>
 </div>
 
