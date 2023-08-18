@@ -43,22 +43,6 @@ function HydrateQOP(QOPUserData: QOPUserDataTemplate) {
 	return QOP;
 }
 
-export function CreateWoodshedModeButton(QOPUserData: QOPUserDataTemplate) {
-	const button = document.createElement('button');
-	button.innerText = 'Activate Woodshed Mode';
-
-	// Position the button (I'm placing it slightly below the previous two for clarity, you can adjust as needed)
-	button.style.position = 'absolute';
-	button.style.top = '80px';
-	button.style.left = '0';
-	button.style.zIndex = '1000'; // Ensure it's above most other elements
-
-	// Bind the button to the WoodshedMode function
-	button.addEventListener('click', () => WoodshedMode(QOPUserData));
-
-	document.body.appendChild(button);
-}
-
 interface IQOPTemplate {
 	StateMachine: QOPStateMachineTemplate;
 	Oscillators: QOPOscillatorsTemplate;

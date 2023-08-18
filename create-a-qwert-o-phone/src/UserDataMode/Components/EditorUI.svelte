@@ -14,8 +14,9 @@
 
 <button on:click={handleAddScale}>Add Scale</button>
 {#each $QOPUserData.ScaleList as scale, scaleIndex}
-	<button on:click={() => handleRemoveScale(scaleIndex)}>Remove Scale {scaleIndex}</button>
-	<Scale scaleData={scale} />
+	<Scale scaleData={scale}>
+		<button on:click={() => handleRemoveScale(scaleIndex)}>Remove Scale {scaleIndex}</button>
+	</Scale>
 {/each}
 
 <style>

@@ -1,28 +1,11 @@
 <script lang="ts">
 	import { writable } from 'svelte/store';
 	import { QOPUserData } from '../QOPUDStore';
-	import {
-		NoteUDTemplate,
-		ScaleUDTemplate,
-		type ScaleTypeString
-	} from '../initQOPUD';
+	import { NoteUDTemplate, ScaleUDTemplate, type ScaleTypeString } from '../initQOPUD';
 	import Note from './Note.svelte';
+	import Chart from './Chart.svelte';
 	export let scaleData: ScaleUDTemplate = new ScaleUDTemplate();
-	
-	
-	
-	let {
-		Name,
-		Description,
-		ScaleType,
-		ScaleID,
-		ReferenceNote,
-		TuningHz,
-		OctaveDivisions,
-		NoteClassSet,
-		NoteSet
-	} = scaleData;
-	
+
 	const scaleTypeOptions: ScaleTypeString[] = [
 		'Equal Temperament',
 		'Just Intonation',
@@ -40,13 +23,14 @@
 		'Bohlen-Pierce Scale (microtonal Music)'
 	];
 
-	$: for (let idNum = 0; idNum < NoteSet.length; idNum++) {
-		NoteSet[idNum].NoteID = idNum;
-		NoteSet[idNum].ScaleID = ScaleID;
+	$: scaleData = $QOPUserData.ScaleList[scaleData.ScaleID];
+
+	function handleAddNoteClass(scaleIndex: number) {
+		QOPUserData.addNoteClass(scaleIndex)
 	}
-
-	$: scaleData = $QOPUserData.ScaleList[ScaleID];
-
+	function handleRemoveNoteClass(scaleIndex: number, noteClassIndex: number) {
+		QOPUserData.removeNoteClass(scaleIndex, noteClassIndex);
+	}
 	function handleAddNote(scaleIndex: number) {
 		QOPUserData.addNote(scaleIndex);
 	}
@@ -56,18 +40,19 @@
 </script>
 
 <div class="scale">
-	<div>Scale ID: {ScaleID}</div>
+	<slot />
+	<div>Scale ID: {scaleData.ScaleID}</div>
 	<div>
 		Scale Name:
-		<input type="text" bind:value={Name} />
+		<input type="text" bind:value={scaleData.Name} />
 	</div>
 	<div>
 		Description:
-		<input type="text" bind:value={Description} />
+		<input type="text" bind:value={scaleData.Description} />
 	</div>
 	<div>
 		Scale Type:
-		<select bind:value={ScaleType}>
+		<select bind:value={scaleData.ScaleType}>
 			{#each scaleTypeOptions as option}
 				<option value={option}>{option}</option>
 			{/each}
@@ -75,49 +60,52 @@
 	</div>
 	<div>
 		Reference Note ID:
-		<input type="number" min="0" max={NoteSet.length - 1} step="1" bind:value={ReferenceNote} />
+		<input
+			type="number"
+			min="0"
+			max={scaleData.NoteSet.length - 1}
+			step="1"
+			bind:value={scaleData.ReferenceNote}
+		/>
 	</div>
 	<div>
 		Tuning:
-		<input type="number" bind:value={TuningHz} />Hz
+		<input type="number" bind:value={scaleData.TuningHz} />Hz
 	</div>
 	<div>
 		Octave Divisions:
-		<input type="number" min="1" step="1" bind:value={OctaveDivisions} />
+		<input type="number" min="1" step="1" bind:value={scaleData.OctaveDivisions} />
 	</div>
 	<div>
 		Note Class Set:
-		{#each $QOPUserData.ScaleList[ScaleID].NoteClassSet as classSet, classSetIndex}
+		<button on:click={() => handleAddNoteClass(scaleData.ScaleID)}>Add Note Class</button>
+		{#each scaleData.NoteClassSet as noteClass, noteClassIndex}
 			<div class="note-class">
-				{#each classSet as note}
-					<input type="text" bind:value={note} />
-				{/each}
+				<input type="text" bind:value={noteClass} />
+				<button on:click={() => handleRemoveNoteClass(scaleData.ScaleID, noteClassIndex)}>Remove {noteClass}</button>
 			</div>
 		{/each}
 	</div>
-	<div class="note">
+	<div>
 		Note Set:
 		<div>
-			<button on:click={() => handleAddNote(ScaleID)}>Add Note</button>
-			<div>
-				{#each $QOPUserData.ScaleList[ScaleID].NoteSet as note, noteIndex}
-					<button on:click={() => handleRemoveNote(ScaleID, noteIndex)} />
-					<Note noteData={note} />
+			<button on:click={() => handleAddNote(scaleData.ScaleID)}>Add Note</button>
+			<div class="note">
+				{#each $QOPUserData.ScaleList[scaleData.ScaleID].NoteSet as note, noteIndex}
+					<Note noteData={note}>
+						<button on:click={() => handleRemoveNote(scaleData.ScaleID, noteIndex)}>Remove Note {noteIndex}</button>
+					</Note>
 				{/each}
 			</div>
 		</div>
-	</div>                     
+	</div>
 </div>
 
 <style>
-	.scale,
-	.note-class {
-		display: block;
+	.scale {
+		display: inline;
 	}
-	.note {
-		overflow: scroll;
-	}
-	* {
+	input {
 		color: black;
 	}
 </style>

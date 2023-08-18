@@ -19,6 +19,21 @@ export function FindClosestMIDINote(targetFrequency: number) {
 // 	const { GutMIDIOUTDisabled } = QOP.MIDIOutput;
 // }
 
+export const standardMIDINoteNames = [
+	'C',
+	'C♯ / D♭',
+	'D',
+	'D♯ / E♭',
+	'E',
+	'F',
+	'F♯ / G♭',
+	'G',
+	'G♯ / A♭',
+	'A',
+	'A♯ / B♭',
+	'B'
+];
+
 export const MIDILUT: {
 	[key: number]: number;
 } = {

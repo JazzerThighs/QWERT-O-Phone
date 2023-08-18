@@ -1,4 +1,4 @@
-import { MIDILUT } from "../WoodshedMode/woodshedMIDIOUT";
+import { MIDILUT, standardMIDINoteNames } from "../WoodshedMode/woodshedMIDIOUT";
 export const CurrentQOPVersion = 'qop0.sk.69';
 
 export interface IQOPUserDataTemplate {
@@ -237,20 +237,56 @@ export class ScaleUDTemplate implements IScaleUDTemplate {
 	public NoteSet: NoteUDTemplate[];
 	constructor() {
 		this.ScaleID = 0;
-		this.Name = '';
-		this.Description = '';
+		this.Name = 'MIDI';
+		this.Description = '(Default MIDI Note Bindings)';
 		this.ScaleType = 'Equal Temperament';
 		this.ReferenceNote = 0; //INT (0 <= x)
 		this.TuningHz = 440; //FLOAT Frequency in Hz of this.referenceNote (0 < x)
 		this.OctaveDivisions = 12;
-		this.NoteClassSet = [];
+		this.NoteClassSet = [
+			'C',
+			'C♯ / D♭',
+			'D',
+			'D♯ / E♭',
+			'E',
+			'F',
+			'F♯ / G♭',
+			'G',
+			'G♯ / A♭',
+			'A',
+			'A♯ / B♭',
+			'B'
+		];
 		this.NoteSet = [];
 
+		let octave = -2; // MIDI note 0 corresponds to C-2.
+		
 		for (let noteIndex = 0; noteIndex < 128; noteIndex++) {
 			this.NoteSet = [...this.NoteSet, new NoteUDTemplate()];
 			this.NoteSet[noteIndex].NoteID = noteIndex;
 			this.NoteSet[noteIndex].PitchHz = MIDILUT[noteIndex];
-			this.NoteSet[noteIndex].ScaleID = this.ScaleID;
+			
+			switch (standardMIDINoteNames[noteIndex % 12]) {
+				case 'C':
+				case 'C♯ / D♭':
+				case 'D':
+				case 'D♯ / E♭':
+				case 'E':
+				case 'F':
+				case 'F♯ / G♭':
+				case 'G':
+				case 'G♯ / A♭':
+				case 'A':
+				case 'A♯ / B♭':
+					this.NoteSet[noteIndex].Name =
+						standardMIDINoteNames[noteIndex % 12] + [octave];
+					continue;
+				case 'B':
+					this.NoteSet[noteIndex].Name = standardMIDINoteNames[noteIndex % 12] + [octave];
+					octave++;
+					continue;
+			
+			}
 		}
 	}
 }

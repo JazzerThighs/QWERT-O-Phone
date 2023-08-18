@@ -1,5 +1,4 @@
 import { writable } from 'svelte/store';
-import { MIDILUT } from '../WoodshedMode/woodshedMIDIOUT';
 import {
 	QOPUserDataTemplate,
 	ScaleUDTemplate,
@@ -22,9 +21,20 @@ function CreateQOPUserData() {
 		subscribe,
 		reset: () => set(new QOPUserDataTemplate()),
 
-		addScale: (newScale = HydrateScaleForUD()) => {
+		addScale: (newScale = new ScaleUDTemplate()) => {
 			update((userData) => {
 				userData.ScaleList = [...userData.ScaleList, newScale];
+				for (let scaleIndex = 0; scaleIndex < userData.ScaleList.length; scaleIndex++) {
+					userData.ScaleList[scaleIndex].ScaleID = scaleIndex;
+					for (
+						let noteIndex = 0;
+						noteIndex < userData.ScaleList[scaleIndex].NoteSet.length;
+						noteIndex++
+					) {
+						userData.ScaleList[scaleIndex].NoteSet[noteIndex].ScaleID = scaleIndex;
+						userData.ScaleList[scaleIndex].NoteSet[noteIndex].NoteID = noteIndex;
+					}
+				}
 				return userData;
 			});
 		},
@@ -32,7 +42,79 @@ function CreateQOPUserData() {
 			update((userData) => {
 				if (userData.ScaleList[scaleIndex]) {
 					userData.ScaleList = userData.ScaleList.filter((_, index) => index !== scaleIndex);
+					for (let scaleIndex = 0; scaleIndex < userData.ScaleList.length; scaleIndex++) {
+						userData.ScaleList[scaleIndex].ScaleID = scaleIndex;
+						for (
+							let noteIndex = 0;
+							noteIndex < userData.ScaleList[scaleIndex].NoteSet.length;
+							noteIndex++
+						) {
+							userData.ScaleList[scaleIndex].NoteSet[noteIndex].ScaleID = scaleIndex;
+							userData.ScaleList[scaleIndex].NoteSet[noteIndex].NoteID = noteIndex;
+						}
+					}
 				}
+				return userData;
+			});
+		},
+
+		addNote: (scaleIndex: number, newNote = new NoteUDTemplate()) => {
+			update((userData) => {
+				if (userData.ScaleList[scaleIndex]) {
+					const updatedNoteSet = [...userData.ScaleList[scaleIndex].NoteSet, newNote];
+					userData.ScaleList[scaleIndex] = {
+						...userData.ScaleList[scaleIndex],
+						NoteSet: updatedNoteSet
+					};
+					for (let scaleIndex = 0; scaleIndex < userData.ScaleList.length; scaleIndex++) {
+						userData.ScaleList[scaleIndex].ScaleID = scaleIndex;
+						for (
+							let noteIndex = 0;
+							noteIndex < userData.ScaleList[scaleIndex].NoteSet.length;
+							noteIndex++
+						) {
+							userData.ScaleList[scaleIndex].NoteSet[noteIndex].ScaleID = scaleIndex;
+							userData.ScaleList[scaleIndex].NoteSet[noteIndex].NoteID = noteIndex;
+						}
+					}
+				}
+				return userData;
+			});
+		},
+		removeNote: (scaleIndex: number, noteIndex: number) => {
+			update((userData) => {
+				if (userData.ScaleList[scaleIndex] && userData.ScaleList[scaleIndex].NoteSet[noteIndex]) {
+					userData.ScaleList[scaleIndex].NoteSet = userData.ScaleList[scaleIndex].NoteSet.filter(
+						(_, index) => index !== noteIndex
+					);
+					for (let scaleIndex = 0; scaleIndex < userData.ScaleList.length; scaleIndex++) {
+						userData.ScaleList[scaleIndex].ScaleID = scaleIndex;
+						for (
+							let noteIndex = 0;
+							noteIndex < userData.ScaleList[scaleIndex].NoteSet.length;
+							noteIndex++
+						) {
+							userData.ScaleList[scaleIndex].NoteSet[noteIndex].ScaleID = scaleIndex;
+							userData.ScaleList[scaleIndex].NoteSet[noteIndex].NoteID = noteIndex;
+						}
+					}
+				}
+				return userData;
+			});
+		},
+
+		addNoteClass: (scaleIndex: number) => {
+			update((userData) => {
+				userData.ScaleList[scaleIndex].NoteClassSet = [
+					...userData.ScaleList[scaleIndex].NoteClassSet,
+					''
+				];
+				return userData;
+			});
+		},
+		removeNoteClass: (scaleIndex: number, noteClassIndex: number) => {
+			update((userData) => {
+				userData.ScaleList[scaleIndex].NoteClassSet.splice(noteClassIndex, 1);
 				return userData;
 			});
 		},
@@ -76,29 +158,6 @@ function CreateQOPUserData() {
 					}));
 				}
 
-				return userData;
-			});
-		},
-
-		addNote: (scaleIndex: number, newNote = new NoteUDTemplate()) => {
-			update((userData) => {
-				if (userData.ScaleList[scaleIndex]) {
-					const updatedNoteSet = [...userData.ScaleList[scaleIndex].NoteSet, newNote];
-					userData.ScaleList[scaleIndex] = {
-						...userData.ScaleList[scaleIndex],
-						NoteSet: updatedNoteSet
-					};
-				}
-				return userData;
-			});
-		},
-		removeNote: (scaleIndex: number, noteIndex: number) => {
-			update((userData) => {
-				if (userData.ScaleList[scaleIndex] && userData.ScaleList[scaleIndex].NoteSet[noteIndex]) {
-					userData.ScaleList[scaleIndex].NoteSet = userData.ScaleList[scaleIndex].NoteSet.filter(
-						(_, index) => index !== noteIndex
-					);
-				}
 				return userData;
 			});
 		},
@@ -228,75 +287,4 @@ function CreateQOPUserData() {
 			});
 		}
 	};
-}
-
-function HydrateScaleForUD() {
-	const passedScale: ScaleUDTemplate = new ScaleUDTemplate();
-
-	let { NoteClassSet } = passedScale;
-	const { NoteSet } = passedScale;
-	const standardMIDINoteNames = [
-		'C / B♯',
-		'C♯ / D♭',
-		'D',
-		'D♯ / E♭',
-		'E / F♭',
-		'F / E♯',
-		'F♯ / G♭',
-		'G',
-		'G♯ / A♭',
-		'A',
-		'A♯ / B♭',
-		'B / C♭'
-	];
-
-	passedScale.Description = 'MIDI';
-	NoteClassSet = standardMIDINoteNames;
-	let octave = -2; // MIDI note 0 corresponds to C-2.
-	if (passedScale.NoteSet.length < 128) {
-		for (let note = 0; note < 127; note++) {
-			NoteSet.push(new NoteUDTemplate());
-		}
-	}
-	for (let note = 0; note < NoteSet.length; note++) {
-		NoteSet[note].NoteID = note;
-		NoteSet[note].PitchHz = MIDILUT[note];
-		NoteSet[note].ScaleID = passedScale.ScaleID;
-
-		for (let noteClass = 0; noteClass < NoteClassSet[note % 12].length; noteClass++) {
-			switch (standardMIDINoteNames[note % 12][noteClass]) {
-				case 'B♯':
-					NoteSet[note].Name = standardMIDINoteNames[note % 12][noteClass] + [octave - 1];
-					continue;
-				case 'C':
-				case 'C♯':
-				case 'D♭':
-				case 'D':
-				case 'D♯':
-				case 'E♭':
-				case 'E':
-				case 'E♯':
-				case 'F♭':
-				case 'F':
-				case 'F♯':
-				case 'G♭':
-				case 'G':
-				case 'G♯':
-				case 'A♭':
-				case 'A':
-				case 'A♯':
-				case 'B♭':
-				case 'B':
-					NoteSet[note].Name = 
-						standardMIDINoteNames[note % 12][noteClass] + [octave];
-					continue;
-				case 'C♭':
-					NoteSet[note].Name = 
-						standardMIDINoteNames[note % 12][noteClass] + [octave + 1];
-					octave++;
-			}
-		}
-	}
-
-	return passedScale;
 }
