@@ -100,9 +100,6 @@
 </div>
 
 <style>
-	.scale {
-		display: inline;
-	}
 	input, select {
 		color: black;
 	}
