@@ -1,45 +1,58 @@
 <!-- YOU CAN DELETE EVERYTHING IN THIS PAGE -->
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import Banner from './Banner.svelte';
 	import EditorUI from '../UserDataMode/Components/EditorUI.svelte';
 	import WoodshedUI from '../WoodshedMode/Components/WoodshedUI.svelte';
+	import { QOPUserData } from '../UserDataMode/QOPUDStore';
+	import type { QOPUserDataTemplate } from '../UserDataMode/initQOPUD';
+	import { QOPMutator } from '../WoodshedMode/mutateQOPLoop';
+	import { DeltaSetValidator, OpenGutValidator } from '../UserDataMode/validateQOPUD';
+	import { HydrateQOP, QOPTemplate } from '../WoodshedMode/initQOP';
 
 	let WoodshedModeToggle: boolean = false;
+	let audioContext: AudioContext;
+	onMount(() => {
+		if (typeof window !== 'undefined') {
+			audioContext = new window.AudioContext();
+		}
+	});
 	function toggleMode() {
 		WoodshedModeToggle = !WoodshedModeToggle;
+		if (!WoodshedModeToggle) {
+			window.removeEventListener('keydown', WoodshedTriggerKeydown);
+			window.removeEventListener('keyup', WoodshedTriggerKeyup);
+		} else {
+			WoodshedMode($QOPUserData);
+		}
+	}
+	let QOP: QOPTemplate;
+	function WoodshedTriggerKeydown(event: KeyboardEvent) {
+		QOPMutator(event, 0, QOP, audioContext);
+	}
+	function WoodshedTriggerKeyup(event: KeyboardEvent) {
+		QOPMutator(event, 1, QOP, audioContext);
+	}
+	function WoodshedMode(QOPUserData: QOPUserDataTemplate) {
+		DeltaSetValidator(QOPUserData);
+		OpenGutValidator(QOPUserData);
+		QOP = HydrateQOP(QOPUserData, audioContext);
+		window.addEventListener('keydown', WoodshedTriggerKeydown);
+		window.addEventListener('keyup', WoodshedTriggerKeyup);
 	}
 </script>
 
-<div class="animate-gradient text-white py-6">
-	<div class="container mx-auto text-center">
-		<h1 class="text-4xl font-bold tracking-wider mb-2">QWERT-O-Phone</h1>
-		<p class="text-lg font-semibold tracking-wide">Create a Custom MIDI Controller</p>
-	</div>
-</div>
+<Banner />
 
 <button on:click={toggleMode}> Toggle Mode </button>
 
 {#if WoodshedModeToggle}
-	<WoodshedUI />
+	<WoodshedUI {QOP} />
 {:else}
 	<EditorUI />
 {/if}
 
 <style>
-	.animate-gradient {
-		background-size: 200% 100%;
-		background-image: linear-gradient(to right, #6ee7b7, #3b82f6, #9333ea, #f59e0b);
-		animation: gradient 8s linear infinite;
-	}
-
-	@keyframes gradient {
-		0% {
-			background-position: 200% 0;
-		}
-		100% {
-			background-position: -200% 0;
-		}
-	}
-
 	button {
 		padding: 10px 15px;
 		border: none;

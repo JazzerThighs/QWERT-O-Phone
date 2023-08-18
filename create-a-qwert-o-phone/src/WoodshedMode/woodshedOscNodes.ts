@@ -1,4 +1,4 @@
-import { QOPTemplate, audioContext } from "./initQOP.js";
+import type { QOPTemplate } from "./initQOP";
 
 export function OscNodesStop(gut: number, QOP: QOPTemplate) {
 	const { ScaleList } = QOP;
@@ -18,7 +18,7 @@ export function PanicOscNodesStop(QOP: QOPTemplate) {
 	}
 }
 
-export function OscNodesUpdate(QOP: QOPTemplate) {
+export function OscNodesUpdate(QOP: QOPTemplate, audioContext: AudioContext) {
 	const { ScaleList, GutList } = QOP;
 	const {
 		GutSoundState,

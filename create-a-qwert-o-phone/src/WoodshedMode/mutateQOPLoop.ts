@@ -21,7 +21,7 @@ const QOPTRLists: QOPTRListsString = [
 	'ChartList',
 	'ComboSetList'
 ];
-export function QOPMutator(event: KeyboardEvent, eNumber: 0 | 1, QOP: QOPTemplate) {
+export function QOPMutator(event: KeyboardEvent, eNumber: 0 | 1, QOP: QOPTemplate, audioContext: AudioContext) {
 	if (event.repeat || event.metaKey) {
 		return;
 	}
@@ -331,7 +331,7 @@ export function QOPMutator(event: KeyboardEvent, eNumber: 0 | 1, QOP: QOPTemplat
 			// MIDIOutputPacket(QOP);
 			// }
 			if (OscModeToggle) {
-				OscNodesUpdate(QOP);
+				OscNodesUpdate(QOP, audioContext);
 			}
 		}, 10);
 	} else {
@@ -341,7 +341,7 @@ export function QOPMutator(event: KeyboardEvent, eNumber: 0 | 1, QOP: QOPTemplat
 			// MIDIOutputPacket(QOP);
 			// }
 			if (OscModeToggle) {
-				OscNodesUpdate(QOP);
+				OscNodesUpdate(QOP, audioContext);
 			}
 		}
 	}

@@ -1,28 +1,10 @@
-import { DeltaSetValidator, OpenGutValidator } from '../UserDataMode/validateQOPUD.js';
 import type {
 	QOPUserDataTemplate,
 	SimpleWaveformTypeString,
 	QOPValidEventCodesString
 } from '../UserDataMode/initQOPUD.js';
 import { FindClosestMIDINote } from './woodshedMIDIOUT.js';
-import { QOPMutator } from './mutateQOPLoop.js';
-
-export function WoodshedMode(QOPUserData: QOPUserDataTemplate) {
-	function WoodshedTriggerKeydown(event: KeyboardEvent) {
-		QOPMutator(event, 0, QOP);
-	}
-	function WoodshedTriggerKeyup(event: KeyboardEvent) {
-		QOPMutator(event, 1, QOP);
-	}
-	DeltaSetValidator(QOPUserData);
-	OpenGutValidator(QOPUserData);
-	const QOP = HydrateQOP(QOPUserData);
-	window.addEventListener('keydown', WoodshedTriggerKeydown);
-	window.addEventListener('keyup', WoodshedTriggerKeyup);
-}
-
-export const audioContext = new (AudioContext || window.AudioContext)();
-function HydrateQOP(QOPUserData: QOPUserDataTemplate) {
+export function HydrateQOP(QOPUserData: QOPUserDataTemplate, audioContext: AudioContext) {
 	const QOP = new QOPTemplate();
 
 	QOP.StateMachine.DebounceTimer = QOPUserData.DebounceTimer;
@@ -30,15 +12,13 @@ function HydrateQOP(QOPUserData: QOPUserDataTemplate) {
 	QOP.MIDIOutput.MIDIOutputModeToggle = QOPUserData.MIDIOutputModeToggle;
 
 	HydrateScaleList(QOPUserData, QOP);
-
-	HydrateGutList(QOPUserData, QOP);
+	
+	HydrateGutList(QOPUserData, QOP, audioContext);
 	HydrateFretSetList(QOPUserData, QOP);
 	HydrateValveList(QOPUserData, QOP);
 	HydrateChartList(QOPUserData, QOP);
 	HydratePadSetList(QOPUserData, QOP);
 	HydrateComboSetList(QOPUserData, QOP);
-
-	
 
 	return QOP;
 }
@@ -597,7 +577,7 @@ function HydrateScaleList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate) {
 	);
 }
 
-function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): void {
+function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate, audioContext: AudioContext): void {
 	for (let gutIndex = 0; gutIndex < QOPUserData.GutList.length; gutIndex++) {
 		QOP.Oscillators.OscNodes.push([]);
 		QOP.Oscillators.OscGainNodes.push([]);
