@@ -7,8 +7,8 @@ import {
 	FretUDTemplate,
 	ValveUDTemplate,
 	ChartUDTemplate,
+	PadUDTemplate,
 	ComboUDTemplate,
-	ActionTypeUDTemplate,
 	DeltaUDTemplate
 } from './initQOPUD';
 
@@ -40,53 +40,8 @@ function CreateQOPUserData() {
 		},
 		removeScale: (scaleIndex: number) => {
 			update((userData) => {
-				if (userData.ScaleList[scaleIndex]) {
+				if (userData.ScaleList.length - 1 !== 0) {
 					userData.ScaleList = userData.ScaleList.filter((_, index) => index !== scaleIndex);
-					for (let scaleIndex = 0; scaleIndex < userData.ScaleList.length; scaleIndex++) {
-						userData.ScaleList[scaleIndex].ScaleID = scaleIndex;
-						for (
-							let noteIndex = 0;
-							noteIndex < userData.ScaleList[scaleIndex].NoteSet.length;
-							noteIndex++
-						) {
-							userData.ScaleList[scaleIndex].NoteSet[noteIndex].ScaleID = scaleIndex;
-							userData.ScaleList[scaleIndex].NoteSet[noteIndex].NoteID = noteIndex;
-						}
-					}
-				}
-				return userData;
-			});
-		},
-
-		addNote: (scaleIndex: number, newNote = new NoteUDTemplate()) => {
-			update((userData) => {
-				if (userData.ScaleList[scaleIndex]) {
-					const updatedNoteSet = [...userData.ScaleList[scaleIndex].NoteSet, newNote];
-					userData.ScaleList[scaleIndex] = {
-						...userData.ScaleList[scaleIndex],
-						NoteSet: updatedNoteSet
-					};
-					for (let scaleIndex = 0; scaleIndex < userData.ScaleList.length; scaleIndex++) {
-						userData.ScaleList[scaleIndex].ScaleID = scaleIndex;
-						for (
-							let noteIndex = 0;
-							noteIndex < userData.ScaleList[scaleIndex].NoteSet.length;
-							noteIndex++
-						) {
-							userData.ScaleList[scaleIndex].NoteSet[noteIndex].ScaleID = scaleIndex;
-							userData.ScaleList[scaleIndex].NoteSet[noteIndex].NoteID = noteIndex;
-						}
-					}
-				}
-				return userData;
-			});
-		},
-		removeNote: (scaleIndex: number, noteIndex: number) => {
-			update((userData) => {
-				if (userData.ScaleList[scaleIndex] && userData.ScaleList[scaleIndex].NoteSet[noteIndex]) {
-					userData.ScaleList[scaleIndex].NoteSet = userData.ScaleList[scaleIndex].NoteSet.filter(
-						(_, index) => index !== noteIndex
-					);
 					for (let scaleIndex = 0; scaleIndex < userData.ScaleList.length; scaleIndex++) {
 						userData.ScaleList[scaleIndex].ScaleID = scaleIndex;
 						for (
@@ -119,9 +74,85 @@ function CreateQOPUserData() {
 			});
 		},
 
+		addNote: (scaleIndex: number, newNote = new NoteUDTemplate()) => {
+			update((userData) => {
+				userData.ScaleList[scaleIndex].NoteSet = [
+					...userData.ScaleList[scaleIndex].NoteSet,
+					newNote
+				];
+				for (
+					let noteIndex = 0;
+					noteIndex < userData.ScaleList[scaleIndex].NoteSet.length;
+					noteIndex++
+				) {
+					userData.ScaleList[scaleIndex].NoteSet[noteIndex].ScaleID = scaleIndex;
+					userData.ScaleList[scaleIndex].NoteSet[noteIndex].NoteID = noteIndex;
+				}
+				return userData;
+			});
+		},
+		removeNote: (scaleIndex: number, noteIndex: number) => {
+			update((userData) => {
+				if (userData.ScaleList[scaleIndex].NoteSet.length - 1 !== 0) {
+					userData.ScaleList[scaleIndex].NoteSet = userData.ScaleList[scaleIndex].NoteSet.splice(
+						noteIndex,
+						1
+					);
+					for (let scaleIndex = 0; scaleIndex < userData.ScaleList.length; scaleIndex++) {
+						userData.ScaleList[scaleIndex].ScaleID = scaleIndex;
+						for (
+							let noteIndex = 0;
+							noteIndex < userData.ScaleList[scaleIndex].NoteSet.length;
+							noteIndex++
+						) {
+							userData.ScaleList[scaleIndex].NoteSet[noteIndex].ScaleID = scaleIndex;
+							userData.ScaleList[scaleIndex].NoteSet[noteIndex].NoteID = noteIndex;
+						}
+					}
+				}
+				return userData;
+			});
+		},
+
 		addGut: (newGut = new GutUDTemplate(), newDelta = new DeltaUDTemplate()) => {
 			update((userData) => {
 				userData.GutList = [...userData.GutList, newGut];
+
+				for (let gutIndex = 0; gutIndex < userData.GutList.length; gutIndex++) {
+					userData.GutList[gutIndex].GutID = gutIndex;
+					if (userData.GutList[gutIndex].OpenGutNoteID.length < userData.ScaleList.length) {
+						userData.GutList[gutIndex].OpenGutNoteID.push(69);
+					} else if (userData.GutList[gutIndex].OpenGutNoteID.length > userData.ScaleList.length) {
+						userData.GutList[gutIndex].OpenGutNoteID.splice(
+							userData.GutList[gutIndex].OpenGutNoteID.length - 1,
+							1
+						);
+					}
+					if (userData.GutList[gutIndex].OscWaveType.length < userData.ScaleList.length) {
+						userData.GutList[gutIndex].OscWaveType.push('sine');
+					} else if (userData.GutList[gutIndex].OscWaveType.length > userData.ScaleList.length) {
+						userData.GutList[gutIndex].OscWaveType.splice(
+							userData.GutList[gutIndex].OscWaveType.length - 1,
+							1
+						);
+					}
+					if (userData.GutList[gutIndex].OscGain.length < userData.ScaleList.length) {
+						userData.GutList[gutIndex].OscGain.push(0.25);
+					} else if (userData.GutList[gutIndex].OscGain.length > userData.ScaleList.length) {
+						userData.GutList[gutIndex].OscGain.splice(
+							userData.GutList[gutIndex].OscGain.length - 1,
+							1
+						);
+					}
+					for (
+						let fretIndex = 0;
+						fretIndex < userData.GutList[gutIndex].FretSet.length;
+						fretIndex++
+					) {
+						userData.GutList[gutIndex].FretSet[fretIndex].GutID = gutIndex;
+						userData.GutList[gutIndex].FretSet[fretIndex].FretID = fretIndex;
+					}
+				}
 
 				userData.ValveList = userData.ValveList.map((valve) => ({
 					...valve,
@@ -141,148 +172,179 @@ function CreateQOPUserData() {
 		},
 		removeGut: (gutIndex: number) => {
 			update((userData) => {
-				if (userData.GutList[gutIndex]) {
+				if (userData.GutList.length - 1 !== 0) {
 					userData.GutList = userData.GutList.filter((_, index) => index !== gutIndex);
 
-					userData.ValveList = userData.ValveList.map((valve) => ({
-						...valve,
-						DeltaSet: valve.DeltaSet.slice(0, -1)
-					}));
+					for (let gutIndex = 0; gutIndex < userData.GutList.length; gutIndex++) {
+						userData.GutList[gutIndex].GutID = gutIndex;
+						for (
+							let fretIndex = 0;
+							fretIndex < userData.GutList[gutIndex].FretSet.length;
+							fretIndex++
+						) {
+							userData.GutList[gutIndex].FretSet[fretIndex].GutID = gutIndex;
+							userData.GutList[gutIndex].FretSet[fretIndex].FretID = fretIndex;
+						}
+					}
 
-					userData.ChartList = userData.ChartList.map((chart) => ({
-						...chart,
-						ComboSet: chart.ComboSet.map((combo) => ({
-							...combo,
-							DeltaSet: combo.DeltaSet.slice(0, -1)
-						}))
-					}));
+					for (let valveIndex = 0; valveIndex < userData.ValveList.length; valveIndex++) {
+						userData.ValveList[valveIndex].DeltaSet.splice(gutIndex, 1);
+					}
+
+					for (let chartIndex = 0; chartIndex < userData.ChartList.length; chartIndex++) {
+						for (
+							let comboIndex = 0;
+							comboIndex < userData.ChartList[chartIndex].ComboSet.length;
+							comboIndex++
+						) {
+							userData.ChartList[chartIndex].ComboSet[comboIndex].DeltaSet.splice(gutIndex, 1);
+						}
+					}
 				}
-
 				return userData;
 			});
 		},
 
 		addFret: (gutIndex: number, newFret = new FretUDTemplate()) => {
 			update((userData) => {
-				if (userData.GutList[gutIndex]) {
-					const updatedGut = {
-						...userData.GutList[gutIndex],
-						FretSet: [...userData.GutList[gutIndex].FretSet, newFret]
-					};
-
-					userData.GutList = [
-						...userData.GutList.slice(0, gutIndex),
-						updatedGut,
-						...userData.GutList.slice(gutIndex + 1)
-					];
+				userData.GutList[gutIndex].FretSet = [...userData.GutList[gutIndex].FretSet, newFret];
+				for (
+					let fretIndex = 0;
+					fretIndex < userData.GutList[gutIndex].FretSet.length;
+					fretIndex++
+				) {
+					userData.GutList[gutIndex].FretSet[fretIndex].GutID = gutIndex;
+					userData.GutList[gutIndex].FretSet[fretIndex].FretID = fretIndex;
 				}
-
 				return userData;
 			});
 		},
 		removeFret: (gutIndex: number, fretIndex: number) => {
 			update((userData) => {
-				if (userData.GutList[gutIndex] && userData.GutList[gutIndex].FretSet[fretIndex]) {
-					const updatedGut = {
-						...userData.GutList[gutIndex],
-						FretSet: userData.GutList[gutIndex].FretSet.filter((_, index) => index !== fretIndex)
-					};
-
-					userData.GutList = [
-						...userData.GutList.slice(0, gutIndex),
-						updatedGut,
-						...userData.GutList.slice(gutIndex + 1)
-					];
+				userData.GutList[gutIndex].FretSet.splice(fretIndex, 1);
+				for (
+					let fretIndex = 0;
+					fretIndex < userData.GutList[gutIndex].FretSet.length;
+					fretIndex++
+				) {
+					userData.GutList[gutIndex].FretSet[fretIndex].GutID = gutIndex;
+					userData.GutList[gutIndex].FretSet[fretIndex].FretID = fretIndex;
 				}
-
 				return userData;
 			});
 		},
 
 		addValve: (newValve = new ValveUDTemplate()) => {
 			update((userData) => {
-				return {
-					...userData,
-					ValveList: [...userData.ValveList, newValve]
-				};
+				userData.ValveList = [...userData.ValveList, newValve];
+				for (let valveIndex = 0; valveIndex < userData.ValveList.length; valveIndex++) {
+					userData.ValveList[valveIndex].ValveID = valveIndex;
+				}
+				return userData;
 			});
 		},
 		removeValve: (valveIndex: number) => {
 			update((userData) => {
-				return {
-					...userData,
-					ValveList: userData.ValveList.filter((_, index) => index !== valveIndex)
-				};
+				userData.ValveList.splice(valveIndex, 1);
+				for (let valveIndex = 0; valveIndex < userData.ValveList.length; valveIndex++) {
+					userData.ValveList[valveIndex].ValveID = valveIndex;
+				}
+				return userData;
 			});
 		},
 
 		addChart: (newChart = new ChartUDTemplate()) => {
 			update((userData) => {
 				userData.ChartList = [...userData.ChartList, newChart];
+				for (let chartIndex = 0; chartIndex < userData.ChartList.length; chartIndex++) {
+					userData.ChartList[chartIndex].ChartID = chartIndex;
+					for (
+						let padIndex = 0;
+						padIndex < userData.ChartList[chartIndex].PadSet.length;
+						padIndex++
+					) {
+						userData.ChartList[chartIndex].PadSet[padIndex].ChartID = chartIndex;
+						userData.ChartList[chartIndex].PadSet[padIndex].PadID = padIndex;
+					}
+				}
 				return userData;
 			});
 		},
 		removeChart: (chartIndex: number) => {
 			update((userData) => {
-				userData.ChartList = userData.ChartList.filter((_, index) => index !== chartIndex);
+				userData.ChartList = userData.ChartList.splice(chartIndex, 1);
+				for (let chartIndex = 0; chartIndex < userData.ChartList.length; chartIndex++) {
+					userData.ChartList[chartIndex].ChartID = chartIndex;
+					for (
+						let padIndex = 0;
+						padIndex < userData.ChartList[chartIndex].PadSet.length;
+						padIndex++
+					) {
+						userData.ChartList[chartIndex].PadSet[padIndex].ChartID = chartIndex;
+						userData.ChartList[chartIndex].PadSet[padIndex].PadID = padIndex;
+					}
+				}
 				return userData;
 			});
 		},
 
-		addPad: (chartIndex: number, newPad = new ActionTypeUDTemplate()) => {
+		addPad: (chartIndex: number, newPad = new PadUDTemplate()) => {
 			update((userData) => {
-				const updatedChartList = [...userData.ChartList];
-
-				if (updatedChartList[chartIndex]) {
-					updatedChartList[chartIndex] = {
-						...updatedChartList[chartIndex],
-						PadSet: [...updatedChartList[chartIndex].PadSet, newPad]
-					};
+				userData.ChartList[chartIndex].PadSet = [...userData.ChartList[chartIndex].PadSet, newPad];
+				for (
+					let padIndex = 0;
+					padIndex < userData.ChartList[chartIndex].PadSet.length;
+					padIndex++
+				) {
+					userData.ChartList[chartIndex].PadSet[padIndex].ChartID = chartIndex;
+					userData.ChartList[chartIndex].PadSet[padIndex].PadID = padIndex;
 				}
-
-				userData.ChartList = updatedChartList;
 				return userData;
 			});
 		},
 		removePad: (chartIndex: number, padIndex: number) => {
 			update((userData) => {
-				const updatedChartList = [...userData.ChartList];
-
-				if (updatedChartList[chartIndex] && updatedChartList[chartIndex].PadSet[padIndex]) {
-					updatedChartList[chartIndex] = {
-						...updatedChartList[chartIndex],
-						PadSet: updatedChartList[chartIndex].PadSet.filter((_, index) => index !== padIndex)
-					};
+				userData.ChartList[chartIndex].PadSet.splice(padIndex, 1);
+				for (
+					let padIndex = 0;
+					padIndex < userData.ChartList[chartIndex].PadSet.length;
+					padIndex++
+				) {
+					userData.ChartList[chartIndex].PadSet[padIndex].ChartID = chartIndex;
+					userData.ChartList[chartIndex].PadSet[padIndex].PadID = padIndex;
 				}
-
-				userData.ChartList = updatedChartList;
 				return userData;
 			});
 		},
-
+		
 		addCombo: (chartIndex: number, newCombo = new ComboUDTemplate()) => {
 			update((userData) => {
-				const targetChart = userData.ChartList[chartIndex];
-				targetChart.ComboSet = [...targetChart.ComboSet, newCombo];
-				userData.ChartList = [
-					...userData.ChartList.slice(0, chartIndex),
-					targetChart,
-					...userData.ChartList.slice(chartIndex + 1)
+				userData.ChartList[chartIndex].ComboSet = [
+					...userData.ChartList[chartIndex].ComboSet,
+					newCombo
 				];
-
+				for (
+					let comboIndex = 0;
+					comboIndex < userData.ChartList[chartIndex].ComboSet.length;
+					comboIndex++
+				) {
+					userData.ChartList[chartIndex].ComboSet[comboIndex].ChartID = chartIndex;
+					userData.ChartList[chartIndex].ComboSet[comboIndex].ComboID = comboIndex;
+				}
 				return userData;
 			});
 		},
 		removeCombo: (chartIndex: number, comboIndex: number) => {
 			update((userData) => {
-				const targetChart = userData.ChartList[chartIndex];
-				targetChart.ComboSet = targetChart.ComboSet.filter((_, index) => index !== comboIndex);
-				userData.ChartList = [
-					...userData.ChartList.slice(0, chartIndex),
-					targetChart,
-					...userData.ChartList.slice(chartIndex + 1)
-				];
-
+				userData.ChartList[chartIndex].ComboSet.splice(comboIndex, 1);
+				for (
+					let comboIndex = 0;
+					comboIndex < userData.ChartList[chartIndex].ComboSet.length;
+					comboIndex++
+				) {
+					userData.ChartList[chartIndex].ComboSet[comboIndex].ChartID = chartIndex;
+					userData.ChartList[chartIndex].ComboSet[comboIndex].ComboID = comboIndex;
+				}
 				return userData;
 			});
 		}

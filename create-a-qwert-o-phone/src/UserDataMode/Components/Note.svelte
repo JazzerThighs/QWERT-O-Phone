@@ -8,8 +8,8 @@
 
 
 <div class="class_note" style="background-color: {noteData.ColorHex}">
+    <div>NoteID: {noteData.NoteID} ScaleID: {noteData.ScaleID}</div>
     <slot />
-    <div>NoteID: {noteData.NoteID}</div>
     <div>Note Name:
         <input type="text" bind:value={noteData.Name} />
         <!--input type="text" bind:value={note.Description} /-->

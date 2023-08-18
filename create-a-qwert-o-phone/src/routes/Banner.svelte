@@ -9,12 +9,11 @@
 </div>
 
 <style>
-  .animate-gradient {
+	.animate-gradient {
 		background-size: 200% 100%;
 		background-image: linear-gradient(to right, #6ee7b7, #3b82f6, #9333ea, #f59e0b);
 		animation: gradient 8s linear infinite;
 	}
-
 	@keyframes gradient {
 		0% {
 			background-position: 200% 0;
@@ -24,4 +23,3 @@
 		}
 	}
 </style>
-

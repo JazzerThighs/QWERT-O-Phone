@@ -1,9 +1,7 @@
 <script lang="ts">
-	import { writable } from 'svelte/store';
 	import { QOPUserData } from '../QOPUDStore';
-	import { NoteUDTemplate, ScaleUDTemplate, type ScaleTypeString } from '../initQOPUD';
+	import { ScaleUDTemplate, type ScaleTypeString } from '../initQOPUD';
 	import Note from './Note.svelte';
-	import Chart from './Chart.svelte';
 	export let scaleData: ScaleUDTemplate = new ScaleUDTemplate();
 
 	const scaleTypeOptions: ScaleTypeString[] = [
@@ -40,8 +38,8 @@
 </script>
 
 <div class="scale">
-	<slot />
 	<div>Scale ID: {scaleData.ScaleID}</div>
+	<slot />
 	<div>
 		Scale Name:
 		<input type="text" bind:value={scaleData.Name} />
@@ -105,7 +103,13 @@
 	.scale {
 		display: inline;
 	}
-	input {
+	input, select {
 		color: black;
+	}
+	button {
+		border: black;
+		color: black;
+		background: lightblue;
+		padding: 3px;
 	}
 </style>

@@ -1,4 +1,4 @@
-import { MIDILUT, standardMIDINoteNames } from "../WoodshedMode/woodshedMIDIOUT";
+import { MIDILUT, standardMIDINoteNames } from '../WoodshedMode/woodshedMIDIOUT';
 export const CurrentQOPVersion = 'qop0.sk.69';
 
 export interface IQOPUserDataTemplate {
@@ -240,7 +240,7 @@ export class ScaleUDTemplate implements IScaleUDTemplate {
 		this.Name = 'MIDI';
 		this.Description = '(Default MIDI Note Bindings)';
 		this.ScaleType = 'Equal Temperament';
-		this.ReferenceNote = 0; //INT (0 <= x)
+		this.ReferenceNote = 69; //INT (0 <= x)
 		this.TuningHz = 440; //FLOAT Frequency in Hz of this.referenceNote (0 < x)
 		this.OctaveDivisions = 12;
 		this.NoteClassSet = [
@@ -260,12 +260,12 @@ export class ScaleUDTemplate implements IScaleUDTemplate {
 		this.NoteSet = [];
 
 		let octave = -2; // MIDI note 0 corresponds to C-2.
-		
+
 		for (let noteIndex = 0; noteIndex < 128; noteIndex++) {
 			this.NoteSet = [...this.NoteSet, new NoteUDTemplate()];
 			this.NoteSet[noteIndex].NoteID = noteIndex;
 			this.NoteSet[noteIndex].PitchHz = MIDILUT[noteIndex];
-			
+
 			switch (standardMIDINoteNames[noteIndex % 12]) {
 				case 'C':
 				case 'C♯ / D♭':
@@ -278,31 +278,35 @@ export class ScaleUDTemplate implements IScaleUDTemplate {
 				case 'G♯ / A♭':
 				case 'A':
 				case 'A♯ / B♭':
-					this.NoteSet[noteIndex].Name =
-						standardMIDINoteNames[noteIndex % 12] + [octave];
+					this.NoteSet[noteIndex].Name = standardMIDINoteNames[noteIndex % 12] + [octave];
 					continue;
 				case 'B':
 					this.NoteSet[noteIndex].Name = standardMIDINoteNames[noteIndex % 12] + [octave];
 					octave++;
 					continue;
-			
 			}
 		}
 	}
 }
 export interface IFretUDTemplate {
+	GutID: number;
+	FretID: number;
 	TranspositionEventCodes: TranspositionObject;
 	DeltaType: DeltaTypesString;
 	NoteIDDelta: number;
 	CentsDelta: number;
 }
 export class FretUDTemplate extends ActionTypeUDTemplate implements IFretUDTemplate {
+	public GutID: number;
+	public FretID: number;
 	public TranspositionEventCodes: TranspositionObject;
 	public DeltaType: DeltaTypesString;
 	public NoteIDDelta: number;
 	public CentsDelta: number;
 	constructor() {
 		super();
+		this.GutID = 0;
+		this.FretID = 0;
 		this.TranspositionEventCodes = {} as TranspositionObject;
 		this.DeltaType = 'NoteID';
 		this.NoteIDDelta = 0;
@@ -310,6 +314,7 @@ export class FretUDTemplate extends ActionTypeUDTemplate implements IFretUDTempl
 	}
 }
 export interface IGutUDTemplate {
+	GutID: number;
 	OpenGutNoteID: number[];
 
 	GutOscMute: boolean;
@@ -325,6 +330,7 @@ export interface IGutUDTemplate {
 	FretSet: FretUDTemplate[];
 }
 export class GutUDTemplate extends ActionTypeUDTemplate implements IGutUDTemplate {
+	public GutID: number;
 	public OpenGutNoteID: number[];
 
 	public GutOscMute: boolean;
@@ -340,6 +346,7 @@ export class GutUDTemplate extends ActionTypeUDTemplate implements IGutUDTemplat
 	public FretSet: FretUDTemplate[];
 	constructor() {
 		super();
+		this.GutID = 0;
 		this.OpenGutNoteID = [69]; // The 69th MIDI note is A4=440Hz
 
 		this.GutOscMute = false;
@@ -356,19 +363,37 @@ export class GutUDTemplate extends ActionTypeUDTemplate implements IGutUDTemplat
 	}
 }
 export interface IValveUDTemplate {
+	ValveID: number;
 	TranspositionEventCodes: TranspositionObject;
 	DeltaSet: DeltaUDTemplate[];
 }
 export class ValveUDTemplate extends ActionTypeUDTemplate implements IValveUDTemplate {
+	public ValveID: number;
 	public TranspositionEventCodes: TranspositionObject;
 	public DeltaSet: DeltaUDTemplate[];
 	constructor() {
 		super();
+		this.ValveID = 0;
 		this.TranspositionEventCodes = {} as TranspositionObject;
 		this.DeltaSet = [new DeltaUDTemplate()];
 	}
 }
+export interface IPadUDTemplate {
+	ChartID: number;
+	PadID: number;
+}
+export class PadUDTemplate extends ActionTypeUDTemplate implements IPadUDTemplate {
+	public ChartID: number;
+	public PadID: number;
+	constructor() {
+		super();
+		this.ChartID = 0;
+		this.PadID = 0;
+	}
+}
 export interface IComboUDTemplate {
+	ChartID: number;
+	ComboID: number;
 	Name: string;
 	Description: string;
 	Combo: boolean[];
@@ -376,12 +401,16 @@ export interface IComboUDTemplate {
 	DeltaSet: DeltaUDTemplate[];
 }
 export class ComboUDTemplate implements IComboUDTemplate {
+	public ChartID: number;
+	public ComboID: number;
 	public Name: string;
 	public Description: string;
 	public Combo: boolean[];
 	public TranspositionEventCodes: TranspositionObject;
 	public DeltaSet: DeltaUDTemplate[];
 	constructor() {
+		this.ChartID = 0;
+		this.ComboID = 0;
 		this.Name = '';
 		this.Description = '';
 		this.TranspositionEventCodes = {} as TranspositionObject;
@@ -390,23 +419,26 @@ export class ComboUDTemplate implements IComboUDTemplate {
 	}
 }
 export interface IChartUDTemplate {
+	ChartID: number;
 	Name: string;
 	Description: string;
 	TranspositionEventCodes: TranspositionObject;
-	PadSet: ActionTypeUDTemplate[];
+	PadSet: PadUDTemplate[];
 	ComboSet: ComboUDTemplate[];
 }
 export class ChartUDTemplate implements IChartUDTemplate {
+	public ChartID: number;
 	public Name: string;
 	public Description: string;
 	public TranspositionEventCodes: TranspositionObject;
-	public PadSet: ActionTypeUDTemplate[];
+	public PadSet: PadUDTemplate[];
 	public ComboSet: ComboUDTemplate[];
 	constructor() {
+		this.ChartID = 0;
 		this.Name = '';
 		this.Description = '';
 		this.TranspositionEventCodes = {} as TranspositionObject;
-		this.PadSet = [new ActionTypeUDTemplate()];
+		this.PadSet = [new PadUDTemplate()];
 		this.ComboSet = [new ComboUDTemplate()];
 	}
 }
