@@ -177,7 +177,7 @@ At the heart of it all, combining the use of Scales, Guts, Frets, Valves, and Ch
 
 In this section, we describe what MIDI is in a bit further detail, and describe the use cases I've considered when designing the QWERT-O-Phone.
 
-# [MIDI Integration 🎹](https://www.midi.org/specifications)<small>[(Click Me!)](https://www.gnu.org/licenses/gpl-3.0.en.html)<small>
+# [MIDI Integration 🎹 <small>(Click Me!)</small>](https://www.midi.org/specifications)
 
 MIDI, or **Musical Instrument Digital Interface**, is a protocol used for exchanging musical information between computers, synthesizers, and other electronic musical instruments. At its core, it's the language of electronic music creation and performance.
 
@@ -210,9 +210,9 @@ In the context of the QWERT-O-Phone:
 | $$      | $$  | $$ \$$    $$| $$      |   $$ \   | $$   |  \|  \|  \
  \$$       \$$   \$$  \$$$$$$  \$$       \$$$$$$    \$$    \$$ \$$ \$$
 ```
-# Chapter IV: PROFIT!!!
+# Chapter IV: PROFIT!!! 💰
 
-# 📜 [License: Copyleft 🔄](https://www.gnu.org/licenses/gpl-3.0.en.html) <small>[(Click Me!)](https://www.gnu.org/licenses/gpl-3.0.en.html)</small>
+# 📜 [License: Copyleft 🔄 (Click Me!)](https://www.gnu.org/licenses/gpl-3.0.en.html) 
 The QWERT-O-Phone is wrapped in the protective embrace of the [GNU General Public License v3.0 (GPL-3.0)](https://www.gnu.org/licenses/gpl-3.0.en.html).
 In less cryptic terms:
 
