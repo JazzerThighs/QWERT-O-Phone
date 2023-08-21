@@ -23,4 +23,8 @@
 </div>
 
 <style>
+    .valve {
+        color: black;
+        background-color: rgb(173, 229, 173);
+    }
 </style>

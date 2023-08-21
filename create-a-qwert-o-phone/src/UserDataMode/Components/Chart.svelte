@@ -63,4 +63,8 @@ import { QOPUserData } from '../QOPUDStore';
 </div>
 
 <style>
+	.chart {
+		color: black;
+		background-color: rgb(128, 255, 255);
+	}
 </style>

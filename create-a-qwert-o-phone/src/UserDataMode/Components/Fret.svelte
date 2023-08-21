@@ -4,6 +4,7 @@
     export let fretData: FretUDTemplate = new FretUDTemplate();
 
     $: fretData = $QOPUserData.GutList[fretData.GutID].FretSet[fretData.FretID];
+
 </script>
 
 <div class="class_fret">
@@ -18,5 +19,12 @@
 
 
 <style>
-    
+    .class_fret {
+        display: inline-block;
+        padding: 15px;
+        border: solid;
+    }
+    * {
+        color: black;
+    }
 </style>

@@ -97,7 +97,7 @@
 
 <style>
 	.list-container {
-    max-height: 66vh;
+    max-height: 85vh;
     overflow-y: auto;
 	margin: 2.5vh 5vh;
 	padding: 1vh;

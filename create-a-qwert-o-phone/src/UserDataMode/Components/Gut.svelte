@@ -55,7 +55,7 @@
 			<div class="fret">
 				{#each $QOPUserData.GutList[gutData.GutID].FretSet as fret, fretIndex}
 					<Fret fretData={fret}>
-						<button on:click={() => handleRemoveFret(gutData.GutID, fretIndex)}>Remove Fret {fretIndex}</button>
+                        <button on:click={() => handleRemoveFret(gutData.GutID, fretIndex)}>Remove Fret {fretIndex}</button>
 					</Fret>
 				{/each}
 			</div>
@@ -72,4 +72,8 @@
 
 
 <style>
+    .gut {
+        color: black;
+        background-color: rgb(255, 214, 137);
+    }
 </style>
