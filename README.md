@@ -72,7 +72,7 @@ We do that by using Musical Instruments. Instrument, in this context, refers to 
 
 Ergo, the goal is to produce Music, but the method is through the use of an instrument. This has its ups and downs.
 
-As time marched onward, and the Electronic Music age was instituted, a very small number of Musical Instrument Control Schemes took precedent when manufacturers decided to mass produce MIDI controllers, capable of letting as many musicians express themselves as possible using the most common interfaces: The piano keyboard, and the modern woodwind instrument.
+As time marched onward, and the Electronic Music age came about, a very small number of Musical Instrument Control Schemes took precedent when manufacturers decided to mass produce MIDI controllers, capable of letting as many musicians express themselves as possible using the most common interfaces: The piano keyboard, and the modern woodwind instrument.
 
 Most MIDI controllers involve piano keyboards; Wind controllers mostly fall into the clarinet-shaped Electronic Wind Instruments (EWIs). And while there are some variations, like alternate key arrangements for piano-like interfaces, and the Electronic Valve Instrument (EVI), the result is clear: Only keyboardists and select-woodwind players have widespread options when finding the right MIDI controller for them.
 
