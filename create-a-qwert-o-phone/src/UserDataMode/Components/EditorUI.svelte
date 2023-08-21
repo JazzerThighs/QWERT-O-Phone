@@ -18,13 +18,13 @@
 		QOPUserData.addGut();
 	}
 	function handleRemoveGut(gutIndex: number) {
-		QOPUserData.removeScale(gutIndex);
+		QOPUserData.removeGut(gutIndex);
 	}
 	function handleAddValve() {
 		QOPUserData.addValve();
 	}
 	function handleRemoveValve(valveIndex: number) {
-		QOPUserData.removeScale(valveIndex);
+		QOPUserData.removeValve(valveIndex);
 	}
 	function handleAddChart() {
 		QOPUserData.addChart();

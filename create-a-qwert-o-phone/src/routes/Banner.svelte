@@ -14,6 +14,9 @@
 		background-image: linear-gradient(to right, #6ee7b7, #3b82f6, #9333ea, #f59e0b);
 		animation: gradient 8s linear infinite;
 	}
+	h1 {
+		font-family: "Comic Sans MS", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+	}
 	@keyframes gradient {
 		0% {
 			background-position: 200% 0;

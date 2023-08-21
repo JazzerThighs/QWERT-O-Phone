@@ -76,4 +76,14 @@
         color: black;
         background-color: rgb(255, 214, 137);
     }
+
+	input, select {
+		color: black;
+	}
+	button {
+		border: black;
+		color: black;
+		background: lightblue;
+		padding: 3px;
+	}
 </style>

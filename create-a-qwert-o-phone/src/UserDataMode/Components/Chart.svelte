@@ -67,4 +67,13 @@ import { QOPUserData } from '../QOPUDStore';
 		color: black;
 		background-color: rgb(128, 255, 255);
 	}
+	input, select {
+		color: black;
+	}
+	button {
+		border: black;
+		color: black;
+		background: lightblue;
+		padding: 3px;
+	}
 </style>

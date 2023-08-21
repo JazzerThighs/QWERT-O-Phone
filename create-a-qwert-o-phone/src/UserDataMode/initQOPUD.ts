@@ -169,7 +169,7 @@ export class NoteUDTemplate implements INoteUDTemplate {
 		this.Name = '';
 		this.Description = '';
 		this.PitchHz = 0; //FLOAT Frequency in Hz of this note (0 < x)
-		this.ColorHex = '#FFFFFF';
+		this.ColorHex = '#afafaf';
 	}
 }
 interface IActionTypeUDTemplate {

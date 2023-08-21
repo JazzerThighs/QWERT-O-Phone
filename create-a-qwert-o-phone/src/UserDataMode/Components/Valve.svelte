@@ -27,4 +27,13 @@
         color: black;
         background-color: rgb(173, 229, 173);
     }
+    input, select {
+		color: black;
+	}
+	button {
+		border: black;
+		color: black;
+		background: lightblue;
+		padding: 3px;
+	}
 </style>
