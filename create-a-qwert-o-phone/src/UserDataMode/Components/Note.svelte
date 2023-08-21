@@ -6,11 +6,7 @@
 	$: noteData = $QOPUserData.ScaleList[noteData.ScaleID].NoteSet[noteData.NoteID];
 </script>
 
-<div
-	class="class_note"
-	style="background-color: {$QOPUserData.ScaleList[noteData.ScaleID].NoteSet[noteData.NoteID]
-		.ColorHex}"
->
+<div class="class_note" style="background-color: {noteData.ColorHex}">
 	<div>NoteID: {noteData.NoteID} ScaleID: {noteData.ScaleID}</div>
 	<slot />
 	<div>
