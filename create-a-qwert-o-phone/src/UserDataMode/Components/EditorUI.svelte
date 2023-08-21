@@ -36,6 +36,29 @@
 
 <h1>Editor Mode</h1>
 
+<div class="qopud-metadata">
+	<div>
+		QOP Name:
+		<input type="text" bind:value={$QOPUserData.Name} />
+	</div>
+	<div>
+		Description:
+		<input type="text" bind:value={$QOPUserData.Description} />
+	</div>
+	<div>
+		Native Sound Toggle:
+		<input type="checkbox" bind:value={$QOPUserData.OscModeToggle} />
+	</div>
+	<div>
+		MIDI Output Toggle:
+		<input type="checkbox" bind:value={$QOPUserData.MIDIOutputModeToggle} />
+	</div>
+	<div>
+		Debounce Timer:
+		<input type="number" bind:value={$QOPUserData.DebounceTimer} />ms
+	</div>
+</div>
+
 <button on:click={handleAddScale}>Add Scale</button>
 <div class="list-container scale-list">    
     {#each $QOPUserData.ScaleList as scale, scaleIndex}

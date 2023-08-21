@@ -6,5 +6,21 @@
 	$: valveData = $QOPUserData.ValveList[valveData.ValveID];
 </script>
 
+<div class="valve">
+    <div>Valve ID: {valveData.ValveID}</div>
+        <slot />
+    <div>
+        Valve Name: 
+        <input type="text" bind:value={valveData.Name} />
+    </div>
+    <div>
+        Description: 
+        <input type="text" bind:value={valveData.Description} />
+    </div>
+   
+
+
+</div>
+
 <style>
 </style>
