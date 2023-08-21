@@ -114,11 +114,4 @@ border: solid lightgreen;
 	.chart-list {
 		border: solid cyan;
 	}
-	
-	button {
-		border: black;
-		color: black;
-		background: lightblue;
-		padding: 3px;
-	}
 </style>

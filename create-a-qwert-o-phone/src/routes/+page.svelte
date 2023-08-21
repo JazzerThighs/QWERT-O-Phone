@@ -53,7 +53,7 @@
 {/if}
 
 <style>
-	button {
+	:global(button) {
 		padding: 10px 15px;
 		border: none;
 		background-color: #007bff;
@@ -63,7 +63,7 @@
 		margin-bottom: 20px;
 	}
 
-	button:hover {
+	:global(button:hover) {
 		background-color: #0056b3;
 	}
 </style>

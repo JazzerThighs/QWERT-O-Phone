@@ -59,7 +59,6 @@ import { QOPUserData } from '../QOPUDStore';
 		</div>
 	</div>
 
-
 </div>
 
 <style>
@@ -69,11 +68,5 @@ import { QOPUserData } from '../QOPUDStore';
 	}
 	input, select {
 		color: black;
-	}
-	button {
-		border: black;
-		color: black;
-		background: lightblue;
-		padding: 3px;
 	}
 </style>
