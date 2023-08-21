@@ -78,9 +78,8 @@ Most MIDI controllers involve piano keyboards; Wind controllers mostly fall into
 
 I aim to enable people to quickly build, practice on, and play MIDI controller interfaces that suit their preferred idiomatic method of mono/polyphonic expression.
 <br />
-
-* _"Out of desperation comes invention..."_
-<br /><br />
+~~~~~~~~~~~
+<br />
 Here is a list of nagging thoughts I had as a prospective teacher of music:
 
 * _"[...] Gee, there are sure a lot of piano keyboards and saxophone-looking MIDI controllers in the market. But I, as someone who solely plays trumpet to any high degree, I wish I could procure a MIDI controller that would let me do what those mass-produced doohickeys do. There is something called an [Electronic Valve Instrument (EVI)](https://www.patchmanmusic.com/NyleMIDIEVI.html), and there are people producing an upgraded, modernized version of this called the [NuEVI](https://berglundinstruments.com/nuevi-trumpet-horn-tuba-fingering-instrument/), using programmable microcontrollers... But I'm not sure I have 4 Dollar Signs to throw at it [...]"_<br />
