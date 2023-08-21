@@ -78,7 +78,7 @@ Most MIDI controllers involve piano keyboards; Wind controllers mostly fall into
 
 I aim to enable people to quickly build, practice on, and play MIDI controller interfaces that suit their preferred idiomatic method of mono/polyphonic expression.
 <br />
-~~~~~~~~~~~
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
 <br />
 Here is a list of nagging thoughts I had as a prospective teacher of music:
 
