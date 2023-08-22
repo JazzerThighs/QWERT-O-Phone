@@ -12,7 +12,7 @@ export function HydrateQOP(QOPUserData: QOPUserDataTemplate, audioContext: Audio
 	QOP.MIDIOutput.MIDIOutputModeToggle = QOPUserData.MIDIOutputModeToggle;
 
 	HydrateScaleList(QOPUserData, QOP);
-	
+
 	HydrateGutList(QOPUserData, QOP, audioContext);
 	HydrateFretSetList(QOPUserData, QOP);
 	HydrateValveList(QOPUserData, QOP);
@@ -173,11 +173,7 @@ export const QOPActionTypeListsArray: QOPActionTypeLists[] = [
 type DeltaTypesString = 'DeltaType' | 'NoteIDDelta' | 'CentsDelta';
 const DeltaTypes: DeltaTypesString[] = ['DeltaType', 'NoteIDDelta', 'CentsDelta'];
 type DeltaTypeMapsString = 'DeltaTypeMap' | 'NoteIDDeltaMap' | 'CentsDeltaMap';
-const DeltaTypeMaps: DeltaTypeMapsString[] = [
-	'DeltaTypeMap',
-	'NoteIDDeltaMap',
-	'CentsDeltaMap'
-];
+const DeltaTypeMaps: DeltaTypeMapsString[] = ['DeltaTypeMap', 'NoteIDDeltaMap', 'CentsDeltaMap'];
 export type ActionTypesString =
 	| 'Sustain'
 	| 'AntiSustain'
@@ -191,7 +187,7 @@ export const ActionTypes: ActionTypesString[] = [
 	'Sostenuto',
 	'AntiSostenuto'
 ];
-type ActionTypesEventCodeString = 
+type ActionTypesEventCodeString =
 	| 'SustainEventCodes'
 	| 'AntiSustainEventCodes'
 	| 'ButtonEventCodes'
@@ -204,7 +200,7 @@ const ActionTypesEventCode: ActionTypesEventCodeString[] = [
 	'SostenutoEventCodes',
 	'AntiSostenutoEventCodes'
 ];
-export type ActionTypesStateString = 
+export type ActionTypesStateString =
 	| 'SustainState'
 	| 'AntiSustainState'
 	| 'ButtonState'
@@ -217,11 +213,11 @@ const ActionTypesState: ActionTypesStateString[] = [
 	'SostenutoState',
 	'AntiSostenutoState'
 ];
-type ActionTypesMapString = 
-	|'ButtonMap'
-	|'SustainMap'
-	|'AntiSustainMap'
-	|'SostenutoMap'
+type ActionTypesMapString =
+	| 'ButtonMap'
+	| 'SustainMap'
+	| 'AntiSustainMap'
+	| 'SostenutoMap'
 	| 'AntiSostenutoMap';
 const ActionTypesMap: ActionTypesMapString[] = [
 	'SustainMap',
@@ -235,7 +231,7 @@ export type ActionTypesTrackerString =
 	| 'AntiSustainTracker'
 	| 'ButtonTracker'
 	| 'SostenutoTracker'
-	| 'AntiSostenutoTracker'
+	| 'AntiSostenutoTracker';
 const ActionTypesTracker: ActionTypesTrackerString[] = [
 	'SustainTracker',
 	'AntiSustainTracker',
@@ -243,7 +239,7 @@ const ActionTypesTracker: ActionTypesTrackerString[] = [
 	'SostenutoTracker',
 	'AntiSostenutoTracker'
 ];
-export type ActionTypesTreeString = 
+export type ActionTypesTreeString =
 	| 'SustainTree'
 	| 'AntiSustainTree'
 	| 'ButtonTree'
@@ -577,7 +573,11 @@ function HydrateScaleList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate) {
 	);
 }
 
-function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate, audioContext: AudioContext): void {
+function HydrateGutList(
+	QOPUserData: QOPUserDataTemplate,
+	QOP: QOPTemplate,
+	audioContext: AudioContext
+): void {
 	for (let gutIndex = 0; gutIndex < QOPUserData.GutList.length; gutIndex++) {
 		QOP.Oscillators.OscNodes.push([]);
 		QOP.Oscillators.OscGainNodes.push([]);
@@ -633,6 +633,9 @@ function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate, audi
 					const eventCode = key as QOPValidEventCodesString;
 					const eventValue = QOPUserData.GutList[gutIndex][eventCodeProp][eventCode];
 					if (eventValue !== undefined) {
+						if (QOP.GutList[actionMap][eventCode] === undefined) {
+							QOP.GutList[actionMap][eventCode] = {};
+						}
 						QOP.GutList[actionMap][eventCode][gutIndex] = eventValue;
 						QOP.GutList[actionTracker][gutIndex][key] = false;
 
@@ -669,6 +672,9 @@ function HydrateGutList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate, audi
 				const eventValue = QOPUserData.GutList[gutIndex].TranspositionEventCodes[eventCode];
 
 				if (eventValue !== undefined) {
+					if (QOP.GutList.TranspositionMap[eventCode] === undefined) {
+						QOP.GutList.TranspositionMap[eventCode] = {};
+					}
 					QOP.GutList.TranspositionMap[eventCode][gutIndex] = eventValue;
 
 					for (let eNumber = 0; eNumber < 2; eNumber++) {
@@ -718,6 +724,9 @@ function HydrateFretSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate):
 						const eventCode = key as QOPValidEventCodesString;
 						const eventValue = UDGut.FretSet[fretIndex][eventCodeProp][eventCode];
 						if (eventValue !== undefined) {
+							if (fretSetIndex[actionMap][eventCode] === undefined) {
+								fretSetIndex[actionMap][eventCode] = {};
+							}
 							fretSetIndex[actionMap][eventCode][fretIndex] = eventValue;
 							fretSetIndex[actionTracker][fretIndex][key] = false;
 
@@ -754,6 +763,9 @@ function HydrateFretSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate):
 					const eventValue = UDGut.TranspositionEventCodes[eventCode];
 
 					if (eventValue !== undefined) {
+						if (fretSetIndex.TranspositionMap[eventCode] === undefined) {
+							fretSetIndex.TranspositionMap[eventCode] = {};
+						}
 						fretSetIndex.TranspositionMap[eventCode][gutIndex] = eventValue;
 
 						for (let eNumber = 0; eNumber < 2; eNumber++) {
@@ -805,6 +817,9 @@ function HydrateValveList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): v
 					const eventCode = key as QOPValidEventCodesString;
 					const eventValue = QOPUserData.ValveList[valveIndex][eventCodeProp][eventCode];
 					if (eventValue !== undefined) {
+						if (QOP.ValveList[actionMap][eventCode] === undefined) {
+							QOP.ValveList[actionMap][eventCode] = {};
+						}
 						QOP.ValveList[actionMap][eventCode][valveIndex] = eventValue;
 						QOP.ValveList[actionTracker][valveIndex][key] = false;
 
@@ -840,6 +855,9 @@ function HydrateValveList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): v
 				const eventCode = key as QOPValidEventCodesString;
 				const eventValue = QOPUserData.ValveList[valveIndex].TranspositionEventCodes[eventCode];
 				if (eventValue !== undefined) {
+					if (QOP.ValveList.TranspositionMap[eventCode] === undefined) {
+						QOP.ValveList.TranspositionMap[eventCode] = {};
+					}
 					QOP.ValveList.TranspositionMap[eventCode][valveIndex] = eventValue;
 
 					for (let eNumber = 0; eNumber < 2; eNumber++) {
@@ -870,6 +888,9 @@ function HydrateValveList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): v
 		for (let propNum = 0; propNum < DeltaTypes.length; propNum++) {
 			const deltaProp = DeltaTypes[propNum];
 			for (let gutIndex = 0; gutIndex < QOPUserData.GutList.length; gutIndex++) {
+				if (QOP.ValveList[DeltaTypeMaps[propNum]][valveIndex] === undefined) {
+					QOP.ValveList[DeltaTypeMaps[propNum]][valveIndex] = [];
+				}
 				QOP.ValveList[DeltaTypeMaps[propNum]][valveIndex][gutIndex] =
 					QOPUserData.ValveList[valveIndex].DeltaSet[gutIndex][deltaProp];
 				QOP.ValveList.ResultantNoteIDDelta.push(0);
@@ -887,6 +908,9 @@ function HydrateChartList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): v
 				const eventValue = QOPUserData.ChartList[chartIndex].TranspositionEventCodes[eventCode];
 
 				if (eventValue !== undefined) {
+					if (QOP.ChartList.TranspositionMap[eventCode] === undefined) {
+						QOP.ChartList.TranspositionMap[eventCode] = {};
+					}
 					QOP.ChartList.TranspositionMap[eventCode][chartIndex] = eventValue;
 
 					for (let eNumber = 0; eNumber < 2; eNumber++) {
@@ -935,6 +959,9 @@ function HydratePadSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): 
 						const eventCode = key as QOPValidEventCodesString;
 						const eventValue = UDChart.PadSet[padIndex][eventCodeProp][eventCode];
 						if (eventValue !== undefined) {
+							if (padSetIndex[actionMap][eventCode] === undefined) {
+								padSetIndex[actionMap][eventCode] = {};
+							}
 							padSetIndex[actionMap][eventCode][chartIndex] = eventValue;
 							padSetIndex[actionTracker][chartIndex][key] = false;
 
@@ -976,6 +1003,9 @@ function HydrateComboSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate)
 			for (let propNum = 0; propNum < DeltaTypes.length; propNum++) {
 				const deltaProp = DeltaTypes[propNum];
 				for (let gutIndex = 0; gutIndex < QOPUserData.GutList.length; gutIndex++) {
+					if (comboSetIndex[DeltaTypeMaps[propNum]][comboIndex] === undefined) {
+						comboSetIndex[DeltaTypeMaps[propNum]][comboIndex] = [];
+					}
 					comboSetIndex[DeltaTypeMaps[propNum]][comboIndex][gutIndex] =
 						UDChart.ComboSet[comboIndex].DeltaSet[gutIndex][deltaProp];
 					comboSetIndex.ResultantNoteIDDelta.push(0);
@@ -989,6 +1019,9 @@ function HydrateComboSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate)
 					const eventValue = UDChart.TranspositionEventCodes[eventCode];
 
 					if (eventValue !== undefined) {
+						if (comboSetIndex.TranspositionMap[eventCode] === undefined) {
+							comboSetIndex.TranspositionMap[eventCode] = {};
+						}
 						comboSetIndex.TranspositionMap[eventCode][chartIndex] = eventValue;
 
 						for (let eNumber = 0; eNumber < 2; eNumber++) {

@@ -20,6 +20,11 @@ function CreateQOPUserData() {
 
 	return {
 		subscribe,
+		set: () => {
+			update((userData) => {
+			return userData;
+			}); 
+		},
 		reset: () => set(new QOPUserDataTemplate()),
 
 		addScale: (newScale = new ScaleUDTemplate()) => {
