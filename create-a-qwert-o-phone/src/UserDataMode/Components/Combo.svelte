@@ -9,7 +9,6 @@
 	$: comboData = $QOPUserData.ChartList[comboData.ChartID].ComboSet[comboData.ComboID];
 </script>
 
-\
 <div class="class_combo">
 	<div>ComboID: {comboData.ComboID} ScaleID: {comboData.ChartID}</div>
 	<slot />
@@ -26,6 +25,34 @@
 		setString={SetString}
 		setIndex={comboData.ComboID}
 	/>
+
+    {#each comboData.DeltaSet as deltaData}
+    <div>
+		Delta Type:
+		<select bind:value={deltaData.DeltaType}>
+			<option value="NoteID">Note ID</option>
+			<option value="Cents">Cents</option>
+			<option value="Both">Both Note ID & Cents</option>
+		</select>
+	</div>
+	<div>
+		Note ID Delta:
+		<input type="number" bind:value={deltaData.NoteIDDelta} />
+	</div>
+	<div>
+		Cents Delta:
+		<input type="number" bind:value={deltaData.CentsDelta} />
+	</div>
+    {/each}
+    
+    <div class="combination">
+        Combo:
+        {#each comboData.Combo as pad, padIndex}
+            <div class="comboPad">Pad {padIndex}:
+                <input type="checkbox" bind:value={pad} />
+            </div>
+        {/each}
+    </div>
 </div>
 
 <style>
@@ -34,6 +61,12 @@
 		padding: 15px;
 		border: solid;
 	}
+    .combination {
+        border: dashed;
+    }
+    .comboPad {
+        border: dotted black;
+    }
 	* {
 		color: black;
 	}

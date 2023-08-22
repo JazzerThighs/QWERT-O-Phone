@@ -63,6 +63,25 @@
 		listString={ListString}
 		bind:listIndex={valveData.ValveID}
 	/>
+
+    {#each valveData.DeltaSet as deltaData}
+    <div>
+		Delta Type:
+		<select bind:value={deltaData.DeltaType}>
+			<option value="NoteID">Note ID</option>
+			<option value="Cents">Cents</option>
+			<option value="Both">Both Note ID & Cents</option>
+		</select>
+	</div>
+	<div>
+		Note ID Delta:
+		<input type="number" bind:value={deltaData.NoteIDDelta} />
+	</div>
+	<div>
+		Cents Delta:
+		<input type="number" bind:value={deltaData.CentsDelta} />
+	</div>
+    {/each}
 </div>
 
 <style>
