@@ -1,14 +1,21 @@
 <script lang="ts">
 	import { QOPUserData } from '../QOPUDStore';
-	import { GutUDTemplate, type SimpleWaveformTypeString, ButtonString, SustainString, AntiSustainString, SostenutoString, AntiSostenutoString } from '../initQOPUD';
+	import {
+		GutUDTemplate,
+		type SimpleWaveformTypeString,
+		ButtonString,
+		SustainString,
+		AntiSustainString,
+		SostenutoString,
+		AntiSostenutoString
+	} from '../initQOPUD';
 	import Fret from './Fret.svelte';
-    import Action from './Action.svelte';
-    import Transposition from './Transposition.svelte';
+	import Action from './Action.svelte';
+	import Transposition from './Transposition.svelte';
 	export let gutData: GutUDTemplate = new GutUDTemplate();
-    const listString = 'GutList';
+	const ListString = 'GutList';
 	const oscWaveTypeOptions: SimpleWaveformTypeString[] = ['sine', 'square', 'triangle', 'sawtooth'];
-    
-    
+
 	$: gutData = $QOPUserData.GutList[gutData.GutID];
 
 	function handleAddFret(gutIndex: number) {
@@ -47,12 +54,41 @@
 		<input type="checkbox" bind:value={gutData.GutMIDIOutputToggle} />
 	</div>
 
-    <Action bind:actionData={gutData.ButtonEventCodes} propString={ButtonString} listString={listString} bind:listIndex={gutData.GutID} />
-    <Action bind:actionData={gutData.SustainEventCodes} propString={SustainString} listString={listString} bind:listIndex={gutData.GutID} />
-    <Action bind:actionData={gutData.AntiSustainEventCodes} propString={AntiSustainString} listString={listString} bind:listIndex={gutData.GutID} />
-    <Action bind:actionData={gutData.SostenutoEventCodes} propString={SostenutoString} listString={listString} bind:listIndex={gutData.GutID} />
-    <Action bind:actionData={gutData.AntiSostenutoEventCodes} propString={AntiSostenutoString} listString={listString} bind:listIndex={gutData.GutID} />
-    <Transposition bind:transpositionData={gutData.TranspositionEventCodes} listString={listString} bind:listIndex={gutData.GutID}/>
+	<Action
+		bind:actionData={gutData.ButtonEventCodes}
+		propString={ButtonString}
+		listString={ListString}
+		bind:listIndex={gutData.GutID}
+	/>
+	<Action
+		bind:actionData={gutData.SustainEventCodes}
+		propString={SustainString}
+		listString={ListString}
+		bind:listIndex={gutData.GutID}
+	/>
+	<Action
+		bind:actionData={gutData.AntiSustainEventCodes}
+		propString={AntiSustainString}
+		listString={ListString}
+		bind:listIndex={gutData.GutID}
+	/>
+	<Action
+		bind:actionData={gutData.SostenutoEventCodes}
+		propString={SostenutoString}
+		listString={ListString}
+		bind:listIndex={gutData.GutID}
+	/>
+	<Action
+		bind:actionData={gutData.AntiSostenutoEventCodes}
+		propString={AntiSostenutoString}
+		listString={ListString}
+		bind:listIndex={gutData.GutID}
+	/>
+	<Transposition
+		bind:transpositionData={gutData.TranspositionEventCodes}
+		listString={ListString}
+		bind:listIndex={gutData.GutID}
+	/>
 
 	<div>
 		Fret Set:
