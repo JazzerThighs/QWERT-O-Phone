@@ -49,7 +49,7 @@
         Combo:
         {#each comboData.Combo as pad, padIndex}
             <div class="comboPad">Pad {padIndex}:
-                <input type="checkbox" bind:value={pad} />
+                <input type="checkbox" bind:value={pad} checked/>
             </div>
         {/each}
     </div>

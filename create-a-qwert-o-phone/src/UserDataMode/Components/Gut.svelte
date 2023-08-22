@@ -50,6 +50,10 @@
 		{/each}
 	</div>
 	<div>
+		Gut Osc Toggle:
+		<input type="checkbox" bind:value={gutData.GutOscMute} />
+	</div>
+	<div>
 		Osc Wave Type:
 		{#each $QOPUserData.ScaleList as scale, scaleIndex}
 		{scaleIndex}:

@@ -650,11 +650,17 @@ function HydrateGutList(
 									QOP[actionTree][kdku][eventCode] = new TreeATListsTemplate();
 									const KEventCode = QOP[actionTree][kdku][eventCode];
 									if (KEventCode !== undefined) {
+										if (KEventCode.GutList === undefined) {
+											KEventCode.GutList = [];
+										}
 										KEventCode.GutList.push(gutIndex);
 									}
 								} else {
 									const KEventCode = QOP[actionTree][kdku][eventCode];
 									if (KEventCode !== undefined) {
+										if (KEventCode.GutList === undefined) {
+											KEventCode.GutList = [];
+										}
 										KEventCode.GutList.push(gutIndex);
 									}
 								}
@@ -688,11 +694,17 @@ function HydrateGutList(
 								QOP.TranspositionTree[kdku][eventCode] = new TreeTRListsTemplate();
 								const KEventCode = QOP.TranspositionTree[kdku][eventCode];
 								if (KEventCode !== undefined) {
+									if (KEventCode.GutList === undefined) {
+										KEventCode.GutList = [];
+									}
 									KEventCode.GutList.push(gutIndex);
 								}
 							} else {
 								const KEventCode = QOP.TranspositionTree[kdku][eventCode];
 								if (KEventCode !== undefined) {
+									if (KEventCode.GutList === undefined) {
+										KEventCode.GutList = [];
+									}
 									KEventCode.GutList.push(gutIndex);
 								}
 							}
@@ -741,11 +753,23 @@ function HydrateFretSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate):
 										QOP[actionTree][kdku][eventCode] = new TreeATListsTemplate();
 										const KEventCode = QOP[actionTree][kdku][eventCode];
 										if (KEventCode !== undefined) {
+											if (KEventCode.FretSetList === undefined) {
+												KEventCode.FretSetList = {};
+											}
+											if (KEventCode.FretSetList[gutIndex] === undefined) {
+												KEventCode.FretSetList[gutIndex] = [];
+											}
 											KEventCode.FretSetList[gutIndex].push(fretIndex);
 										}
 									} else {
 										const KEventCode = QOP[actionTree][kdku][eventCode];
 										if (KEventCode !== undefined) {
+											if (KEventCode.FretSetList === undefined) {
+												KEventCode.FretSetList = {};
+											}
+											if (KEventCode.FretSetList[gutIndex] === undefined) {
+												KEventCode.FretSetList[gutIndex] = [];
+											}
 											KEventCode.FretSetList[gutIndex].push(fretIndex);
 										}
 									}
@@ -779,11 +803,23 @@ function HydrateFretSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate):
 									QOP.TranspositionTree[kdku][eventCode] = new TreeTRListsTemplate();
 									const KEventCode = QOP.TranspositionTree[kdku][eventCode];
 									if (KEventCode !== undefined) {
+										if (KEventCode.FretSetList === undefined) {
+											KEventCode.FretSetList = {};
+										}
+										if (KEventCode.FretSetList[gutIndex] === undefined) {
+											KEventCode.FretSetList[gutIndex] = [];
+										}
 										KEventCode.FretSetList[gutIndex].push(fretIndex);
 									}
 								} else {
 									const KEventCode = QOP.TranspositionTree[kdku][eventCode];
 									if (KEventCode !== undefined) {
+										if (KEventCode.FretSetList === undefined) {
+											KEventCode.FretSetList = {};
+										}
+										if (KEventCode.FretSetList[gutIndex] === undefined) {
+											KEventCode.FretSetList[gutIndex] = [];
+										}
 										KEventCode.FretSetList[gutIndex].push(fretIndex);
 									}
 								}
@@ -834,11 +870,17 @@ function HydrateValveList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): v
 									QOP[actionTree][kdku][eventCode] = new TreeATListsTemplate();
 									const KEventCode = QOP[actionTree][kdku][eventCode];
 									if (KEventCode !== undefined) {
+										if (KEventCode.ValveList === undefined) {
+											KEventCode.ValveList = [];
+										}
 										KEventCode.ValveList.push(valveIndex);
 									}
 								} else {
 									const KEventCode = QOP[actionTree][kdku][eventCode];
 									if (KEventCode !== undefined) {
+										if (KEventCode.ValveList === undefined) {
+											KEventCode.ValveList = [];
+										}
 										KEventCode.ValveList.push(valveIndex);
 									}
 								}
@@ -871,11 +913,17 @@ function HydrateValveList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): v
 								QOP.TranspositionTree[kdku][eventCode] = new TreeTRListsTemplate();
 								const KEventCode = QOP.TranspositionTree[kdku][eventCode];
 								if (KEventCode !== undefined) {
+									if (KEventCode.ValveList === undefined) {
+										KEventCode.ValveList = [];
+									}
 									KEventCode.ValveList.push(valveIndex);
 								}
 							} else {
 								const KEventCode = QOP.TranspositionTree[kdku][eventCode];
 								if (KEventCode !== undefined) {
+									if (KEventCode.ValveList === undefined) {
+										KEventCode.ValveList = [];
+									}
 									KEventCode.ValveList.push(valveIndex);
 								}
 							}
@@ -924,11 +972,17 @@ function HydrateChartList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): v
 								QOP.TranspositionTree[kdku][eventCode] = new TreeTRListsTemplate();
 								const KEventCode = QOP.TranspositionTree[kdku][eventCode];
 								if (KEventCode !== undefined) {
+									if (KEventCode.ChartList === undefined) {
+										KEventCode.ChartList = [];
+									}
 									KEventCode.ChartList.push(chartIndex);
 								}
 							} else {
 								const KEventCode = QOP.TranspositionTree[kdku][eventCode];
 								if (KEventCode !== undefined) {
+									if (KEventCode.ChartList === undefined) {
+										KEventCode.ChartList = [];
+									}
 									KEventCode.ChartList.push(chartIndex);
 								}
 							}
@@ -976,11 +1030,23 @@ function HydratePadSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate): 
 										QOP[actionTree][kdku][eventCode] = new TreeATListsTemplate();
 										const KEventCode = QOP[actionTree][kdku][eventCode];
 										if (KEventCode !== undefined) {
+											if (KEventCode.PadSetList === undefined) {
+												KEventCode.PadSetList = {};
+											}
+											if (KEventCode.PadSetList[chartIndex] === undefined) {
+												KEventCode.PadSetList[chartIndex] = [];
+											}
 											KEventCode.PadSetList[chartIndex].push(padIndex);
 										}
 									} else {
 										const KEventCode = QOP[actionTree][kdku][eventCode];
 										if (KEventCode !== undefined) {
+											if (KEventCode.PadSetList === undefined) {
+												KEventCode.PadSetList = {};
+											}
+											if (KEventCode.PadSetList[chartIndex] === undefined) {
+												KEventCode.PadSetList[chartIndex] = [];
+											}
 											KEventCode.PadSetList[chartIndex].push(padIndex);
 										}
 									}
@@ -1035,11 +1101,23 @@ function HydrateComboSetList(QOPUserData: QOPUserDataTemplate, QOP: QOPTemplate)
 									QOP.TranspositionTree[kdku][eventCode] = new TreeTRListsTemplate();
 									const KEventCode = QOP.TranspositionTree[kdku][eventCode];
 									if (KEventCode !== undefined) {
+										if (KEventCode.ComboSetList === undefined) {
+											KEventCode.ComboSetList = {};
+										}
+										if (KEventCode.ComboSetList[chartIndex] === undefined) {
+											KEventCode.ComboSetList[chartIndex] = [];
+										}
 										KEventCode.ComboSetList[chartIndex].push(comboIndex);
 									}
 								} else {
 									const KEventCode = QOP.TranspositionTree[kdku][eventCode];
 									if (KEventCode !== undefined) {
+										if (KEventCode.ComboSetList === undefined) {
+											KEventCode.ComboSetList = {};
+										}
+										if (KEventCode.ComboSetList[chartIndex] === undefined) {
+											KEventCode.ComboSetList[chartIndex] = [];
+										}
 										KEventCode.ComboSetList[chartIndex].push(comboIndex);
 									}
 								}

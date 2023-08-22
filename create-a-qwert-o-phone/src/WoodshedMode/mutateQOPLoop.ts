@@ -134,7 +134,7 @@ export function QOPMutator(
 					const actionTracker = (xActionType + 'Tracker') as ActionTypesTrackerString;
 					if (actionTracker !== undefined) {
 						const actionState = (xActionType + 'State') as ActionTypesStateString;
-						for (let q = 0; q < actionTracker.length; q++) {
+						for (let q = 0; q < QOP[listString][actionTracker].length - 1; q++) {
 							switch (xActionType) {
 								case 'Sostenuto':
 									if (!QOP[listString][actionState][q]) {
@@ -222,7 +222,7 @@ export function QOPMutator(
 						const actionTracker = (xActionType + 'Tracker') as ActionTypesTrackerString;
 						if (actionTracker !== undefined) {
 							const actionState = (xActionType + 'State') as ActionTypesStateString;
-							for (let q = 0; q < actionTracker.length; q++) {
+							for (let q = 0; q < QOP[listString][member][actionTracker].length; q++) {
 								switch (xActionType) {
 									case 'Sostenuto':
 										if (!QOP[listString][member][actionState][q]) {

@@ -487,7 +487,7 @@ export class ComboUDTemplate implements IComboUDTemplate {
 		this.Name = '';
 		this.Description = '';
 		this.TranspositionEventCodes = {} as TranspositionObject;
-		this.Combo = []; // Array of BOOLEAN
+		this.Combo = [true]; // Array of BOOLEAN
 		this.DeltaSet = [new DeltaUDTemplate()]; //Array of Objects
 	}
 }

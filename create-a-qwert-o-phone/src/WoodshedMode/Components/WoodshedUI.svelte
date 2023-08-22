@@ -26,6 +26,7 @@
 
     onMount(() => {
         WoodshedMode($QOPUserData, audioContext);
+		console.log(JSON.stringify(qop));
     });
 
     onDestroy(() => {

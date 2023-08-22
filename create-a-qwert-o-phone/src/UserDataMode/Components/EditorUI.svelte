@@ -44,7 +44,7 @@
 	</div>
 	<div>
 		Native Sound Toggle:
-		<input type="checkbox" bind:value={$QOPUserData.OscModeToggle} />
+		<input type="checkbox" bind:value={$QOPUserData.OscModeToggle} checked/>
 	</div>
 	<div>
 		MIDI Output Toggle:

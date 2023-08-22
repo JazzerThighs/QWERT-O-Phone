@@ -82,7 +82,10 @@
 		border: solid black;
 		padding: 2vh;
 	}
-	.eventCode,
+	.eventCode {
+		border: dashed;
+		padding: 1vh;
+	}
 	.transposition-keydown,
 	.transposition-keyup {
 		border: dotted black;
