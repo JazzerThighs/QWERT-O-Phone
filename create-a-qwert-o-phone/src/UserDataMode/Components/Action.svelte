@@ -14,6 +14,16 @@
     export let setString: 'FretSet' | 'PadSet' | null = null;
 	export let setIndex: number | null = null;
 
+    $: {
+        if (setString === null && listString !== 'ChartList') {
+            actionData = $QOPUserData[listString][listIndex][propString]
+        } else if (listString === 'GutList' && setString === 'FretSet' && setIndex !== null) {
+            actionData = $QOPUserData[listString][listIndex][setString][setIndex][propString]
+        } else if (listString === 'ChartList' && setString === 'PadSet' && setIndex !== null) {
+            actionData = $QOPUserData[listString][listIndex][setString][setIndex][propString]
+        }
+    }
+
     function handleAddActionCode() {
         function handleKeydownEvent(event: KeyboardEvent) {
             if (QOPValidEventCodes.includes(event.code as QOPValidEventCodesString)) {
