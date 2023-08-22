@@ -26,33 +26,36 @@
 		setIndex={comboData.ComboID}
 	/>
 
-    {#each comboData.DeltaSet as deltaData}
-    <div>
-		Delta Type:
-		<select bind:value={deltaData.DeltaType}>
-			<option value="NoteID">Note ID</option>
-			<option value="Cents">Cents</option>
-			<option value="Both">Both Note ID & Cents</option>
-		</select>
+	{#each comboData.DeltaSet as deltaData, deltaDataIndex}
+		<div class="deltaObj">
+			<div>{deltaDataIndex}:
+				Delta Type:
+				<select bind:value={deltaData.DeltaType}>
+					<option value="NoteID">Note ID</option>
+					<option value="Cents">Cents</option>
+					<option value="Both">Both Note ID & Cents</option>
+				</select>
+			</div>
+			<div>
+				Note ID Delta:
+				<input type="number" bind:value={deltaData.NoteIDDelta} />
+			</div>
+			<div>
+				Cents Delta:
+				<input type="number" bind:value={deltaData.CentsDelta} />
+			</div>
+		</div>
+	{/each}
+
+	<div class="combination">
+		Combo:
+		{#each comboData.Combo as pad, padIndex}
+			<div class="comboPad">
+				Pad {padIndex}:
+				<input type="checkbox" bind:value={pad} checked />
+			</div>
+		{/each}
 	</div>
-	<div>
-		Note ID Delta:
-		<input type="number" bind:value={deltaData.NoteIDDelta} />
-	</div>
-	<div>
-		Cents Delta:
-		<input type="number" bind:value={deltaData.CentsDelta} />
-	</div>
-    {/each}
-    
-    <div class="combination">
-        Combo:
-        {#each comboData.Combo as pad, padIndex}
-            <div class="comboPad">Pad {padIndex}:
-                <input type="checkbox" bind:value={pad} checked/>
-            </div>
-        {/each}
-    </div>
 </div>
 
 <style>
@@ -61,12 +64,12 @@
 		padding: 15px;
 		border: solid;
 	}
-    .combination {
-        border: dashed;
-    }
-    .comboPad {
-        border: dotted black;
-    }
+	.combination, .deltaObj {
+		border: dashed;
+	}
+	.comboPad {
+		border: dotted black;
+	}
 	* {
 		color: black;
 	}

@@ -43,13 +43,6 @@
 	</div>
 
 	<div>
-		Open Gut Note ID:
-		{#each $QOPUserData.ScaleList as scale, scaleIndex}
-		{scaleIndex}:
-		<input type="number" step='1' min=0 bind:value={gutData.OpenGutNoteID[scaleIndex]} />
-		{/each}
-	</div>
-	<div>
 		Gut Osc Toggle:
 		<input type="checkbox" bind:value={gutData.GutOscMute} />
 	</div>
@@ -72,7 +65,25 @@
 		{/each}
 	</div>
 	
-	
+	<div>
+		Open Gut Note ID:
+		{#each $QOPUserData.ScaleList as scale, scaleIndex}
+		{scaleIndex}:
+		<input type="number" step='1' min=0 bind:value={gutData.OpenGutNoteID[scaleIndex]} />
+		{/each}
+	</div>
+	<div>
+		Require Fret:
+		<input type="checkbox" bind:value={gutData.RequireFret} />
+	</div>
+	<div>
+		Require Valve:
+		<input type="checkbox" bind:value={gutData.RequireValve} />
+	</div>
+	<div>
+		Require Combo:
+		<input type="checkbox" bind:value={gutData.RequireCombo} />
+	</div>
 
 	<Action
 		bind:actionData={gutData.ButtonEventCodes}
