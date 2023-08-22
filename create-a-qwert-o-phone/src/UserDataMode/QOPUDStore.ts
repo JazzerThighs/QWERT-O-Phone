@@ -519,7 +519,58 @@ function CreateQOPUserData() {
 			});
 		},
 
-		//addTranspositionCode: () => {},
-		//removeTranspositionCode: () => {}
+		addTranspositionCode: (
+			eventCode: QOPValidEventCodesString,
+			listString: 'GutList' | 'ValveList' | 'ChartList',
+			listIndex: number,
+			setString: 'FretSet' | 'ComboSet' | null = null,
+			setIndex: number | null = null
+		) => {
+			update((userData) => {
+				if (setString === null) {
+					userData[listString][listIndex].TranspositionEventCodes[eventCode] = [
+						[0, 0],
+						[0, 0]
+					];
+				} else if (listString === 'GutList' && setString === 'FretSet' && setIndex !== null) {
+					userData[listString][listIndex][setString][setIndex].TranspositionEventCodes[eventCode] =
+						[
+							[0, 0],
+							[0, 0]
+						];
+				} else if (listString === 'ChartList' && setString === 'ComboSet' && setIndex !== null) {
+					userData[listString][listIndex][setString][setIndex].TranspositionEventCodes[eventCode] =
+						[
+							[0, 0],
+							[0, 0]
+						];
+				}
+
+				return userData;
+			});
+		},
+		removeTranspositionCode: (
+			eventCode: QOPValidEventCodesString,
+			listString: 'GutList' | 'ValveList' | 'ChartList',
+			listIndex: number,
+			setString: 'FretSet' | 'ComboSet' | null = null,
+			setIndex: number | null = null
+		) => {
+			update((userData) => {
+				if (setString === null) {
+					delete userData[listString][listIndex].TranspositionEventCodes[eventCode];
+				} else if (listString === 'GutList' && setString === 'FretSet' && setIndex !== null) {
+					delete userData[listString][listIndex][setString][setIndex].TranspositionEventCodes[
+						eventCode
+					];
+				} else if (listString === 'ChartList' && setString === 'ComboSet' && setIndex !== null) {
+					delete userData[listString][listIndex][setString][setIndex].TranspositionEventCodes[
+						eventCode
+					];
+				}
+
+				return userData;
+			});
+		}
 	};
 }
