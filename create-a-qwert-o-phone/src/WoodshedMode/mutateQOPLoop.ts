@@ -21,7 +21,12 @@ const QOPTRLists: QOPTRListsString = [
 	'ChartList',
 	'ComboSetList'
 ];
-export function QOPMutator(event: KeyboardEvent, eNumber: 0 | 1, QOP: QOPTemplate, audioContext: AudioContext) {
+export function QOPMutator(
+	event: KeyboardEvent,
+	eNumber: 0 | 1,
+	QOP: QOPTemplate,
+	audioContext: AudioContext
+) {
 	if (event.repeat || event.metaKey) {
 		return;
 	}
@@ -507,6 +512,18 @@ function CalculateTotalFrequency(QOP: QOPTemplate) {
 				ValveList.ResultantNoteIDDelta[gut] +
 				ChartList.TranspositionState[gut][0] +
 				ComboNoteIDAccumulator[gut];
+
+			if (NoteIDAccumulator[gut][scale] < 0) {
+				NoteIDAccumulator[gut][scale] = 0;
+				console.log(
+					`NoteIDAccumulator${gut}:${scale} has dipped below 0, consider revising used parameters`
+				);
+			} else if (NoteIDAccumulator[gut][scale] > ScaleList[scale].length - 1) {
+				NoteIDAccumulator[gut][scale] = ScaleList[scale].length - 1;
+				console.log(
+					`NoteIDAccumulator${gut}:${scale} has exceeded highest listed Note in Scale ${scale}, consider revising used parameters`
+				);
+			}
 
 			UnalteredScaleFrequency[scale] = ScaleList[scale][NoteIDAccumulator[gut][scale]].PitchHz;
 			TotalFrequency[gut][scale] =

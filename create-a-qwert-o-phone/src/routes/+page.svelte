@@ -11,12 +11,15 @@
 	import { HydrateQOP, QOPTemplate } from '../WoodshedMode/initQOP';
 
 	let WoodshedModeToggle: boolean = false;
+	let QOP: QOPTemplate;
 	let audioContext: AudioContext;
+	
 	onMount(() => {
 		if (typeof window !== 'undefined') {
 			audioContext = new window.AudioContext();
 		}
 	});
+	
 	function toggleMode() {
 		WoodshedModeToggle = !WoodshedModeToggle;
 		if (!WoodshedModeToggle) {
@@ -26,7 +29,7 @@
 			WoodshedMode($QOPUserData);
 		}
 	}
-	let QOP: QOPTemplate;
+	
 	function WoodshedTriggerKeydown(event: KeyboardEvent) {
 		QOPMutator(event, 0, QOP, audioContext);
 	}

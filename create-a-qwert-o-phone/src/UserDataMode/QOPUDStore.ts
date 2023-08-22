@@ -9,7 +9,8 @@ import {
 	ChartUDTemplate,
 	PadUDTemplate,
 	ComboUDTemplate,
-	DeltaUDTemplate
+	DeltaUDTemplate,
+	type QOPValidEventCodesString
 } from './initQOPUD';
 
 export const QOPUserData = CreateQOPUserData();
@@ -126,41 +127,34 @@ function CreateQOPUserData() {
 
 				for (let gutIndex = 0; gutIndex < userData.GutList.length; gutIndex++) {
 					userData.GutList[gutIndex].GutID = gutIndex;
-					if (userData.GutList[gutIndex].OpenGutNoteID.length < userData.ScaleList.length) {
-						while (userData.GutList[gutIndex].OpenGutNoteID.length < userData.ScaleList.length) {
-							userData.GutList[gutIndex].OpenGutNoteID.push(69);
-						}
-					} else if (userData.GutList[gutIndex].OpenGutNoteID.length > userData.ScaleList.length) {
-						while (userData.GutList[gutIndex].OpenGutNoteID.length > userData.ScaleList.length) {
-							userData.GutList[gutIndex].OpenGutNoteID.splice(
-								userData.GutList[gutIndex].OpenGutNoteID.length - 1,
-								1
-							);
-						}
+					while (userData.GutList[gutIndex].OpenGutNoteID.length < userData.ScaleList.length) {
+						userData.GutList[gutIndex].OpenGutNoteID.push(69);
 					}
-					if (userData.GutList[gutIndex].OscWaveType.length < userData.ScaleList.length) {
-						while (userData.GutList[gutIndex].OscWaveType.length < userData.ScaleList.length) {
-							userData.GutList[gutIndex].OscWaveType.push('sine');
-						}
-					} else if (userData.GutList[gutIndex].OscWaveType.length > userData.ScaleList.length) {
-						while (userData.GutList[gutIndex].OscWaveType.length > userData.ScaleList.length) {
-							userData.GutList[gutIndex].OscWaveType.splice(
-								userData.GutList[gutIndex].OscWaveType.length - 1,
-								1
-							);
-						}
+					while (userData.GutList[gutIndex].OpenGutNoteID.length > userData.ScaleList.length) {
+						userData.GutList[gutIndex].OpenGutNoteID.splice(
+							userData.GutList[gutIndex].OpenGutNoteID.length - 1,
+							1
+						);
 					}
-					if (userData.GutList[gutIndex].OscGain.length < userData.ScaleList.length) {
-						while (userData.GutList[gutIndex].OscGain.length < userData.ScaleList.length) {
-							userData.GutList[gutIndex].OscGain.push(0.25);
-						}
-					} else if (userData.GutList[gutIndex].OscGain.length > userData.ScaleList.length) {
-						while (userData.GutList[gutIndex].OscGain.length > userData.ScaleList.length) {
-							userData.GutList[gutIndex].OscGain.splice(
-								userData.GutList[gutIndex].OscGain.length - 1,
-								1
-							);
-						}
+
+					while (userData.GutList[gutIndex].OscWaveType.length < userData.ScaleList.length) {
+						userData.GutList[gutIndex].OscWaveType.push('sine');
+					}
+					while (userData.GutList[gutIndex].OscWaveType.length > userData.ScaleList.length) {
+						userData.GutList[gutIndex].OscWaveType.splice(
+							userData.GutList[gutIndex].OscWaveType.length - 1,
+							1
+						);
+					}
+
+					while (userData.GutList[gutIndex].OscGain.length < userData.ScaleList.length) {
+						userData.GutList[gutIndex].OscGain.push(0.25);
+					}
+					while (userData.GutList[gutIndex].OscGain.length > userData.ScaleList.length) {
+						userData.GutList[gutIndex].OscGain.splice(
+							userData.GutList[gutIndex].OscGain.length - 1,
+							1
+						);
 					}
 
 					for (
@@ -260,17 +254,14 @@ function CreateQOPUserData() {
 				userData.ValveList = [...userData.ValveList, newValve];
 				for (let valveIndex = 0; valveIndex < userData.ValveList.length; valveIndex++) {
 					userData.ValveList[valveIndex].ValveID = valveIndex;
-					if (userData.ValveList[valveIndex].DeltaSet.length < userData.GutList.length) {
-						while (userData.ValveList[valveIndex].DeltaSet.length < userData.GutList.length) {
-							userData.ValveList[valveIndex].DeltaSet.push(newDelta);
-						}
-					} else if (userData.ValveList[valveIndex].DeltaSet.length > userData.GutList.length) {
-						while (userData.ValveList[valveIndex].DeltaSet.length > userData.GutList.length) {
-							userData.ValveList[valveIndex].DeltaSet.splice(
-								userData.ValveList[valveIndex].DeltaSet.length - 1,
-								1
-							);
-						}
+					while (userData.ValveList[valveIndex].DeltaSet.length < userData.GutList.length) {
+						userData.ValveList[valveIndex].DeltaSet.push(newDelta);
+					}
+					while (userData.ValveList[valveIndex].DeltaSet.length > userData.GutList.length) {
+						userData.ValveList[valveIndex].DeltaSet.splice(
+							userData.ValveList[valveIndex].DeltaSet.length - 1,
+							1
+						);
 					}
 				}
 				return userData;
@@ -301,22 +292,40 @@ function CreateQOPUserData() {
 						userData.ChartList[chartIndex].PadSet[padIndex].ChartID = chartIndex;
 						userData.ChartList[chartIndex].PadSet[padIndex].PadID = padIndex;
 					}
+					for (
+						let comboIndex = 0;
+						comboIndex < userData.ChartList[chartIndex].ComboSet.length;
+						comboIndex++
+					) {
+						userData.ChartList[chartIndex].ComboSet[comboIndex].ChartID = chartIndex;
+						userData.ChartList[chartIndex].ComboSet[comboIndex].ComboID = comboIndex;
+					}
 				}
 				return userData;
 			});
 		},
 		removeChart: (chartIndex: number) => {
 			update((userData) => {
-				userData.ChartList = userData.ChartList.splice(chartIndex, 1);
-				for (let chartIndex = 0; chartIndex < userData.ChartList.length; chartIndex++) {
-					userData.ChartList[chartIndex].ChartID = chartIndex;
-					for (
-						let padIndex = 0;
-						padIndex < userData.ChartList[chartIndex].PadSet.length;
-						padIndex++
-					) {
-						userData.ChartList[chartIndex].PadSet[padIndex].ChartID = chartIndex;
-						userData.ChartList[chartIndex].PadSet[padIndex].PadID = padIndex;
+				if (userData.ChartList.length - 1 !== 0) {
+					userData.ChartList = userData.ChartList.splice(chartIndex, 1);
+					for (let chartIndex = 0; chartIndex < userData.ChartList.length; chartIndex++) {
+						userData.ChartList[chartIndex].ChartID = chartIndex;
+						for (
+							let padIndex = 0;
+							padIndex < userData.ChartList[chartIndex].PadSet.length;
+							padIndex++
+						) {
+							userData.ChartList[chartIndex].PadSet[padIndex].ChartID = chartIndex;
+							userData.ChartList[chartIndex].PadSet[padIndex].PadID = padIndex;
+						}
+						for (
+							let comboIndex = 0;
+							comboIndex < userData.ChartList[chartIndex].ComboSet.length;
+							comboIndex++
+						) {
+							userData.ChartList[chartIndex].ComboSet[comboIndex].ChartID = chartIndex;
+							userData.ChartList[chartIndex].ComboSet[comboIndex].ComboID = comboIndex;
+						}
 					}
 				}
 				return userData;
@@ -365,6 +374,22 @@ function CreateQOPUserData() {
 						userData.ChartList[chartIndex].PadSet[padIndex].ChartID = chartIndex;
 						userData.ChartList[chartIndex].PadSet[padIndex].PadID = padIndex;
 					}
+
+					for (
+						let comboIndex = 0;
+						comboIndex < userData.ChartList[chartIndex].ComboSet.length;
+						comboIndex++
+					) {
+						while (
+							userData.ChartList[chartIndex].ComboSet.length >
+							Math.pow(2, userData.ChartList[chartIndex].PadSet.length)
+						) {
+							userData.ChartList[chartIndex].ComboSet.splice(
+								userData.ChartList[chartIndex].ComboSet.length - 1,
+								1
+							);
+						}
+					}
 				}
 				return userData;
 			});
@@ -376,31 +401,27 @@ function CreateQOPUserData() {
 			newDelta = new DeltaUDTemplate()
 		) => {
 			update((userData) => {
-				userData.ChartList[chartIndex].ComboSet = [
-					...userData.ChartList[chartIndex].ComboSet,
-					newCombo
-				];
-				for (
-					let comboIndex = 0;
-					comboIndex < userData.ChartList[chartIndex].ComboSet.length;
-					comboIndex++
+				if (
+					userData.ChartList[chartIndex].ComboSet.length <
+					Math.pow(2, userData.ChartList[chartIndex].PadSet.length)
 				) {
-					userData.ChartList[chartIndex].ComboSet[comboIndex].ChartID = chartIndex;
-					userData.ChartList[chartIndex].ComboSet[comboIndex].ComboID = comboIndex;
-					if (
-						userData.ChartList[chartIndex].ComboSet[comboIndex].DeltaSet.length <
-						userData.GutList.length
+					userData.ChartList[chartIndex].ComboSet = [
+						...userData.ChartList[chartIndex].ComboSet,
+						newCombo
+					];
+					for (
+						let comboIndex = 0;
+						comboIndex < userData.ChartList[chartIndex].ComboSet.length;
+						comboIndex++
 					) {
+						userData.ChartList[chartIndex].ComboSet[comboIndex].ChartID = chartIndex;
+						userData.ChartList[chartIndex].ComboSet[comboIndex].ComboID = comboIndex;
 						while (
 							userData.ChartList[chartIndex].ComboSet[comboIndex].DeltaSet.length <
 							userData.GutList.length
 						) {
 							userData.ChartList[chartIndex].ComboSet[comboIndex].DeltaSet.push(newDelta);
 						}
-					} else if (
-						userData.ChartList[chartIndex].ComboSet[comboIndex].DeltaSet.length >
-						userData.GutList.length
-					) {
 						while (
 							userData.ChartList[chartIndex].ComboSet[comboIndex].DeltaSet.length >
 							userData.GutList.length
@@ -410,22 +431,13 @@ function CreateQOPUserData() {
 								1
 							);
 						}
-					}
 
-					if (
-						userData.ChartList[chartIndex].ComboSet[comboIndex].Combo.length <
-						userData.ChartList[chartIndex].PadSet.length
-					) {
 						while (
 							userData.ChartList[chartIndex].ComboSet[comboIndex].Combo.length <
 							userData.ChartList[chartIndex].PadSet.length
 						) {
 							userData.ChartList[chartIndex].ComboSet[comboIndex].Combo.push(false);
 						}
-					} else if (
-						userData.ChartList[chartIndex].ComboSet[comboIndex].Combo.length >
-						userData.ChartList[chartIndex].PadSet.length
-					) {
 						while (
 							userData.ChartList[chartIndex].ComboSet[comboIndex].Combo.length >
 							userData.ChartList[chartIndex].PadSet.length
@@ -455,6 +467,59 @@ function CreateQOPUserData() {
 				}
 				return userData;
 			});
-		}
+		},
+
+		addActionCode: (
+			eventCode: QOPValidEventCodesString,
+			propString:
+				| 'ButtonEventCodes'
+				| 'SustainEventCodes'
+				| 'AntiSustainEventCodes'
+				| 'SostenutoEventCodes'
+				| 'AntiSostenutoEventCodes',
+			listString: 'GutList' | 'ValveList' | 'ChartList',
+			listIndex: number,
+			setString: 'FretSet' | 'PadSet' | null = null,
+			setIndex: number | null = null
+		) => {
+			update((userData) => {
+				if (setString === null && listString !== 'ChartList') {
+					userData[listString][listIndex][propString][eventCode] = [1, 1];
+				} else if (listString === 'GutList' && setString === 'FretSet' && setIndex !== null) {
+					userData[listString][listIndex][setString][setIndex][propString][eventCode] = [1, 1];
+				} else if (listString === 'ChartList' && setString === 'PadSet' && setIndex !== null) {
+					userData[listString][listIndex][setString][setIndex][propString][eventCode] = [1, 1];
+				}
+				return userData;
+			});
+		},
+		removeActionCode: (
+			eventCode: QOPValidEventCodesString,
+			propString:
+				| 'ButtonEventCodes'
+				| 'SustainEventCodes'
+				| 'AntiSustainEventCodes'
+				| 'SostenutoEventCodes'
+				| 'AntiSostenutoEventCodes',
+			listString: 'GutList' | 'ValveList' | 'ChartList',
+			listIndex: number,
+			setString: 'FretSet' | 'PadSet' | null = null,
+			setIndex: number | null = null
+		) => {
+			update((userData) => {
+				if (setString === null && listString !== 'ChartList') {
+					delete userData[listString][listIndex][propString][eventCode];
+				} else if (listString === 'GutList' && setString === 'FretSet' && setIndex !== null) {
+					delete userData[listString][listIndex][setString][setIndex][propString][eventCode];
+				} else if (listString === 'ChartList' && setString === 'PadSet' && setIndex !== null) {
+					delete userData[listString][listIndex][setString][setIndex][propString][eventCode];
+				}
+
+				return userData;
+			});
+		},
+
+		//addTranspositionCode: () => {},
+		//removeTranspositionCode: () => {}
 	};
 }

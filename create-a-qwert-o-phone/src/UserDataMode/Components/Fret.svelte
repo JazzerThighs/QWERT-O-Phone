@@ -15,6 +15,20 @@
         <!--input type="text" bind:value={fret.Description} /-->
     </div>
 
+    <div>Delta Type:
+        <select bind:value={fretData.DeltaType}>
+            <option value="NoteID">Note ID</option>
+            <option value="Cents">Cents</option>
+            <option value="Both">Both Note ID & Cents</option>
+        </select>
+    </div>
+    <div>Note ID Delta:
+        <input type="number" bind:value={fretData.NoteIDDelta}/>
+    </div>
+    <div>Cents Delta:
+        <input type="number" bind:value={fretData.CentsDelta}/>
+    </div>
+
 </div>
 
 
