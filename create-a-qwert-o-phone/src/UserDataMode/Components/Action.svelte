@@ -31,7 +31,7 @@
     }
 </script>
 
-<div class="actionEventCodes">
+<div class="actionEventCodes">{propString.substring(0, propString.length - 10)} Keys:
     <button on:click={() => handleAddActionCode()}>Add Key</button>
 	{#each Object.entries(actionData) as [eventCode, value]}
 		<div class="eventCode">{[eventCode]}:

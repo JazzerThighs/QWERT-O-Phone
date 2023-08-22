@@ -34,6 +34,9 @@ import { QOPUserData } from '../QOPUDStore';
         Description: 
         <input type="text" bind:value={chartData.Description} />
     </div>
+
+	<Transposition bind:transpositionData={chartData.TranspositionEventCodes} listString={listString} bind:listIndex={chartData.ChartID}/>
+
 	<div>
 		Pad Set:
 		<div>
@@ -68,7 +71,7 @@ import { QOPUserData } from '../QOPUDStore';
 		color: black;
 		background-color: rgb(128, 255, 255);
 	}
-	input, select {
+	input {
 		color: black;
 	}
 </style>

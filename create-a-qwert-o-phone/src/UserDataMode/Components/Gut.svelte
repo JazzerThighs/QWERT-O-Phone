@@ -52,6 +52,7 @@
     <Action bind:actionData={gutData.AntiSustainEventCodes} propString={AntiSustainString} listString={listString} bind:listIndex={gutData.GutID} />
     <Action bind:actionData={gutData.SostenutoEventCodes} propString={SostenutoString} listString={listString} bind:listIndex={gutData.GutID} />
     <Action bind:actionData={gutData.AntiSostenutoEventCodes} propString={AntiSostenutoString} listString={listString} bind:listIndex={gutData.GutID} />
+    <Transposition bind:transpositionData={gutData.TranspositionEventCodes} listString={listString} bind:listIndex={gutData.GutID}/>
 
 	<div>
 		Fret Set:

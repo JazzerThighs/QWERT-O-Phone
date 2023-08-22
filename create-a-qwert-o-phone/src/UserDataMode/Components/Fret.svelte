@@ -19,6 +19,13 @@
         <!--input type="text" bind:value={fret.Description} /-->
     </div>
 
+    <Action bind:actionData={fretData.ButtonEventCodes} propString={ButtonString} listString={listString} bind:listIndex={fretData.GutID} setString={setString} bind:setIndex={fretData.FretID}/>
+    <Action bind:actionData={fretData.SustainEventCodes} propString={SustainString} listString={listString} bind:listIndex={fretData.GutID} setString={setString} bind:setIndex={fretData.FretID}/>
+    <Action bind:actionData={fretData.AntiSustainEventCodes} propString={AntiSustainString} listString={listString} bind:listIndex={fretData.GutID} setString={setString} bind:setIndex={fretData.FretID}/>
+    <Action bind:actionData={fretData.SostenutoEventCodes} propString={SostenutoString} listString={listString} bind:listIndex={fretData.GutID} setString={setString} bind:setIndex={fretData.FretID}/>
+    <Action bind:actionData={fretData.AntiSostenutoEventCodes} propString={AntiSostenutoString} listString={listString} bind:listIndex={fretData.GutID} setString={setString} bind:setIndex={fretData.FretID}/>
+    <Transposition bind:transpositionData={fretData.TranspositionEventCodes} listString={listString} bind:listIndex={fretData.GutID} setString={setString} bind:setIndex={fretData.FretID}/>
+
     <div>Delta Type:
         <select bind:value={fretData.DeltaType}>
             <option value="NoteID">Note ID</option>

@@ -525,7 +525,7 @@ function CalculateTotalFrequency(QOP: QOPTemplate) {
 				);
 			}
 
-			UnalteredScaleFrequency[scale] = ScaleList[scale][NoteIDAccumulator[gut][scale]].PitchHz;
+			UnalteredScaleFrequency[scale] = ScaleList[scale][Math.round(NoteIDAccumulator[gut][scale])].PitchHz;
 			TotalFrequency[gut][scale] =
 				UnalteredScaleFrequency[scale] * Math.pow(2, CentsAccumulator[gut] / 1200);
 		}

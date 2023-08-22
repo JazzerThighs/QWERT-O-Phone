@@ -17,6 +17,8 @@
         <!--input type="text" bind:value={combo.Description} /-->
     </div>
 
+    <Transposition bind:transpositionData={comboData.TranspositionEventCodes} listString={listString} bind:listIndex={comboData.ChartID} setString={setString} setIndex={comboData.ComboID}/>
+
 </div>
 
 

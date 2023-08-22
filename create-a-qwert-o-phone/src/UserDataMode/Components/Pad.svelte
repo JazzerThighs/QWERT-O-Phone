@@ -17,6 +17,12 @@
         <!--input type="text" bind:value={pad.Description} /-->
     </div>
 
+    <Action bind:actionData={padData.ButtonEventCodes} propString={ButtonString} listString={listString} bind:listIndex={padData.ChartID} setString={setString} bind:setIndex={padData.PadID}/>
+    <Action bind:actionData={padData.SustainEventCodes} propString={SustainString} listString={listString} bind:listIndex={padData.ChartID} setString={setString} bind:setIndex={padData.PadID}/>
+    <Action bind:actionData={padData.AntiSustainEventCodes} propString={AntiSustainString} listString={listString} bind:listIndex={padData.ChartID} setString={setString} bind:setIndex={padData.PadID}/>
+    <Action bind:actionData={padData.SostenutoEventCodes} propString={SostenutoString} listString={listString} bind:listIndex={padData.ChartID} setString={setString} bind:setIndex={padData.PadID}/>
+    <Action bind:actionData={padData.AntiSostenutoEventCodes} propString={AntiSostenutoString} listString={listString} bind:listIndex={padData.ChartID} setString={setString} bind:setIndex={padData.PadID}/>
+
 </div>
 
 

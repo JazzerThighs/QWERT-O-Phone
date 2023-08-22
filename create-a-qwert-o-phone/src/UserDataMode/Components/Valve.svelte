@@ -20,7 +20,13 @@
         Description: 
         <input type="text" bind:value={valveData.Description} />
     </div>
-   
+
+    <Action bind:actionData={valveData.ButtonEventCodes} propString={ButtonString} listString={listString} bind:listIndex={valveData.ValveID} />
+    <Action bind:actionData={valveData.SustainEventCodes} propString={SustainString} listString={listString} bind:listIndex={valveData.ValveID} />
+    <Action bind:actionData={valveData.AntiSustainEventCodes} propString={AntiSustainString} listString={listString} bind:listIndex={valveData.ValveID} />
+    <Action bind:actionData={valveData.SostenutoEventCodes} propString={SostenutoString} listString={listString} bind:listIndex={valveData.ValveID} />
+    <Action bind:actionData={valveData.AntiSostenutoEventCodes} propString={AntiSostenutoString} listString={listString} bind:listIndex={valveData.ValveID} />
+    <Transposition bind:transpositionData={valveData.TranspositionEventCodes} listString={listString} bind:listIndex={valveData.ValveID}/>
 
 
 </div>
@@ -30,7 +36,7 @@
         color: black;
         background-color: rgb(173, 229, 173);
     }
-    input, select {
+    input {
 		color: black;
 	}
 </style>
