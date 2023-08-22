@@ -215,6 +215,11 @@ export type ActionEventCodes = Partial<{
 export type TranspositionObject = Partial<{
 	[QOPValidEventCode in QOPValidEventCodesString]: [[number, number], [number, number]];
 }>;
+export const ButtonString = 'ButtonEventCodes';
+export const SustainString = 'SustainEventCodes';
+export const AntiSustainString = 'AntiSustainEventCodes';
+export const SostenutoString = 'SostenutoEventCodes';
+export const AntiSostenutoString = 'AntiSostenutoEventCodes';
 
 export interface INoteUDTemplate {
 	ScaleID: number;

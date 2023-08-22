@@ -3,7 +3,9 @@ import { QOPUserData } from '../QOPUDStore';
 	import { ChartUDTemplate } from '../initQOPUD';
 	import Pad from './Pad.svelte';
     import Combo from './Combo.svelte';
+    import Transposition from './Transposition.svelte';
 	export let chartData: ChartUDTemplate = new ChartUDTemplate();
+	const listString = 'ChartList';
 
     $: chartData = $QOPUserData.ChartList[chartData.ChartID];
 

@@ -1,17 +1,13 @@
 <script lang="ts">
 	import { QOPUserData } from '../QOPUDStore';
-	import { GutUDTemplate, type SimpleWaveformTypeString } from '../initQOPUD';
+	import { GutUDTemplate, type SimpleWaveformTypeString, ButtonString, SustainString, AntiSustainString, SostenutoString, AntiSostenutoString } from '../initQOPUD';
 	import Fret from './Fret.svelte';
     import Action from './Action.svelte';
+    import Transposition from './Transposition.svelte';
 	export let gutData: GutUDTemplate = new GutUDTemplate();
-
+    const listString = 'GutList';
 	const oscWaveTypeOptions: SimpleWaveformTypeString[] = ['sine', 'square', 'triangle', 'sawtooth'];
-    let buttonString: 'ButtonEventCodes' = 'ButtonEventCodes';
-    let sustainString: 'SustainEventCodes' = 'SustainEventCodes';
-    let antiSustainString: 'AntiSustainEventCodes' = 'AntiSustainEventCodes';
-    let sostenutoString: 'SostenutoEventCodes' = 'SostenutoEventCodes';
-    let antiSostenutoString: 'AntiSostenutoEventCodes' = 'AntiSostenutoEventCodes';
-    let gutString: 'GutList' = 'GutList';
+    
     
 	$: gutData = $QOPUserData.GutList[gutData.GutID];
 
@@ -51,11 +47,11 @@
 		<input type="checkbox" bind:value={gutData.GutMIDIOutputToggle} />
 	</div>
 
-    <Action bind:actionData={gutData.ButtonEventCodes} bind:propString={buttonString} bind:listString={gutString} bind:listIndex={gutData.GutID} />
-    <Action bind:actionData={gutData.SustainEventCodes} bind:propString={sustainString} bind:listString={gutString} bind:listIndex={gutData.GutID} />
-    <Action bind:actionData={gutData.AntiSustainEventCodes} bind:propString={antiSustainString} bind:listString={gutString} bind:listIndex={gutData.GutID} />
-    <Action bind:actionData={gutData.SostenutoEventCodes} bind:propString={sostenutoString} bind:listString={gutString} bind:listIndex={gutData.GutID} />
-    <Action bind:actionData={gutData.AntiSostenutoEventCodes} bind:propString={antiSostenutoString} bind:listString={gutString} bind:listIndex={gutData.GutID} />
+    <Action bind:actionData={gutData.ButtonEventCodes} propString={ButtonString} listString={listString} bind:listIndex={gutData.GutID} />
+    <Action bind:actionData={gutData.SustainEventCodes} propString={SustainString} listString={listString} bind:listIndex={gutData.GutID} />
+    <Action bind:actionData={gutData.AntiSustainEventCodes} propString={AntiSustainString} listString={listString} bind:listIndex={gutData.GutID} />
+    <Action bind:actionData={gutData.SostenutoEventCodes} propString={SostenutoString} listString={listString} bind:listIndex={gutData.GutID} />
+    <Action bind:actionData={gutData.AntiSostenutoEventCodes} propString={AntiSostenutoString} listString={listString} bind:listIndex={gutData.GutID} />
 
 	<div>
 		Fret Set:

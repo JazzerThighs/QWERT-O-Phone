@@ -1,7 +1,11 @@
 <script lang="ts">
 	import { QOPUserData } from '../QOPUDStore';
-    import { FretUDTemplate } from '../initQOPUD'
+    import { FretUDTemplate, ButtonString, SustainString, AntiSustainString, SostenutoString, AntiSostenutoString } from '../initQOPUD';
+    import Action from './Action.svelte';
+    import Transposition from './Transposition.svelte';
     export let fretData: FretUDTemplate = new FretUDTemplate();
+    const listString = 'GutList';
+    const setString = 'FretSet';
 
     $: fretData = $QOPUserData.GutList[fretData.GutID].FretSet[fretData.FretID];
 

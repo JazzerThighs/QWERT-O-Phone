@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { QOPUserData } from '../QOPUDStore';
-    import { ComboUDTemplate } from '../initQOPUD'
+    import { ComboUDTemplate } from '../initQOPUD';
+    import Transposition from './Transposition.svelte';
     export let comboData: ComboUDTemplate = new ComboUDTemplate();
+    const listString = 'ChartList';
+    const setString = 'ComboSet';
 
     $: comboData = $QOPUserData.ChartList[comboData.ChartID].ComboSet[comboData.ComboID];
 </script>

@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { QOPUserData } from '../QOPUDStore';
-	import { ValveUDTemplate } from '../initQOPUD';
+	import { ValveUDTemplate, ButtonString, SustainString, AntiSustainString, SostenutoString, AntiSostenutoString } from '../initQOPUD';
+    import Action from './Action.svelte';
+    import Transposition from './Transposition.svelte';
 	export let valveData: ValveUDTemplate = new ValveUDTemplate();
+    const listString = 'ValveList';
 
 	$: valveData = $QOPUserData.ValveList[valveData.ValveID];
 </script>

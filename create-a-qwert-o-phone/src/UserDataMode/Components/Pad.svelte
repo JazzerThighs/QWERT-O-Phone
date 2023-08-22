@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { QOPUserData } from '../QOPUDStore';
-    import { PadUDTemplate } from '../initQOPUD'
+    import { PadUDTemplate, ButtonString, SustainString, AntiSustainString, SostenutoString, AntiSostenutoString } from '../initQOPUD';
+    import Action from './Action.svelte';
     export let padData: PadUDTemplate = new PadUDTemplate();
+    const listString = 'ChartList';
+    const setString = 'PadSet';
 
     $: padData = $QOPUserData.ChartList[padData.ChartID].PadSet[padData.PadID];
 </script>
