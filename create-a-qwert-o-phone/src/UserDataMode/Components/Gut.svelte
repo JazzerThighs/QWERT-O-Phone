@@ -38,21 +38,37 @@
 		<input type="text" bind:value={gutData.Description} />
 	</div>
 	<div>
+		Gut MIDI Output Toggle:
+		<input type="checkbox" bind:value={gutData.GutMIDIOutputToggle} />
+	</div>
+
+	<div>
+		Open Gut Note ID:
+		{#each $QOPUserData.ScaleList as scale, scaleIndex}
+		{scaleIndex}:
+		<input type="number" step='1' min=0 bind:value={gutData.OpenGutNoteID[scaleIndex]} />
+		{/each}
+	</div>
+	<div>
 		Osc Wave Type:
-		<select bind:value={gutData.OscWaveType}>
+		{#each $QOPUserData.ScaleList as scale, scaleIndex}
+		{scaleIndex}:
+		<select bind:value={gutData.OscWaveType[scaleIndex]}>
 			{#each oscWaveTypeOptions as option}
 				<option value={option}>{option}</option>
 			{/each}
 		</select>
+		{/each}
 	</div>
 	<div>
 		Osc Gain:
-		<input type="number" bind:value={gutData.OscGain} />
+		{#each $QOPUserData.ScaleList as scale, scaleIndex}
+		{scaleIndex}:
+		<input type="number" bind:value={gutData.OscGain[scaleIndex]} />
+		{/each}
 	</div>
-	<div>
-		Gut MIDI Output Toggle:
-		<input type="checkbox" bind:value={gutData.GutMIDIOutputToggle} />
-	</div>
+	
+	
 
 	<Action
 		bind:actionData={gutData.ButtonEventCodes}

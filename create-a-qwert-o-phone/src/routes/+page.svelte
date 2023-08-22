@@ -11,37 +11,9 @@
 	import { HydrateQOP, QOPTemplate } from '../WoodshedMode/initQOP';
 
 	let WoodshedModeToggle: boolean = false;
-	let QOP: QOPTemplate;
-	let audioContext: AudioContext;
-	
-	onMount(() => {
-		if (typeof window !== 'undefined') {
-			audioContext = new window.AudioContext();
-		}
-	});
 	
 	function toggleMode() {
 		WoodshedModeToggle = !WoodshedModeToggle;
-		if (!WoodshedModeToggle) {
-			window.removeEventListener('keydown', WoodshedTriggerKeydown);
-			window.removeEventListener('keyup', WoodshedTriggerKeyup);
-		} else {
-			WoodshedMode($QOPUserData);
-		}
-	}
-	
-	function WoodshedTriggerKeydown(event: KeyboardEvent) {
-		QOPMutator(event, 0, QOP, audioContext);
-	}
-	function WoodshedTriggerKeyup(event: KeyboardEvent) {
-		QOPMutator(event, 1, QOP, audioContext);
-	}
-	function WoodshedMode(QOPUserData: QOPUserDataTemplate) {
-		DeltaSetValidator(QOPUserData);
-		OpenGutValidator(QOPUserData);
-		QOP = HydrateQOP(QOPUserData, audioContext);
-		window.addEventListener('keydown', WoodshedTriggerKeydown);
-		window.addEventListener('keyup', WoodshedTriggerKeyup);
 	}
 </script>
 
@@ -50,7 +22,7 @@
 <button on:click={toggleMode}> Toggle Mode </button>
 
 {#if WoodshedModeToggle}
-	<WoodshedUI {QOP} />
+	<WoodshedUI />
 {:else}
 	<EditorUI />
 {/if}
