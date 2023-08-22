@@ -4,6 +4,11 @@
 	import Gut from './Gut.svelte';
 	import Valve from './Valve.svelte';
 	import Chart from './Chart.svelte';
+	import type { QOPUserDataTemplate } from '../initQOPUD';
+
+	let userData: QOPUserDataTemplate = $QOPUserData;
+
+	$: userData = $QOPUserData;
 
 	function handleAddScale() {
 		QOPUserData.addScale();
@@ -36,29 +41,33 @@
 <div class="qopud-metadata">
 	<div>
 		QOP Name:
-		<input type="text" bind:value={$QOPUserData.Name} />
+		<input type="text" bind:value={userData.Name} />
 	</div>
 	<div>
 		Description:
-		<input type="text" bind:value={$QOPUserData.Description} />
+		<input type="text" bind:value={userData.Description} />
 	</div>
 	<div>
 		Native Sound Toggle:
-		<input type="checkbox" bind:value={$QOPUserData.OscModeToggle} checked/>
+		<div class="button-container">
+			<input type="checkbox" bind:value={userData.OscModeToggle} checked />\
+		</div>
 	</div>
 	<div>
 		MIDI Output Toggle:
-		<input type="checkbox" bind:value={$QOPUserData.MIDIOutputModeToggle} />
+		<div class="button-container">
+			<input type="checkbox" bind:value={userData.MIDIOutputModeToggle} />
+		</div>
 	</div>
 	<div>
 		Debounce Timer:
-		<input type="number" bind:value={$QOPUserData.DebounceTimer} />ms
+		<input type="number" bind:value={userData.DebounceTimer} />ms
 	</div>
 </div>
 
 <button on:click={handleAddScale}>Add Scale</button>
 <div class="list-container scale-list">
-	{#each $QOPUserData.ScaleList as scale, scaleIndex}
+	{#each userData.ScaleList as scale, scaleIndex}
 		<Scale scaleData={scale}>
 			<button on:click={() => handleRemoveScale(scaleIndex)}>Remove Scale {scaleIndex}</button>
 		</Scale>
@@ -67,7 +76,7 @@
 
 <button on:click={handleAddGut}>Add Gut</button>
 <div class="list-container gut-list">
-	{#each $QOPUserData.GutList as gut, gutIndex}
+	{#each userData.GutList as gut, gutIndex}
 		<Gut gutData={gut}>
 			<button on:click={() => handleRemoveGut(gutIndex)}>Remove Gut {gutIndex}</button>
 		</Gut>
@@ -113,5 +122,17 @@
 	}
 	h1 {
 		font-family: 'Comic Sans MS';
+	}
+	input {
+		color: rgb(43, 43, 43);
+		background-color: white;
+		margin: 3px;
+	}
+	.button-container {
+		display: inline;
+		margin: 2px;
+		border: black;
+		padding: 5px;
+		background-color: lightgray
 	}
 </style>
