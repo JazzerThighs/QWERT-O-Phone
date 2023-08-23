@@ -10,6 +10,7 @@
 	export let listIndex: number = 0;
 	export let setString: 'FretSet' | 'ComboSet' | null = null;
 	export let setIndex: number | null = null;
+	let showOverlay = false;
 
 	$: {
 		if (setString === null) {
@@ -24,6 +25,8 @@
 	}
 
 	function handleAddTranspositionCode() {
+		showOverlay = true;
+
 		function handleKeydownEvent(event: KeyboardEvent) {
 			if (QOPValidEventCodes.includes(event.code as QOPValidEventCodesString)) {
 				QOPUserData.addTranspositionCode(
@@ -33,12 +36,13 @@
 					setString,
 					setIndex
 				);
-				window.removeEventListener('keydown', handleKeydownEvent);
 			} else {
 				console.log(`${event.code} is disallowed. Pick a different keyboard key.`);
-				window.removeEventListener('keydown', handleKeydownEvent);
 			}
+			window.removeEventListener('keydown', handleKeydownEvent);
+			showOverlay = false;
 		}
+
 		window.addEventListener('keydown', handleKeydownEvent);
 	}
 	function handleRemoveTranspositionCode(eventCode: string) {
@@ -51,6 +55,10 @@
 		);
 	}
 </script>
+
+{#if showOverlay}
+	<div class="overlay">Press a Computer-Keyboard Key</div>
+{/if}
 
 <div class="transpositionEventCodes">
 	Transposition Keys:
@@ -78,6 +86,20 @@
 </div>
 
 <style>
+	.overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		z-index: 9999; /* Ensure the overlay is on top of everything else */
+		color: white;
+		text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
+	}
 	.transpositionEventCodes {
 		border: solid black;
 		padding: 2vh;
