@@ -77,14 +77,14 @@
 			<div>
 				↓:
 				<select bind:value={value[0]}>
-					<option value="1" selected>True</option>
+					<option value="1">True</option>
 					<option value="0">False</option>
 				</select>
 			</div>
 			<div>
 				↑:
 				<select bind:value={value[1]}>
-					<option value="1" selected>True</option>
+					<option value="1">True</option>
 					<option value="0">False</option>
 				</select>
 			</div>
