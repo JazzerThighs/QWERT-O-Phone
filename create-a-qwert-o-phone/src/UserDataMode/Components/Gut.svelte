@@ -44,7 +44,7 @@
 
 	<div>
 		Gut Osc Toggle:
-		<input type="checkbox" bind:value={gutData.GutOscMute} />
+		<input type="checkbox" bind:value={gutData.GutOscToggle} checked/>
 	</div>
 	<div>
 		Osc Wave Type:

@@ -390,7 +390,7 @@ export interface IGutUDTemplate {
 	GutID: number;
 	OpenGutNoteID: number[];
 
-	GutOscMute: boolean;
+	GutOscToggle: boolean;
 	OscWaveType: SimpleWaveformTypeString[];
 	OscGain: number[];
 
@@ -406,7 +406,7 @@ export class GutUDTemplate extends ActionTypeUDTemplate implements IGutUDTemplat
 	public GutID: number;
 	public OpenGutNoteID: number[];
 
-	public GutOscMute: boolean;
+	public GutOscToggle: boolean;
 	public OscWaveType: SimpleWaveformTypeString[];
 	public OscGain: number[];
 
@@ -422,7 +422,7 @@ export class GutUDTemplate extends ActionTypeUDTemplate implements IGutUDTemplat
 		this.GutID = 0;
 		this.OpenGutNoteID = [69]; // The 69th MIDI note is A4=440Hz
 
-		this.GutOscMute = false;
+		this.GutOscToggle = true;
 		this.OscWaveType = ['sine'];
 		this.OscGain = [0.25];
 

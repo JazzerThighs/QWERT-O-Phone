@@ -581,7 +581,7 @@ function HydrateGutList(
 	for (let gutIndex = 0; gutIndex < QOPUserData.GutList.length; gutIndex++) {
 		QOP.Oscillators.OscNodes.push([]);
 		QOP.Oscillators.OscGainNodes.push([]);
-		QOP.Oscillators.OscNodesMute.push(false);
+		QOP.Oscillators.OscNodesMute[gutIndex] = !QOPUserData.GutList[gutIndex].GutOscToggle;
 		const emptyWaveformArray: SimpleWaveformTypeString[] = [];
 		QOP.Oscillators.OscWaveform.push(emptyWaveformArray);
 

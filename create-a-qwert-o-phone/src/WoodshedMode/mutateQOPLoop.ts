@@ -27,10 +27,12 @@ export function QOPMutator(
 	QOP: QOPTemplate,
 	audioContext: AudioContext
 ) {
+	console.log('QOPMutator Started.');
 	if (event.repeat || event.metaKey) {
 		return;
 	}
-
+	console.log(QOP.GutList.ButtonTracker[0] + '- Start');
+	console.log(QOP.GutList.ButtonState[0]);
 	const e = event.type as 'keydown' | 'keyup';
 	const code = event.code as QOPValidEventCodesString;
 	let { ChangedActionTypes, ChangedLists, ChangedTransposition } = QOP.StateMachine;
@@ -47,7 +49,6 @@ export function QOPMutator(
 		const xActionType = ActionTypes[propNum] as ActionTypesString;
 		const actionTree = (xActionType + 'Tree') as ActionTypesTreeString;
 		const actionTracker = (xActionType + 'Tracker') as ActionTypesTrackerString;
-
 		const actionTypeTree = QOP[actionTree];
 		const actionTypeTree_Event = actionTypeTree[e];
 		if (actionTypeTree_Event[code] !== undefined) {
@@ -55,8 +56,6 @@ export function QOPMutator(
 			if (actionTypeTree_Event_Code !== undefined) {
 				for (const list of QOPActionTypeListsArray) {
 					if (actionTypeTree_Event_Code[list] !== undefined) {
-						ChangedActionTypes = [...ChangedActionTypes, xActionType];
-						ChangedLists = [...ChangedLists, list];
 						if (list === 'GutList' || list === 'ValveList') {
 							const actionTypeTree_Event_Code_List = actionTypeTree_Event_Code[list];
 							for (const q of actionTypeTree_Event_Code_List) {
@@ -73,11 +72,15 @@ export function QOPMutator(
 								}
 							}
 						}
+						ChangedActionTypes = [...ChangedActionTypes, xActionType];
+						ChangedLists = [...ChangedLists, list];
 					}
 				}
 			}
 		}
 	}
+	console.log(QOP.GutList.ButtonTracker[0] + '- Trackers flipped');
+	console.log(QOP.GutList.ButtonState[0]);
 
 	// Update Transposition States
 	for (const list of QOPTRLists) {
@@ -132,9 +135,9 @@ export function QOPMutator(
 				const listString = xList as QOPSingleObjString;
 				for (const xActionType of ChangedActionTypes) {
 					const actionTracker = (xActionType + 'Tracker') as ActionTypesTrackerString;
-					if (actionTracker !== undefined) {
+					if (QOP[listString][actionTracker] !== undefined) {
 						const actionState = (xActionType + 'State') as ActionTypesStateString;
-						for (let q = 0; q < QOP[listString][actionTracker].length - 1; q++) {
+						for (let q = 0; q < QOP[listString][actionTracker].length; q++) {
 							switch (xActionType) {
 								case 'Sostenuto':
 									if (!QOP[listString][actionState][q]) {
@@ -177,7 +180,7 @@ export function QOPMutator(
 									}
 									break;
 								case 'Button':
-									if (!actionState[q]) {
+									if (!QOP[listString][actionState][q]) {
 										if (
 											Object.values(QOP[listString][actionTracker][q]).some(
 												(b: boolean) => b === true
@@ -265,7 +268,7 @@ export function QOPMutator(
 										}
 										break;
 									case 'Button':
-										if (!actionState[q]) {
+										if (!QOP[listString][member][actionState][q]) {
 											if (
 												Object.values(QOP[listString][member][actionTracker][q]).some(
 													(b: boolean) => b === true
@@ -324,21 +327,30 @@ export function QOPMutator(
 					break;
 			}
 		}
-
-		let debounceTimer = DebounceTimer;
-		if (DebounceTimer !== null) {
-			clearTimeout(debounceTimer);
+		console.log(QOP.GutList.ButtonTracker[0] + '-States flipped');
+		console.log(QOP.GutList.ButtonState[0]);
+		CalculateTotalFrequency(QOP);
+		// if (MIDIOutputModeToggle) {
+		// MIDIOutputPacket(QOP);
+		// }
+		if (OscModeToggle) {
+			OscNodesUpdate(QOP, audioContext);
 		}
 
-		debounceTimer = window.setTimeout(() => {
-			CalculateTotalFrequency(QOP);
-			// if (MIDIOutputModeToggle) {
-			// MIDIOutputPacket(QOP);
-			// }
-			if (OscModeToggle) {
-				OscNodesUpdate(QOP, audioContext);
-			}
-		}, 10);
+		// let debounceTimer = DebounceTimer;
+		// if (DebounceTimer !== null) {
+		// 	clearTimeout(debounceTimer);
+		// }
+
+		// debounceTimer = window.setTimeout(() => {
+		// 	CalculateTotalFrequency(QOP);
+		// 	// if (MIDIOutputModeToggle) {
+		// 	// MIDIOutputPacket(QOP);
+		// 	// }
+		// 	if (OscModeToggle) {
+		// 		OscNodesUpdate(QOP, audioContext);
+		// 	}
+		// }, 10);
 	} else {
 		if (ChangedTransposition === true) {
 			CalculateTotalFrequency(QOP);
@@ -525,7 +537,8 @@ function CalculateTotalFrequency(QOP: QOPTemplate) {
 				);
 			}
 
-			UnalteredScaleFrequency[scale] = ScaleList[scale][Math.round(NoteIDAccumulator[gut][scale])].PitchHz;
+			UnalteredScaleFrequency[scale] =
+				ScaleList[scale][Math.round(NoteIDAccumulator[gut][scale])].PitchHz;
 			TotalFrequency[gut][scale] =
 				UnalteredScaleFrequency[scale] * Math.pow(2, CentsAccumulator[gut] / 1200);
 		}
