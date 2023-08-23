@@ -9,7 +9,21 @@
 	let userData: QOPUserDataTemplate = $QOPUserData;
 
 	$: userData = $QOPUserData;
-
+	function handleDownloadQOPUD() {
+		QOPUserData.downloadQOPUD();
+	}
+	function handleDownloadScale(scaleIndex: number) {
+		QOPUserData.downloadScale(scaleIndex);
+	}
+	function handleDownloadGut(gutIndex: number) {
+		QOPUserData.downloadGut(gutIndex);
+	}
+	function handleDownloadValve(valveIndex: number) {
+		QOPUserData.downloadValve(valveIndex);
+	}
+	function handleDownloadChart(chartIndex: number) {
+		QOPUserData.downloadChart(chartIndex);
+	}
 	function handleAddScale() {
 		QOPUserData.addScale();
 	}
@@ -39,6 +53,7 @@
 <h1>Editor Mode</h1>
 
 <div class="qopud-metadata">
+	<button on:click={() => handleDownloadQOPUD()}>Download Current QOPUD</button>
 	<div>
 		QOP Name:
 		<input type="text" bind:value={userData.Name} />
@@ -69,6 +84,7 @@
 <div class="list-container scale-list">
 	{#each userData.ScaleList as scale, scaleIndex}
 		<Scale scaleData={scale}>
+			<button on:click={() => handleDownloadScale(scaleIndex)}>Download Scale {scaleIndex}</button>
 			<button on:click={() => handleRemoveScale(scaleIndex)}>Remove Scale {scaleIndex}</button>
 		</Scale>
 	{/each}
@@ -78,6 +94,7 @@
 <div class="list-container gut-list">
 	{#each userData.GutList as gut, gutIndex}
 		<Gut gutData={gut}>
+			<button on:click={() => handleDownloadGut(gutIndex)}>Download Gut {gutIndex}</button>
 			<button on:click={() => handleRemoveGut(gutIndex)}>Remove Gut {gutIndex}</button>
 		</Gut>
 	{/each}
@@ -87,6 +104,7 @@
 <div class="list-container valve-list">
 	{#each $QOPUserData.ValveList as valve, valveIndex}
 		<Valve valveData={valve}>
+			<button on:click={() => handleDownloadValve(valveIndex)}>Download Valve {valveIndex}</button>
 			<button on:click={() => handleRemoveValve(valveIndex)}>Remove Valve {valveIndex}</button>
 		</Valve>
 	{/each}
@@ -96,6 +114,7 @@
 <div class="list-container chart-list">
 	{#each $QOPUserData.ChartList as chart, chartIndex}
 		<Chart chartData={chart}>
+			<button on:click={() => handleDownloadChart(chartIndex)}>Download Chart {chartIndex}</button>
 			<button on:click={() => handleRemoveChart(chartIndex)}>Remove Chart {chartIndex}</button>
 		</Chart>
 	{/each}
