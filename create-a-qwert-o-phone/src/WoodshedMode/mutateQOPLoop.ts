@@ -7,7 +7,7 @@ import type {
 	ActionTypesTreeString
 } from './initQOP.js';
 import { ActionTypes, QOPActionTypeListsArray } from './initQOP.js';
-//import { MIDIOutputPacket } from './woodshedMIDIOUT.js';
+import { SendMIDIMessages } from './woodshedMIDIOUT.js';
 import { OscNodesUpdate } from './woodshedOscNodes.js';
 
 type QOPTRListsString = ['GutList', 'FretSetList', 'ValveList', 'ChartList', 'ComboSetList'];
@@ -36,7 +36,7 @@ export function QOPMutator(
 	const e = event.type as 'keydown' | 'keyup';
 	const code = event.code as QOPValidEventCodesString;
 	let { ChangedActionTypes, ChangedLists, ChangedTransposition } = QOP.StateMachine;
-	const { DebounceTimer } = QOP.StateMachine;
+	//const { DebounceTimer } = QOP.StateMachine;
 	const { OscModeToggle } = QOP.Oscillators;
 	const { MIDIOutputModeToggle } = QOP.MIDIOutput;
 
@@ -330,33 +330,18 @@ export function QOPMutator(
 		console.log(QOP.GutList.ButtonTracker[0] + '-States flipped');
 		console.log(QOP.GutList.ButtonState[0]);
 		CalculateTotalFrequency(QOP);
-		// if (MIDIOutputModeToggle) {
-		// MIDIOutputPacket(QOP);
-		// }
+		if (MIDIOutputModeToggle) {
+		SendMIDIMessages(QOP);
+		}
 		if (OscModeToggle) {
 			OscNodesUpdate(QOP, audioContext);
 		}
-
-		// let debounceTimer = DebounceTimer;
-		// if (DebounceTimer !== null) {
-		// 	clearTimeout(debounceTimer);
-		// }
-
-		// debounceTimer = window.setTimeout(() => {
-		// 	CalculateTotalFrequency(QOP);
-		// 	// if (MIDIOutputModeToggle) {
-		// 	// MIDIOutputPacket(QOP);
-		// 	// }
-		// 	if (OscModeToggle) {
-		// 		OscNodesUpdate(QOP, audioContext);
-		// 	}
-		// }, 10);
 	} else {
 		if (ChangedTransposition === true) {
 			CalculateTotalFrequency(QOP);
-			// if (MIDIOutputModeToggle) {
-			// MIDIOutputPacket(QOP);
-			// }
+			if (MIDIOutputModeToggle) {
+			SendMIDIMessages(QOP);
+			}
 			if (OscModeToggle) {
 				OscNodesUpdate(QOP, audioContext);
 			}

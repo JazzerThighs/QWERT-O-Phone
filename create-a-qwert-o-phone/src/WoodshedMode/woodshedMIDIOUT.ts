@@ -1,10 +1,44 @@
-//import type { QOPTemplate } from "./initQOP.js";
+import type { QOPTemplate } from './initQOP.js';
+
+export function SendMIDIMessages(QOP: QOPTemplate) {
+	if (QOP.MIDIOutput.SelectedMIDIOutput === null) {
+		console.error('No MIDI output device selected.');
+		return;
+	}
+	MIDIOutputPacket(QOP);
+}
+
+function MIDIOutputPacket(QOP: QOPTemplate) {
+	const { TotalFrequency, GutSoundState } = QOP.StateMachine;
+	const { GutMIDIOutputToggle, SelectedMIDIOutput } = QOP.MIDIOutput;
+
+	if (!SelectedMIDIOutput) {
+		console.error('No MIDI output device selected.');
+		return;
+	}
+
+	for (let i = 0; i < GutSoundState.length; i++) {
+		if (GutSoundState[i] && GutMIDIOutputToggle[i]) {
+			SendMIDINoteWithPitchBend(TotalFrequency[i][0], SelectedMIDIOutput);
+		}
+	}
+}
+
+function SendMIDINoteWithPitchBend(PitchHz: number, midiOutput: MIDIOutput) {
+	const { ClosestMIDINote, closestFrequency } = FindClosestMIDINote(PitchHz);
+	midiOutput.send([0x90, ClosestMIDINote, 127]); // Note on message, channel 1, max velocity
+
+	const n = 12 * Math.log2(PitchHz / closestFrequency);
+	const pitchBend = Math.round((n / 2) * 0x2000 + 0x2000);
+	const PitchBendLSB = pitchBend & 0x7f;
+	const PitchBendMSB = (pitchBend >> 7) & 0x7f;
+	midiOutput.send([0xe0, PitchBendLSB, PitchBendMSB]); // Pitch bend message, channel 1
+}
 
 export function FindClosestMIDINote(targetFrequency: number) {
 	let ClosestMIDINote = 0;
 	let closestFrequency = 0;
 
-	// Find the MIDI note closest to the target frequency
 	for (let m = 0; m <= 127; m++) {
 		if (Math.abs(MIDILUT[m] - targetFrequency) < Math.abs(closestFrequency - targetFrequency)) {
 			ClosestMIDINote = m;
@@ -14,11 +48,6 @@ export function FindClosestMIDINote(targetFrequency: number) {
 
 	return { ClosestMIDINote, closestFrequency };
 }
-// export function MIDIOutputPacket(QOP: QOPTemplate) {
-// 	const { GutSoundState } = QOP.StateMachine;
-// 	const { GutMIDIOUTDisabled } = QOP.MIDIOutput;
-// }
-
 export const standardMIDINoteNames = [
 	'C',
 	'C♯ / D♭',

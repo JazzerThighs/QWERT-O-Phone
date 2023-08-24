@@ -129,6 +129,7 @@ class QOPStateMachineTemplate implements IQOPStateMachineTemplate {
 	}
 }
 interface IQOPOscillatorsTemplate {
+	OscModeToggle: boolean;
 	OscNodes: OscillatorNode[][];
 	OscGainNodes: GainNode[][];
 	OscWaveform: SimpleWaveformTypeString[][];
@@ -151,15 +152,17 @@ class QOPOscillatorsTemplate implements IQOPOscillatorsTemplate {
 }
 interface IQOPMIDIOutputTemplate {
 	MIDIOutputModeToggle: boolean;
-	GutMIDIOUTDisabled: boolean[];
+	GutMIDIOutputToggle: boolean[];
 }
 class QOPMIDIOutputTemplate implements IQOPMIDIOutputTemplate {
 	public MIDIOutputModeToggle: boolean;
-	public GutMIDIOUTDisabled: boolean[];
+	public GutMIDIOutputToggle: boolean[];
+	public SelectedMIDIOutput: MIDIOutput | null;
 
 	constructor() {
 		this.MIDIOutputModeToggle = false;
-		this.GutMIDIOUTDisabled = [];
+		this.GutMIDIOutputToggle = [];
+		this.SelectedMIDIOutput = null;
 	}
 }
 
@@ -585,7 +588,7 @@ function HydrateGutList(
 		const emptyWaveformArray: SimpleWaveformTypeString[] = [];
 		QOP.Oscillators.OscWaveform.push(emptyWaveformArray);
 
-		QOP.MIDIOutput.GutMIDIOUTDisabled.push(true);
+		QOP.MIDIOutput.GutMIDIOutputToggle.push(QOPUserData.GutList[gutIndex].GutMIDIOutputToggle);
 
 		QOP.StateMachine.GutSoundState.push(false);
 		QOP.StateMachine.NoteIDAccumulator.push([]);
