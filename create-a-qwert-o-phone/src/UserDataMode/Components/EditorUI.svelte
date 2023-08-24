@@ -24,6 +24,7 @@
 	function handleDownloadChart(chartIndex: number) {
 		QOPUserData.downloadChart(chartIndex);
 	}
+	
 	function handleAddScale() {
 		QOPUserData.addScale();
 	}
@@ -83,8 +84,8 @@
 <button on:click={handleAddScale}>Add Scale</button>
 <div class="list-container scale-list">
 	{#each userData.ScaleList as scale, scaleIndex}
+	<button on:click={() => handleDownloadScale(scaleIndex)}>Download Scale {scaleIndex}</button>
 		<Scale scaleData={scale}>
-			<button on:click={() => handleDownloadScale(scaleIndex)}>Download Scale {scaleIndex}</button>
 			<button on:click={() => handleRemoveScale(scaleIndex)}>Remove Scale {scaleIndex}</button>
 		</Scale>
 	{/each}
@@ -93,8 +94,8 @@
 <button on:click={handleAddGut}>Add Gut</button>
 <div class="list-container gut-list">
 	{#each userData.GutList as gut, gutIndex}
+		<button on:click={() => handleDownloadGut(gutIndex)}>Download Gut {gutIndex}</button>
 		<Gut gutData={gut}>
-			<button on:click={() => handleDownloadGut(gutIndex)}>Download Gut {gutIndex}</button>
 			<button on:click={() => handleRemoveGut(gutIndex)}>Remove Gut {gutIndex}</button>
 		</Gut>
 	{/each}
@@ -103,8 +104,8 @@
 <button on:click={handleAddValve}>Add Valve</button>
 <div class="list-container valve-list">
 	{#each $QOPUserData.ValveList as valve, valveIndex}
+	<button on:click={() => handleDownloadValve(valveIndex)}>Download Valve {valveIndex}</button>
 		<Valve valveData={valve}>
-			<button on:click={() => handleDownloadValve(valveIndex)}>Download Valve {valveIndex}</button>
 			<button on:click={() => handleRemoveValve(valveIndex)}>Remove Valve {valveIndex}</button>
 		</Valve>
 	{/each}
@@ -113,8 +114,8 @@
 <button on:click={handleAddChart}>Add Chart</button>
 <div class="list-container chart-list">
 	{#each $QOPUserData.ChartList as chart, chartIndex}
+	<button on:click={() => handleDownloadChart(chartIndex)}>Download Chart {chartIndex}</button>
 		<Chart chartData={chart}>
-			<button on:click={() => handleDownloadChart(chartIndex)}>Download Chart {chartIndex}</button>
 			<button on:click={() => handleRemoveChart(chartIndex)}>Remove Chart {chartIndex}</button>
 		</Chart>
 	{/each}

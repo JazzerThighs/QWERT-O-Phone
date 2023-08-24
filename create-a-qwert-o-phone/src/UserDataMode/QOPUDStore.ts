@@ -28,7 +28,7 @@ function CreateQOPUserData() {
 		},
 		reset: () => set(new QOPUserDataTemplate()),
 		downloadQOPUD: () => {
-			subscribe((currentData) => {
+			update((currentData) => {
 				const jsonStr = JSON.stringify(currentData, null, 2);
 				const blob = new Blob([jsonStr], { type: 'application/json' });
 				const url = URL.createObjectURL(blob);
@@ -38,10 +38,11 @@ function CreateQOPUserData() {
 				a.download = 'QOPUD' + timeStamp + currentData.Name + '.json';
 				a.click();
 				URL.revokeObjectURL(url);
+				return currentData;
 			});
 		},
 		downloadScale: (scaleIndex: number) => {
-			subscribe((currentData) => {
+			update((currentData) => {
 				const jsonStr = JSON.stringify(currentData.ScaleList[scaleIndex], null, 2);
 				const blob = new Blob([jsonStr], { type: 'application/json' });
 				const url = URL.createObjectURL(blob);
@@ -51,10 +52,11 @@ function CreateQOPUserData() {
 				a.download = 'QOPScale' + timeStamp + currentData.ScaleList[scaleIndex].Name + '.json';
 				a.click();
 				URL.revokeObjectURL(url);
+				return currentData;
 			});
 		},
 		downloadGut: (gutIndex: number) => {
-			subscribe((currentData) => {
+			update((currentData) => {
 				const jsonStr = JSON.stringify(currentData.GutList[gutIndex], null, 2);
 				const blob = new Blob([jsonStr], { type: 'application/json' });
 				const url = URL.createObjectURL(blob);
@@ -64,10 +66,11 @@ function CreateQOPUserData() {
 				a.download = 'QOPGut' + timeStamp + currentData.GutList[gutIndex].Name + '.json';
 				a.click();
 				URL.revokeObjectURL(url);
+				return currentData;
 			});
 		},
 		downloadValve: (valveIndex: number) => {
-			subscribe((currentData) => {
+			update((currentData) => {
 				const jsonStr = JSON.stringify(currentData.ValveList[valveIndex], null, 2);
 				const blob = new Blob([jsonStr], { type: 'application/json' });
 				const url = URL.createObjectURL(blob);
@@ -77,20 +80,22 @@ function CreateQOPUserData() {
 				a.download = 'QOPValve' + timeStamp + currentData.ValveList[valveIndex].Name + '.json';
 				a.click();
 				URL.revokeObjectURL(url);
+				return currentData;
 			});
 		},
 		downloadChart: (chartIndex: number) => {
-			subscribe(currentData => {
-                const jsonStr = JSON.stringify(currentData.ChartList[chartIndex], null, 2);
-                const blob = new Blob([jsonStr], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
+			update((currentData) => {
+				const jsonStr = JSON.stringify(currentData.ChartList[chartIndex], null, 2);
+				const blob = new Blob([jsonStr], { type: 'application/json' });
+				const url = URL.createObjectURL(blob);
+				const a = document.createElement('a');
 				a.href = url;
 				const timeStamp = QOPUDTimestamp();
-                a.download = 'QOPChart' + timeStamp + currentData.ChartList[chartIndex].Name + '.json';
-                a.click();
-                URL.revokeObjectURL(url);
-            });
+				a.download = 'QOPChart' + timeStamp + currentData.ChartList[chartIndex].Name + '.json';
+				a.click();
+				URL.revokeObjectURL(url);
+				return currentData;
+			});
 		},
 
 		addScale: (newScale = new ScaleUDTemplate()) => {
