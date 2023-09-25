@@ -147,7 +147,7 @@ At the heart of it all, combining the use of Scales, Guts, Frets, Valves, and Ch
 ```
 # Chapter II: The Grind
 
-After make instrument, play instrument. And play instrument. And play instrument. And play instrument... This is called practicing. It could also be called woodsheding, or jamming. Yes, this is in fact "The Jamming."
+After make instrument, play instrument. And play instrument. And play instrument. And play instrument... This is called practicing. It could also be called woodshedding, or jamming. Yes, this is in fact "The Jamming."
 
 ```
   /$$$$$$  /$$                             /$$                               /$$$$$$ /$$$$$$ /$$$$$$    
