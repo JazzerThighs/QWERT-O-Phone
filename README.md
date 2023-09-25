@@ -16,12 +16,13 @@ Stuff I Actually Did (Go me!):
 
 - Guts, Frets, Valves, and Fingering Charts: Sounds complicated, but it's not...okay, maybe a little.<br />
 - In-browser Oscillators: For when you want that sweet, sweet Woodshed Mode experience.
+- UserData Editor UI: User Interface for creating QWERT-O-Phones.<br />
+- Dedicated URL: So you can show your grandma what you've been up to.<br />
 
 To Be Implemented:
 
-- UserData Editor UI: User Interface for creating QWERT-O-Phones.<br />
+
 - Woodshed Mode UI: So you can actually see what it is you have built and are playing on.<br />
-- Dedicated URL: So you can show your grandma what you've been up to.<br />
 - Server for Your QWERT-O-Phones: Because storing them on post-its isn't efficient.<br />
 - MIDI: In, Out, all around.<br />
 - Analog Control Support: For extra flavor.<br />
@@ -72,9 +73,9 @@ We do that by using Musical Instruments. Instrument, in this context, refers to 
 
 Ergo, the goal is to produce Music, but the method is through the use of an instrument. This has its ups and downs.
 
-As time marched onward, and the Electronic Music age came about, a very small number of Musical Instrument Control Schemes took precedent when manufacturers decided to mass produce MIDI controllers, capable of letting as many musicians express themselves as possible using the most common interfaces: The piano keyboard, and the modern woodwind instrument.
+As time marched onward, and the Electronic Music age came about, a very small number of Musical Instrument Control Schemes took precedent when manufacturers decided to mass produce "Musical Instrument Digital Interface (MIDI)" controllers. The idea simply was, "What are the most common instruments that people play in the markets we will sell our products? The answer was the piano keyboard. Drum kits and single-reed woodwind instruments were also available, albeit far smaller numbers of these are sold (I don't have sale stats. Leave me alone).
 
-Most MIDI controllers involve piano keyboards; Wind controllers mostly fall into the clarinet-shaped Electronic Wind Instruments (EWIs). And while there are some variations, like alternate key arrangements for piano-like interfaces, and the Electronic Valve Instrument (EVI), the result is clear: Only keyboardists and select-woodwind players have widespread options when finding the right MIDI controller for them.
+Most MIDI controllers involve piano keyboards. Wind controllers mostly fall into the "clarinet-shaped" category, and are called "Electronic Wind Instruments (EWIs)." And while there are some variations, like alternate key arrangements for piano-like interfaces, and the "Electronic Valve Instrument (EVI)," the result is clear: Only keyboardists and select woodwind players have widespread options when finding the right MIDI controller for them.
 
 I aim to enable people to quickly build, practice on, and play MIDI controller interfaces that suit their preferred idiomatic method of mono/polyphonic expression.
 <br />
@@ -86,11 +87,11 @@ Here is a list of nagging thoughts I had as a prospective teacher of music:
 
 * _"[...] I mean, really, if I'm going to teach music to entire bands worth of pupils, I should actually be able to hold my own on... wow... a really wide variety of instruments. Brass, single reed, double reed, keyboard, symphonic percussion, drum set... I absolutely do not have the funds for all of the expensive MIDI controllers out there that are simply shaped differently but apply all of the same principles as each other [...]"_<br />
 
-At this point in the story, I'm starting to suspect that DIY MIDI controllers are the wave. The long short of my experience with hardware mods is a few homebrewed "Big N" consoles, loosely assisting in the construction of a "Phob..." Nothing really stands out as reason I should get into the manufacturing business... So, I kept musing:<br />
+At this point in the story, I'm starting to suspect that DIY MIDI controllers are the wave. The long short of my experience with hardware mods is a few homebrewed "Big N" consoles, and loosely assisting in the construction of a "[Phob](https://www.youtube.com/watch?v=RGyQbXGr4Po&ab_channel=Frost)." Nothing really stands out as reason I should get into the manufacturing business... So, I kept musing:<br />
 
-* _"[...] You know, there's no foolproof way I've seen to just set up a simple keyboard to be able to demonstrate to someone what different temperaments sound like. If I want to have two keyboards, one assigned to the A=440 12-Tone Equal Temperament Scale as used by MIDI, and one keyboard assigned to the same scale of notes, just transposed down to 432... It would take some elbow grease, even for an experienced DAW user. It takes even longer to set up any other temperament system It would make so much sense to build that. It doesn't seem that hard to go through the motions one time in JavaScript (and indeed, with the infamous ChatGPT's help, any trash solution to a problem is just a proompt away), and I'm not about to pay 3 Dollar Signs for [Pianoteq](https://www.modartt.com/pianoteq) [...]"_<br />
+* _"[...] You know, there's no foolproof way I've seen to just set up a simple keyboard to be able to demonstrate to someone what different temperaments sound like. If I want to have two keyboards, one assigned to the A=440 12-Tone Equal Temperament Scale as used by MIDI, and one keyboard assigned to the same scale of notes, just transposed down to 432... It would take some elbow grease, even for an experienced DAW user. It takes even longer to set up any other temperament system. It would make so much sense to build that. It doesn't seem that hard to go through the motions one time in JavaScript (and indeed, with the infamous ChatGPT's help, any trash solution to a problem is just a "proompt" away), and I'm not about to pay 3 Dollar Signs for [Pianoteq](https://www.modartt.com/pianoteq) [...]"_<br />
 
-Here, I had come to understand the fundamentals of the end product that the QWERT-O-Phone eventually came to be. I started proompting, just to get some instant results. The long short of this is that I spent dozens of hours, days, weeks, just coaxing the AI with increasingly stricter parameters to improve the state of my code. I have to say that my good friend's decision to create this in TypeScript has been largely helpful, even if I have to maintain a cobbled-together [Single-File CodePen Fork](https://codepen.io/JazzerThighs/pen/mdQqzBR) to consistently test runtime usage.<br />
+Here, I had come to understand the fundamentals of the end product that the QWERT-O-Phone eventually came to be. I started proompting, just to get some instant results. The long short of this is that I spent dozens of hours, days, weeks, just coaxing the AI with increasingly stricter parameters to improve the state of my code. I have to say that my good friend's decision to create this in TypeScript has been largely helpful, even if I have to maintain a cobbled-together [Single-File CodePen Fork (This fork ain't gonna be worked on anymore)](https://codepen.io/JazzerThighs/pen/mdQqzBR) to consistently test runtime usage.<br />
 
 After a large amount of deliberation, a heap of back-and-forth, deciding where certain interactive features make sense, balancing feature coverage and maintainability, I've narrowed the core of the instrument engine to a small number of categories for method of sound production. I've boiled down the tendencies of most musical instruments to a small set of simple functions, and we will go through the process of building a QWERT-O-Phone in the next subsection.<br />
 
@@ -146,7 +147,7 @@ At the heart of it all, combining the use of Scales, Guts, Frets, Valves, and Ch
 ```
 # Chapter II: The Grind
 
-
+After make instrument, play instrument. And play instrument. And play instrument. And play instrument... This is called practicing. It could also be called woodsheding, or jamming. Yes, this is in fact "The Jamming."
 
 ```
   /$$$$$$  /$$                             /$$                               /$$$$$$ /$$$$$$ /$$$$$$    
@@ -172,7 +173,6 @@ At the heart of it all, combining the use of Scales, Guts, Frets, Valves, and Ch
 ```
 # Chapter III: ????
 
-
 In this section, we describe what MIDI is in a bit further detail, and describe the use cases I've considered when designing the QWERT-O-Phone.
 
 # [MIDI Integration 🎹 <small>(Click Me!)</small>](https://www.midi.org/specifications)
@@ -183,6 +183,7 @@ In the context of the QWERT-O-Phone:
 - **Live Performances**: With MIDI, you can leverage the QWERT-O-Phone's customizable interface to control virtual instruments seamlessly, bringing your unique sounds to the stage.
 - **Recording MIDI Data**: Record your performances and compositions, then easily export them to notation or sequencer applications for further refinement or collaboration.
 - **Diverse Control**: Whether you're looking to compose, arrange, or just jam out, the app's MIDI capabilities enhance your creative workflow, connecting with a vast ecosystem of digital music tools.
+- **MIDI 2**: Listen, if I actually get something that can meaningfully take advantage of the new MIDI 2 protocol, that would be kind of wild. Don't count on it, unless you wanna fork the source.
 
 
 
@@ -221,7 +222,7 @@ In less cryptic terms:
 
 However, the soul of Copyleft resides in one key principle:<br /><br />
 
-* 🔄 The Same Freedoms Must Remain — Any derivative work must be open-source and free, under the same GPL-3.0 license.
+* 🔄 The Same Freedoms Must Remain — Any derivative work must be open-source and free, under the same [GPL-3.0 License](https://www.gnu.org/licenses/gpl-3.0.en.html).
 <br /><br />
 ```
 ____________________/\\\\\\\\\\\__________________________________________________________________________/\\\\\\\\\\\\\\\__/\\\_____________________________/\\\______________________        
