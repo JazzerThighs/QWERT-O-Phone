@@ -98,8 +98,9 @@ function CreateQOPUserData() {
 			});
 		},
 
-		addScale: (newScale = new ScaleUDTemplate()) => {
+		addScale: () => {
 			update((userData) => {
+				const newScale = new ScaleUDTemplate();
 				userData.ScaleList = [...userData.ScaleList, newScale];
 				for (let scaleIndex = 0; scaleIndex < userData.ScaleList.length; scaleIndex++) {
 					userData.ScaleList[scaleIndex].ScaleID = scaleIndex;
@@ -163,8 +164,9 @@ function CreateQOPUserData() {
 			});
 		},
 
-		addNote: (scaleIndex: number, newNote = new NoteUDTemplate()) => {
+		addNote: (scaleIndex: number) => {
 			update((userData) => {
+				const newNote = new NoteUDTemplate();
 				userData.ScaleList[scaleIndex].NoteSet = [
 					...userData.ScaleList[scaleIndex].NoteSet,
 					newNote
@@ -197,8 +199,9 @@ function CreateQOPUserData() {
 			});
 		},
 
-		addGut: (newGut = new GutUDTemplate(), newDelta = new DeltaUDTemplate()) => {
+		addGut: () => {
 			update((userData) => {
+				const newGut = new GutUDTemplate();
 				userData.GutList = [...userData.GutList, newGut];
 
 				for (let gutIndex = 0; gutIndex < userData.GutList.length; gutIndex++) {
@@ -244,6 +247,7 @@ function CreateQOPUserData() {
 				}
 
 				for (let valveIndex = 0; valveIndex < userData.ValveList.length; valveIndex++) {
+					const newDelta = new DeltaUDTemplate();
 					userData.ValveList[valveIndex].DeltaSet.push(newDelta);
 				}
 
@@ -253,6 +257,7 @@ function CreateQOPUserData() {
 						comboIndex < userData.ChartList[chartIndex].ComboSet.length;
 						comboIndex++
 					) {
+						const newDelta = new DeltaUDTemplate();
 						userData.ChartList[chartIndex].ComboSet[comboIndex].DeltaSet.push(newDelta);
 					}
 				}
@@ -294,8 +299,9 @@ function CreateQOPUserData() {
 			});
 		},
 
-		addFret: (gutIndex: number, newFret = new FretUDTemplate()) => {
+		addFret: (gutIndex: number) => {
 			update((userData) => {
+				const newFret = new FretUDTemplate();
 				userData.GutList[gutIndex].FretSet = [...userData.GutList[gutIndex].FretSet, newFret];
 				for (
 					let fretIndex = 0;
@@ -325,12 +331,14 @@ function CreateQOPUserData() {
 			});
 		},
 
-		addValve: (newValve = new ValveUDTemplate(), newDelta = new DeltaUDTemplate()) => {
+		addValve: () => {
 			update((userData) => {
+				const newValve = new ValveUDTemplate();
 				userData.ValveList = [...userData.ValveList, newValve];
 				for (let valveIndex = 0; valveIndex < userData.ValveList.length; valveIndex++) {
 					userData.ValveList[valveIndex].ValveID = valveIndex;
 					while (userData.ValveList[valveIndex].DeltaSet.length < userData.GutList.length) {
+						const newDelta = new DeltaUDTemplate();
 						userData.ValveList[valveIndex].DeltaSet.push(newDelta);
 					}
 					while (userData.ValveList[valveIndex].DeltaSet.length > userData.GutList.length) {
@@ -355,8 +363,9 @@ function CreateQOPUserData() {
 			});
 		},
 
-		addChart: (newChart = new ChartUDTemplate()) => {
+		addChart: () => {
 			update((userData) => {
+				const newChart = new ChartUDTemplate();
 				userData.ChartList = [...userData.ChartList, newChart];
 				for (let chartIndex = 0; chartIndex < userData.ChartList.length; chartIndex++) {
 					userData.ChartList[chartIndex].ChartID = chartIndex;
@@ -375,6 +384,39 @@ function CreateQOPUserData() {
 					) {
 						userData.ChartList[chartIndex].ComboSet[comboIndex].ChartID = chartIndex;
 						userData.ChartList[chartIndex].ComboSet[comboIndex].ComboID = comboIndex;
+
+						while (
+							userData.ChartList[chartIndex].ComboSet[comboIndex].DeltaSet.length <
+							userData.GutList.length
+						) {
+							const newDelta = new DeltaUDTemplate();
+							userData.ChartList[chartIndex].ComboSet[comboIndex].DeltaSet.push(newDelta);
+						}
+						while (
+							userData.ChartList[chartIndex].ComboSet[comboIndex].DeltaSet.length >
+							userData.GutList.length
+						) {
+							userData.ChartList[chartIndex].ComboSet[comboIndex].DeltaSet.splice(
+								userData.ChartList[chartIndex].ComboSet[comboIndex].DeltaSet.length - 1,
+								1
+							);
+						}
+
+						while (
+							userData.ChartList[chartIndex].ComboSet[comboIndex].Combo.length <
+							userData.ChartList[chartIndex].PadSet.length
+						) {
+							userData.ChartList[chartIndex].ComboSet[comboIndex].Combo.push(false);
+						}
+						while (
+							userData.ChartList[chartIndex].ComboSet[comboIndex].Combo.length >
+							userData.ChartList[chartIndex].PadSet.length
+						) {
+							userData.ChartList[chartIndex].ComboSet[comboIndex].Combo.splice(
+								userData.ChartList[chartIndex].ComboSet[comboIndex].Combo.length - 1,
+								1
+							);
+						}
 					}
 				}
 				return userData;
@@ -408,8 +450,9 @@ function CreateQOPUserData() {
 			});
 		},
 
-		addPad: (chartIndex: number, newPad = new PadUDTemplate()) => {
+		addPad: (chartIndex: number) => {
 			update((userData) => {
+				const newPad = new PadUDTemplate();
 				userData.ChartList[chartIndex].PadSet = [...userData.ChartList[chartIndex].PadSet, newPad];
 				for (
 					let comboIndex = 0;
@@ -434,6 +477,17 @@ function CreateQOPUserData() {
 			update((userData) => {
 				if (userData.ChartList[chartIndex].PadSet.length - 1 !== 0) {
 					userData.ChartList[chartIndex].PadSet.splice(padIndex, 1);
+
+					while (
+						userData.ChartList[chartIndex].ComboSet.length >
+						Math.pow(2, userData.ChartList[chartIndex].PadSet.length)
+					) {
+						userData.ChartList[chartIndex].ComboSet.splice(
+							userData.ChartList[chartIndex].ComboSet.length - 1,
+							1
+						);
+					}
+
 					for (
 						let comboIndex = 0;
 						comboIndex < userData.ChartList[chartIndex].ComboSet.length;
@@ -450,37 +504,18 @@ function CreateQOPUserData() {
 						userData.ChartList[chartIndex].PadSet[padIndex].ChartID = chartIndex;
 						userData.ChartList[chartIndex].PadSet[padIndex].PadID = padIndex;
 					}
-
-					for (
-						let comboIndex = 0;
-						comboIndex < userData.ChartList[chartIndex].ComboSet.length;
-						comboIndex++
-					) {
-						while (
-							userData.ChartList[chartIndex].ComboSet.length >
-							Math.pow(2, userData.ChartList[chartIndex].PadSet.length)
-						) {
-							userData.ChartList[chartIndex].ComboSet.splice(
-								userData.ChartList[chartIndex].ComboSet.length - 1,
-								1
-							);
-						}
-					}
 				}
 				return userData;
 			});
 		},
 
-		addCombo: (
-			chartIndex: number,
-			newCombo = new ComboUDTemplate(),
-			newDelta = new DeltaUDTemplate()
-		) => {
+		addCombo: (chartIndex: number) => {
 			update((userData) => {
 				if (
 					userData.ChartList[chartIndex].ComboSet.length <
 					Math.pow(2, userData.ChartList[chartIndex].PadSet.length)
 				) {
+					const newCombo = new ComboUDTemplate();
 					userData.ChartList[chartIndex].ComboSet = [
 						...userData.ChartList[chartIndex].ComboSet,
 						newCombo
@@ -492,10 +527,12 @@ function CreateQOPUserData() {
 					) {
 						userData.ChartList[chartIndex].ComboSet[comboIndex].ChartID = chartIndex;
 						userData.ChartList[chartIndex].ComboSet[comboIndex].ComboID = comboIndex;
+
 						while (
 							userData.ChartList[chartIndex].ComboSet[comboIndex].DeltaSet.length <
 							userData.GutList.length
 						) {
+							const newDelta = new DeltaUDTemplate();
 							userData.ChartList[chartIndex].ComboSet[comboIndex].DeltaSet.push(newDelta);
 						}
 						while (

@@ -484,8 +484,15 @@ function CalculateTotalFrequency(QOP: QOPTemplate) {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	PrevTotalFrequency = TotalFrequency.map((innerArray) => [...innerArray]);
 
+	let ChartNoteIDTranspostionAccumulator = 0;
+	let ChartCentsTranspostionAccumulator = 0;
 	const ComboNoteIDAccumulator: number[] = Array(PadSetList.length).fill(0);
 	const ComboCentsAccumulator: number[] = Array(PadSetList.length).fill(0);
+
+	for (let chart = 0; chart < PadSetList.length; chart++) {
+		ChartNoteIDTranspostionAccumulator += ChartList.TranspositionState[chart][0];
+		ChartCentsTranspostionAccumulator += ChartList.TranspositionState[chart][1];
+	}
 
 	for (let gut = 0; gut < GutList.ButtonState.length; gut++) {
 		for (let chart = 0; chart < PadSetList.length; chart++) {
@@ -494,10 +501,10 @@ function CalculateTotalFrequency(QOP: QOPTemplate) {
 		}
 
 		CentsAccumulator[gut] =
-			GutList.TranspositionState[gut][0] +
+			GutList.TranspositionState[gut][1] +
 			FretSetList[gut].ResultantCentsDelta +
 			ValveList.ResultantCentsDelta[gut] +
-			ChartList.TranspositionState[gut][0] +
+			/*ChartCentsTranspostionAccumulator +*/
 			ComboCentsAccumulator[gut];
 
 		const UnalteredScaleFrequency: number[] = Array(ScaleList.length).fill(0);
@@ -507,7 +514,7 @@ function CalculateTotalFrequency(QOP: QOPTemplate) {
 				GutList.TranspositionState[gut][0] +
 				FretSetList[gut].ResultantNoteIDDelta +
 				ValveList.ResultantNoteIDDelta[gut] +
-				ChartList.TranspositionState[gut][0] +
+				/*ChartNoteIDTranspostionAccumulator +*/
 				ComboNoteIDAccumulator[gut];
 
 			if (NoteIDAccumulator[gut][scale] < 0) {
