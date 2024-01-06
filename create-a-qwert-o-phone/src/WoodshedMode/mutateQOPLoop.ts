@@ -504,7 +504,7 @@ function CalculateTotalFrequency(QOP: QOPTemplate) {
 			GutList.TranspositionState[gut][1] +
 			FretSetList[gut].ResultantCentsDelta +
 			ValveList.ResultantCentsDelta[gut] +
-			/*ChartCentsTranspostionAccumulator +*/
+			ChartCentsTranspostionAccumulator +
 			ComboCentsAccumulator[gut];
 
 		const UnalteredScaleFrequency: number[] = Array(ScaleList.length).fill(0);
@@ -514,7 +514,7 @@ function CalculateTotalFrequency(QOP: QOPTemplate) {
 				GutList.TranspositionState[gut][0] +
 				FretSetList[gut].ResultantNoteIDDelta +
 				ValveList.ResultantNoteIDDelta[gut] +
-				/*ChartNoteIDTranspostionAccumulator +*/
+				ChartNoteIDTranspostionAccumulator +
 				ComboNoteIDAccumulator[gut];
 
 			if (NoteIDAccumulator[gut][scale] < 0) {
